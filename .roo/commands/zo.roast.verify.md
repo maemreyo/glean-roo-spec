@@ -14,7 +14,7 @@ $ARGUMENTS
 ## Context Setup
 
 1.  **Initialize Verification**:
-    -   Run `.specify/scripts/bash/setup-roast-verify.sh --json` (optionally pass `--report=path` if user specified) to locate the target roast report.
+    -   Run `.specify/scripts/bash/setup-roast-verify.sh --json $ARGUMENTS` to locate the target roast report.
     -   Parse the JSON output to get `REPORT_FILE`.
     -   Read `REPORT_FILE` to access the **Audit & Roast Checklist**.
 
