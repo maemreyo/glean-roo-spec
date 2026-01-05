@@ -23,7 +23,9 @@ $ARGUMENTS
 
 ## Instructions
 
-1.  **Analyze Context**: Read `spec.md`, `plan.md`, and `tasks.md` to understand the project state.
+1.  **Context Loading**:
+    -   Run `.specify/scripts/bash/check-prerequisites.sh --json` to get the absolute paths of active documents.
+    -   Read the files returned in the JSON (specifically `spec.md` and `plan.md`. checking `tasks.md` is optional but recommended for progress context).
 2.  **Generate Candidates**: Internally generate a prioritized queue of **5 specific improvement ideas** that balance **Creativity (Vibe)** and **Stability (Pro)**.
     -   *The Mix*: Ensure the list includes:
         -   2x **"Blue Sky" Features** (UX delight, new capabilities - *The Vibe Coder*).
