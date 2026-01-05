@@ -1,6 +1,6 @@
-# Speckit & Roo Integration Guide
+# Zo & Roo Integration Guide
 
-This document outlines the integration between **Speckit** (referring to [GitHub Spec Kit](https://github.com/github/spec-kit)) and **Roo Code**. This integration facilitates **Spec-Driven Development (SDD)**, allowing for a structured, high-quality development workflow driven by clear specifications and AI agents.
+This document outlines the integration between **Zo** (referring to [GitHub Spec Kit](https://github.com/github/spec-kit)) and **Roo Code**. This integration facilitates **Spec-Driven Development (SDD)**, allowing for a structured, high-quality development workflow driven by clear specifications and AI agents.
 
 ## Overview
 

@@ -1,6 +1,6 @@
 # Proposal: New Command `/zo.brainstorm`
 
-You asked for a command to suggest improvements or brainstorm project direction. Based on the Speckit architecture, I recommend creating **`/zo.brainstorm`**.
+You asked for a command to suggest improvements or brainstorm project direction. Based on the Zo architecture, I recommend creating **`/zo.brainstorm`**.
 
 ## 1. Command Definition
 
