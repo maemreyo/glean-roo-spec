@@ -30,16 +30,51 @@ source "$SCRIPT_DIR/common.sh"
 # Get all paths and variables from common functions
 eval $(get_feature_paths)
 
-# Check if we're on a proper feature branch (only for git repos)
-check_feature_branch "$CURRENT_BRANCH" "$HAS_GIT" || exit 1
+# Handle optional feature directory argument
+if [[ ${#ARGS[@]} -gt 0 ]]; then
+    FEATURE_ARG="${ARGS[0]}"
+    if [[ -d "$FEATURE_ARG" ]]; then
+        # Resolve absolute path
+        FEATURE_DIR="$(cd "$FEATURE_ARG" && pwd)"
+        echo "Using specified feature directory: $FEATURE_DIR"
+        
+        # Override derived paths
+        FEATURE_SPEC="$FEATURE_DIR/spec.md"
+        IMPL_PLAN="$FEATURE_DIR/plan.md"
+        TASKS="$FEATURE_DIR/tasks.md"
+        
+        # We might not be on the branch matching this folder, so extract name from folder
+        FEATURE_NAME=$(basename "$FEATURE_DIR")
+    elif [[ -d "$REPO_ROOT/$FEATURE_ARG" ]]; then
+        FEATURE_DIR="$(cd "$REPO_ROOT/$FEATURE_ARG" && pwd)"
+        echo "Using specified feature directory: $FEATURE_DIR"
+        
+        FEATURE_SPEC="$FEATURE_DIR/spec.md"
+        IMPL_PLAN="$FEATURE_DIR/plan.md"
+        TASKS="$FEATURE_DIR/tasks.md"
+        
+        FEATURE_NAME=$(basename "$FEATURE_DIR")
+    else
+        echo "Error: Directory '$FEATURE_ARG' not found."
+        exit 1
+    fi
+else
+    FEATURE_NAME="$CURRENT_BRANCH"
+fi
 
-# Ensure the docs directory exists (where reports go)
-DOCS_DIR="$REPO_ROOT/docs/roasts"
+# Check if we're on a proper feature branch (only for git repos)
+# If explicit feature dir provided, skip branch check or warn?
+if [[ ${#ARGS[@]} -eq 0 ]]; then
+    check_feature_branch "$CURRENT_BRANCH" "$HAS_GIT" || exit 1
+fi
+
+# Ensure the roast directory exists INSIDE the feature spec folder
+DOCS_DIR="$FEATURE_DIR/roasts"
 mkdir -p "$DOCS_DIR"
 
 # Define Report Path
 DATE_STR=$(date +%Y-%m-%d-%H%M)
-REPORT_FILE="$DOCS_DIR/roast-report-${CURRENT_BRANCH}-${DATE_STR}.md"
+REPORT_FILE="$DOCS_DIR/roast-report-${FEATURE_NAME}-${DATE_STR}.md"
 
 # Copy template if it exists
 TEMPLATE="$REPO_ROOT/.specify/templates/roast-template.md"

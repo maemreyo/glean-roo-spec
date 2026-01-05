@@ -35,10 +35,38 @@ source "$SCRIPT_DIR/common.sh"
 # Get all paths and variables from common functions
 eval $(get_feature_paths)
 
-# Check if we're on a proper feature branch (only for git repos)
-check_feature_branch "$CURRENT_BRANCH" "$HAS_GIT" || exit 1
+# Handle optional feature directory argument
+if [[ ${#ARGS[@]} -gt 0 ]]; then
+    FEATURE_ARG="${ARGS[0]}"
+    if [[ -d "$FEATURE_ARG" ]]; then
+        # Resolve absolute path
+        FEATURE_DIR="$(cd "$FEATURE_ARG" && pwd)"
+        echo "Using specified feature directory: $FEATURE_DIR"
+        
+        # Override derived paths
+        TASKS="$FEATURE_DIR/tasks.md"
+        FEATURE_NAME=$(basename "$FEATURE_DIR")
+    elif [[ -d "$REPO_ROOT/$FEATURE_ARG" ]]; then
+        FEATURE_DIR="$(cd "$REPO_ROOT/$FEATURE_ARG" && pwd)"
+        echo "Using specified feature directory: $FEATURE_DIR"
+        
+        TASKS="$FEATURE_DIR/tasks.md"
+        FEATURE_NAME=$(basename "$FEATURE_DIR")
+    else
+        echo "Error: Directory '$FEATURE_ARG' not found."
+        exit 1
+    fi
+else
+    FEATURE_NAME="$CURRENT_BRANCH"
+fi
 
-DOCS_DIR="$REPO_ROOT/docs/roasts"
+# Check if we're on a proper feature branch (only for git repos)
+# If explicit feature dir provided, skip branch check or warn?
+if [[ ${#ARGS[@]} -eq 0 ]]; then
+    check_feature_branch "$CURRENT_BRANCH" "$HAS_GIT" || exit 1
+fi
+
+DOCS_DIR="$FEATURE_DIR/roasts"
 
 # Determine Report File
 if [[ -n "$REPORT_ARG" ]]; then
@@ -51,12 +79,12 @@ if [[ -n "$REPORT_ARG" ]]; then
         exit 1
     fi
 else
-    # Find the latest roast report for the current branch
-    # Assumes format: roast-report-[branch]-YYYY-MM-DD-HHMM.md
-    REPORT_FILE=$(find "$DOCS_DIR" -maxdepth 1 -name "roast-report-${CURRENT_BRANCH}-*.md" | sort -r | head -n 1)
+    # Find the latest roast report for the current branch/feature
+    # Assumes format: roast-report-[name]-YYYY-MM-DD-HHMM.md
+    REPORT_FILE=$(find "$DOCS_DIR" -maxdepth 1 -name "roast-report-${FEATURE_NAME}-*.md" | sort -r | head -n 1)
     
     if [[ -z "$REPORT_FILE" ]]; then
-        echo "Error: No roast report found for branch $CURRENT_BRANCH in $DOCS_DIR" >&2
+        echo "Error: No roast report found for feature ${FEATURE_NAME} in $DOCS_DIR" >&2
         exit 1
     fi
 fi
