@@ -34,28 +34,28 @@ When using Roo Code with this integration, you drive the workflow using specific
 
 | Command | Description | Usage |
 | :--- | :--- | :--- |
-| **`/speckit.specify`** | **Generate Specification**<br>Converts a feature description into a structured `spec.md`. Validates requirements against quality criteria. | `/speckit.specify "feature description"` |
-| **`/speckit.clarify`** | **Refine Specification**<br>Interactive Q&A session to reduce ambiguity in the Spec. Updates `spec.md` directly. | `/speckit.clarify` |
-| **`/speckit.plan`** | **Create Technical Plan**<br>Generates `plan.md` (architecture, stack), `data-model.md`, and API contracts based on the Spec. | `/speckit.plan` |
-| **`/speckit.checklist`**| **Validate Requirements**<br>Generates "unit tests for English" (e.g., `checklists/ux.md`) to verify spec quality/completeness before coding. | `/speckit.checklist "UX focus"` |
-| **`/speckit.tasks`** | **Generate Task List**<br>Converts Spec and Plan into an actionable `tasks.md`, organized by user story and phases. | `/speckit.tasks` |
-| **`/speckit.analyze`** | **Consistency Check**<br>Read-only analysis of `spec.md`, `plan.md`, and `tasks.md` to find inconsistencies or "Constitution" violations. | `/speckit.analyze` |
-| **`/speckit.implement`**| **Execute Code**<br>Verifies checklists and project setup, then executes tasks from `tasks.md` phase-by-phase. | `/speckit.implement` |
+| **`/zo.specify`** | **Generate Specification**<br>Converts a feature description into a structured `spec.md`. Validates requirements against quality criteria. | `/zo.specify "feature description"` |
+| **`/zo.clarify`** | **Refine Specification**<br>Interactive Q&A session to reduce ambiguity in the Spec. Updates `spec.md` directly. | `/zo.clarify` |
+| **`/zo.plan`** | **Create Technical Plan**<br>Generates `plan.md` (architecture, stack), `data-model.md`, and API contracts based on the Spec. | `/zo.plan` |
+| **`/zo.checklist`**| **Validate Requirements**<br>Generates "unit tests for English" (e.g., `checklists/ux.md`) to verify spec quality/completeness before coding. | `/zo.checklist "UX focus"` |
+| **`/zo.tasks`** | **Generate Task List**<br>Converts Spec and Plan into an actionable `tasks.md`, organized by user story and phases. | `/zo.tasks` |
+| **`/zo.analyze`** | **Consistency Check**<br>Read-only analysis of `spec.md`, `plan.md`, and `tasks.md` to find inconsistencies or "Constitution" violations. | `/zo.analyze` |
+| **`/zo.implement`**| **Execute Code**<br>Verifies checklists and project setup, then executes tasks from `tasks.md` phase-by-phase. | `/zo.implement` |
 
 ### Utility & Configuration
 
 | Command | Description |
 | :--- | :--- |
-| **`/speckit.constitution`** | **Update Constitution**<br>Updates the project principles in `.specify/memory/constitution.md`. |
-| **`/speckit.taskstoissues`**| **Export to GitHub**<br>Converts items in `tasks.md` into actual GitHub Issues (requires remote to match). |
+| **`/zo.constitution`** | **Update Constitution**<br>Updates the project principles in `.specify/memory/constitution.md`. |
+| **`/zo.taskstoissues`**| **Export to GitHub**<br>Converts items in `tasks.md` into actual GitHub Issues (requires remote to match). |
 
 ## Getting Started
 
-1.  **Define a Feature**: Start by running `/speckit.specify` and describing what you want to build.
+1.  **Define a Feature**: Start by running `/zo.specify` and describing what you want to build.
 2.  **Review the Spec**: Roo will generate a markdown file (usually in `specs/`). Review and refine it.
-3.  **Plan**: Run `/speckit.plan` on the approved Spec.
-4.  **Task**: Run `/speckit.tasks` to generate the checklist.
-5.  **Build**: Use `/speckit.implement` to let Roo build the feature step-by-step.
+3.  **Plan**: Run `/zo.plan` on the approved Spec.
+4.  **Task**: Run `/zo.tasks` to generate the checklist.
+5.  **Build**: Use `/zo.implement` to let Roo build the feature step-by-step.
 
 ## Creating Custom Commands
 

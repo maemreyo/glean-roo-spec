@@ -2,10 +2,10 @@
 description: Brainstorm improvements, architectural evolutions, or new features based on current project state (8 ideas, mixed creativity/stability).
 handoffs:
   - label: Specification
-    agent: speckit.specify
+    agent: zo.specify
     prompt: I like this idea. Let's specify it.
   - label: Tasks
-    agent: speckit.tasks
+    agent: zo.tasks
     prompt: Let's turn this idea into tasks.
 ---
 
@@ -72,4 +72,4 @@ For EACH of the 8 ideas, follow this sequence:
 
 After the loop ends:
 1.  List the titles of all ideas that were saved to `docs/brainstorming.md`.
-2.  Suggest the next logical step (e.g., "Run `/speckit.specify` on [Saved Idea] to start building it").
+2.  Suggest the next logical step (e.g., "Run `/zo.specify` on [Saved Idea] to start building it").

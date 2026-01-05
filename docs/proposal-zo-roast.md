@@ -1,25 +1,25 @@
-# Proposal: New Command `/speckit.roast`
+# Proposal: New Command `/zo.roast`
 
 You requested a command that:
 1.  Audits `tasks.md` for completeness.
 2.  Reviews the implemented code.
 3.  **Crucially**: Uses a harsh, sarcastic, "yelling" persona.
 
-I recommend naming this **`/speckit.roast`**.
+I recommend naming this **`/zo.roast`**.
 
 ## 1. Command Definition
 
-**Name**: `/speckit.roast`
+**Name**: `/zo.roast`
 **Purpose**: A brutal code reviewer that audits your `tasks.md` status and rips your code apart for poor quality, using extreme sarcasm to enforce high standards.
 
-### Proposed `.roo/commands/speckit.roast.md` Structure
+### Proposed `.roo/commands/zo.roast.md` Structure
 
 ```markdown
 ---
 description: A brutal, sarcastic code reviewer that audits task completion and critiques implementation quality.
 handoffs:
   - label: Fix Issues
-    agent: speckit.implement
+    agent: zo.implement
     prompt: Okay, I'm sorry. I'll fix the code.
 ---
 

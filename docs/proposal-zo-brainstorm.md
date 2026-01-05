@@ -1,20 +1,20 @@
-# Proposal: New Command `/speckit.brainstorm`
+# Proposal: New Command `/zo.brainstorm`
 
-You asked for a command to suggest improvements or brainstorm project direction. Based on the Speckit architecture, I recommend creating **`/speckit.brainstorm`**.
+You asked for a command to suggest improvements or brainstorm project direction. Based on the Speckit architecture, I recommend creating **`/zo.brainstorm`**.
 
 ## 1. Command Definition
 
-**Name**: `/speckit.brainstorm`
+**Name**: `/zo.brainstorm`
 **Purpose**: leverages the existing context (Spec, Plan, Code) to generate new ideas, optimizations, or strategic pivots.
 
-### Proposed `.roo/commands/speckit.brainstorm.md` Structure
+### Proposed `.roo/commands/zo.brainstorm.md` Structure
 
 ```markdown
 ---
 description: Brainstorm improvements, architectural evolutions, or new features based on current project state.
 handoffs:
   - label: Specification
-    agent: speckit.specify
+    agent: zo.specify
     prompt: I like this idea. Let's specify it.
 ---
 
@@ -50,17 +50,17 @@ $ARGUMENTS
     -   Stop after 8 ideas or if user says "stop".
 4.  **Completion**:
     -   Report summary of saved ideas.
-    -   Suggest next steps (e.g., "Run `/speckit.specify` on the best idea to start building it").
+    -   Suggest next steps (e.g., "Run `/zo.specify` on the best idea to start building it").
 ```
 
 ## 2. Workflows & Scenarios
 
 ### Scenario A: Optimization Review
-*User*: `/speckit.brainstorm "How can we make the User Profile check faster?"`
+*User*: `/zo.brainstorm "How can we make the User Profile check faster?"`
 *Agent*: Reads `plan.md` (identifies DB schema), suggests Redis caching or Indexing.
 
 ### Scenario B: Feature Ideation
-*User*: `/speckit.brainstorm "What social features would fit our current app?"`
+*User*: `/zo.brainstorm "What social features would fit our current app?"`
 *Agent*: Reads `spec.md` (understands core app), suggests "Friend Requests" or "Activity Feed" compatible with current data model.
 
 ## 3. Edge Cases
@@ -71,7 +71,7 @@ $ARGUMENTS
 | **Scope Creep** | Suggestions drift specifically away from the core `Constitution` or original vision. | Explicitly instruct the command to check suggestions against `.specify/memory/constitution.md`. |
 | **Hallucinated Tech** | AI Suggests libraries that don't match the stack (e.g., suggesting a React library for a Vue project). | Mandatory "Tech Constraint Check" step reading `plan.md` before outputting ideas. |
 | **Subjectivity** | "Improvement" is vague. AI might suggest style changes when user wants performance. | Prompt the user for a "Focus Area" (UX vs. Performance vs. Architecture) if prompt is too short. |
-| **Obsolete Docs** | `spec.md` is out of sync with code. Brainstorming based on stale spec. | Recommendation to run `/speckit.analyze` first to ensure consistency. |
+| **Obsolete Docs** | `spec.md` is out of sync with code. Brainstorming based on stale spec. | Recommendation to run `/zo.analyze` first to ensure consistency. |
 
 ## 4. Philosophy: Vibe vs. Professional
 
