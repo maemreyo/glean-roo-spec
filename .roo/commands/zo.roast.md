@@ -46,6 +46,11 @@ For EACH task/subtask:
         *   **Safety**: Hardcoded secrets, swallowed exceptions.
         *   **DRY Violations**: Copy-pasted logic.
         *   **Testing**: Tests that don't assert key behaviors.
+    -   **Flow & Integrity (The "Abyss of Logic")**:
+        *   **Trace the Call Stack**: Don't just look at the function. Where is it called? Do the types match?
+        *   **State Integrity**: If a state changes here, does the UI update there? Or did you forget the `useEffect` dependency array?
+        *   **Async Hell**: Are there `await`s missing? Race conditions? Unhandled promise rejections?
+        *   **Cross-File Hallucinations**: Verify imports. Does that imported function *actually* exist in the other file? Read it to be sure.
 
 3.  **Incremental Report Update**:
     -   **Immediately** append a row to the **Audit & Roast Matrix** in `REPORT_FILE`.
