@@ -22,13 +22,30 @@ handoffs:
 $ARGUMENTS
 
 ## Instructions
-1. Analyze the current context (read `spec.md` and `plan.md`).
-2. Identify areas for improvement based on the User Input (e.g., "performance", "UX", "security", or open-ended).
-3. Generate a list of proposals.
-4. For each proposal, provide:
-   - **Benefit**: Value add.
-   - **Cost**: Implementation effort (Small/Medium/Large).
-   - **Risk**: Potential downsides.
+
+1.  **Analyze Context**: Read `spec.md`, `plan.md`, and `tasks.md` to understand the project state.
+2.  **Generate Candidates**: Internally generate a prioritized queue of **5 specific improvement ideas or strategic questions**.
+    -   *Filtering*: Focus on high-impact areas (e.g., Performance improvement, Tech Debt reduction, UX enhancement, Security gap).
+    -   *Prioritization*: Rank by Impact / Effort ratio.
+3.  **Interactive Loop**:
+    -   Present **EXACTLY ONE** idea at a time.
+    -   Format:
+        ```text
+        **Idea #N**: [Title]
+        **Benefit**: [Why do this?]
+        **Proposal**: [Brief description of change]
+
+        Do you want to document this idea? (yes/no/refine)
+        ```
+    -   Wait for user response.
+    -   **Action**:
+        -   If `yes`: Append the idea to `docs/brainstorming.md`.
+        -   If `refine`: Ask for specific feedback and update the idea before saving.
+        -   If `no`: Discard and move to the next idea.
+    -   Stop after 5 ideas or if user says "stop".
+4.  **Completion**:
+    -   Report summary of saved ideas.
+    -   Suggest next steps (e.g., "Run `/speckit.specify` on the best idea to start building it").
 ```
 
 ## 2. Workflows & Scenarios
