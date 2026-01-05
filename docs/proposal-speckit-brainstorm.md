@@ -26,11 +26,11 @@ $ARGUMENTS
 1.  **Context Loading**:
     -   Run `.specify/scripts/bash/check-prerequisites.sh --json` to get the absolute paths of active documents.
     -   Read the files returned in the JSON (specifically `spec.md` and `plan.md`. checking `tasks.md` is optional but recommended for progress context).
-2.  **Generate Candidates**: Internally generate a prioritized queue of **5 specific improvement ideas** that balance **Creativity (Vibe)** and **Stability (Pro)**.
+2.  **Generate Candidates**: Internally generate a prioritized queue of **8 specific improvement ideas** that balance **Creativity (Vibe)** and **Stability (Pro)**.
     -   *The Mix*: Ensure the list includes:
-        -   2x **"Blue Sky" Features** (UX delight, new capabilities - *The Vibe Coder*).
-        -   2x **"Bedrock" Improvements** (Refactoring, Security, Performance - *The Pro Dev*).
-        -   1x **"Strategic" Question** (Market fit, Scalability - *The Architect*).
+        -   3x **"Blue Sky" Features** (UX delight, new capabilities - *The Vibe Coder*).
+        -   3x **"Bedrock" Improvements** (Refactoring, Security, Performance - *The Pro Dev*).
+        -   2x **"Strategic" Question** (Market fit, Scalability - *The Architect*).
     -   *Compliance*: Run all "Blue Sky" ideas against the project `Constitution` to ensure they don't violate enterprise constraints (e.g., "Add gamification" is fine, but "Store user data in local storage" might violate a Security Principle).
 3.  **Interactive Loop**:
     -   Present **EXACTLY ONE** idea at a time, clearly labeled by type.
@@ -47,7 +47,7 @@ $ARGUMENTS
         -   If `yes`: Append the idea to `docs/brainstorming.md`.
         -   If `refine`: Ask for specific feedback and update the idea before saving.
         -   If `no`: Discard and move to the next idea.
-    -   Stop after 5 ideas or if user says "stop".
+    -   Stop after 8 ideas or if user says "stop".
 4.  **Completion**:
     -   Report summary of saved ideas.
     -   Suggest next steps (e.g., "Run `/speckit.specify` on the best idea to start building it").
