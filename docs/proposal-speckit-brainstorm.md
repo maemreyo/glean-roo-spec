@@ -24,11 +24,14 @@ $ARGUMENTS
 ## Instructions
 
 1.  **Analyze Context**: Read `spec.md`, `plan.md`, and `tasks.md` to understand the project state.
-2.  **Generate Candidates**: Internally generate a prioritized queue of **5 specific improvement ideas or strategic questions**.
-    -   *Filtering*: Focus on high-impact areas (e.g., Performance improvement, Tech Debt reduction, UX enhancement, Security gap).
-    -   *Prioritization*: Rank by Impact / Effort ratio.
+2.  **Generate Candidates**: Internally generate a prioritized queue of **5 specific improvement ideas** that balance **Creativity (Vibe)** and **Stability (Pro)**.
+    -   *The Mix*: Ensure the list includes:
+        -   2x **"Blue Sky" Features** (UX delight, new capabilities - *The Vibe Coder*).
+        -   2x **"Bedrock" Improvements** (Refactoring, Security, Performance - *The Pro Dev*).
+        -   1x **"Strategic" Question** (Market fit, Scalability - *The Architect*).
+    -   *Compliance*: Run all "Blue Sky" ideas against the project `Constitution` to ensure they don't violate enterprise constraints (e.g., "Add gamification" is fine, but "Store user data in local storage" might violate a Security Principle).
 3.  **Interactive Loop**:
-    -   Present **EXACTLY ONE** idea at a time.
+    -   Present **EXACTLY ONE** idea at a time, clearly labeled by type.
     -   Format:
         ```text
         **Idea #N**: [Title]
@@ -67,3 +70,14 @@ $ARGUMENTS
 | **Hallucinated Tech** | AI Suggests libraries that don't match the stack (e.g., suggesting a React library for a Vue project). | Mandatory "Tech Constraint Check" step reading `plan.md` before outputting ideas. |
 | **Subjectivity** | "Improvement" is vague. AI might suggest style changes when user wants performance. | Prompt the user for a "Focus Area" (UX vs. Performance vs. Architecture) if prompt is too short. |
 | **Obsolete Docs** | `spec.md` is out of sync with code. Brainstorming based on stale spec. | Recommendation to run `/speckit.analyze` first to ensure consistency. |
+
+## 4. Philosophy: Vibe vs. Professional
+
+To satisfy both the "Vibe Coder" and the "Large Enterprise Dev", this command operates on a **"Safe Creativity"** principle:
+
+1.  **For the Vibe Coder**: The command encourages wild, creative ideas in the generation phase. It looks for "Delighters" and "UX Magic" that standard specs might miss.
+2.  **For the Pro Dev**: It enforces the **Constitution** as a hard filter. A creative idea is only suggested if it *can* be built professionally.
+    -   *Example*: A Vibe Coder wants "Instant Search".
+    -   *The Command*: Suggests "Optimistic UI updates with a Redis-backed search index" (Vibe goal + Pro implementation).
+
+This ensures innovation doesn't create technical debt.
