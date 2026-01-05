@@ -34,11 +34,11 @@ eval $(get_feature_paths)
 check_feature_branch "$CURRENT_BRANCH" "$HAS_GIT" || exit 1
 
 # Ensure the docs directory exists (where reports go)
-DOCS_DIR="$REPO_ROOT/docs"
+DOCS_DIR="$REPO_ROOT/docs/roasts"
 mkdir -p "$DOCS_DIR"
 
 # Define Report Path
-DATE_STR=$(date +%Y-%m-%d)
+DATE_STR=$(date +%Y-%m-%d-%H%M)
 REPORT_FILE="$DOCS_DIR/roast-report-${CURRENT_BRANCH}-${DATE_STR}.md"
 
 # Copy template if it exists

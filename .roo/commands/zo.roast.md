@@ -51,8 +51,8 @@ For EACH task/subtask:
         *   Prop drifting: "This prop has traveled further than I have in years. Use context or state management."
 
 3.  **Incremental Report Update**:
-    -   **Immediately** append a row to the **Audit & Roast Matrix** in `REPORT_FILE`.
-    -   Format: `| **[TaskID]** | 🔴/🟢 | [Your vile critique here] |`
+    -   **Immediately** append a new item to the **Audit & Roast Checklist** in `REPORT_FILE`.
+    -   Format: `- [ ] **[TaskID]** 🔴/🟢 [Your vile critique here]`
 
 ### 2. The Final Verdict (The "Scorched Earth Score")
 
