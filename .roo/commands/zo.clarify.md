@@ -32,6 +32,13 @@ Execution steps:
 
 2. Load the current spec file. Perform a structured ambiguity & coverage scan using this taxonomy. For each category, mark status: Clear / Partial / Missing. Produce an internal coverage map used for prioritization (do not output raw map unless no questions will be asked).
 
+   **Design System Validation** (if DESIGN_FILE exists):
+   - Check if `.zo/design-system.md` exists in repository
+   - If global design system exists, verify design.md references it with version
+   - Check for duplication of global tokens (colors, typography, spacing, icons)
+   - Verify design-extensions.md exists if feature overrides global tokens
+   - Flag any inconsistencies between feature design and global system
+
    Functional Scope & Behavior:
    - Core user goals & success criteria
    - Explicit out-of-scope declarations
@@ -47,6 +54,7 @@ Execution steps:
    - Critical user journeys / sequences
    - Error/empty/loading states
    - Accessibility or localization notes
+   - Design system consistency (if DESIGN_FILE exists)
 
    Non-Functional Quality Attributes:
    - Performance (latency, throughput targets)
@@ -166,6 +174,10 @@ Execution steps:
    - Path to updated spec.
    - Sections touched (list names).
    - Coverage summary table listing each taxonomy category with Status: Resolved (was Partial/Missing and addressed), Deferred (exceeds question quota or better suited for planning), Clear (already sufficient), Outstanding (still Partial/Missing but low impact).
+   - **Design System Validation** (if DESIGN_FILE exists):
+     - Global design system reference status (✓ Referenced / ⚠ Missing / ✗ No global system exists)
+     - Design extensions status (✓ Not needed / ⚠ Should use extensions / ✗ Extensions missing)
+     - Duplication check (✓ No duplication / ⚠ Has duplications)
    - If any Outstanding or Deferred remain, recommend whether to proceed to `/zo.plan` or run `/zo.clarify` again later post-plan.
    - Suggested next command.
 
