@@ -32,7 +32,7 @@ First, establish the project context by finding the correct specification and pl
     .specify/scripts/bash/setup-brainstorm.sh --json $ARGUMENTS
     ```
 2.  Parse the JSON output to find:
-    *   `OUTPUT_FILE`: Where to save the accepted ideas (e.g., `specs/012-story/brainstorming.md` or `docs/brainstorming.md`).
+    *   `OUTPUT_FILE`: Where to save the accepted ideas (e.g., `.zo/brainstorms/improve-login-flow-DATE.md`).
     *   `FEATURE_SPEC`: The specification file (`spec.md`).
     *   `IMPL_PLAN`: The implementation plan (`plan.md`).
     *   `TASKS`: The task list (`tasks.md`).

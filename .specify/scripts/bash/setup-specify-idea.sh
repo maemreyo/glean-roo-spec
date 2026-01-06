@@ -30,24 +30,19 @@ if [[ ${#ARGS[@]} -gt 0 ]]; then
     fi
 else
     # Auto-detect latest brainstorm
-    # Check current feature first
-    if [[ -d "$FEATURE_DIR/brainstorms" ]]; then
+    # Primary Location: .zo/brainstorms
+    BRAINSTORM_DIR="$REPO_ROOT/.zo/brainstorms"
+    
+    if [[ -d "$BRAINSTORM_DIR" ]]; then
+        BRAINSTORM_FILE=$(find "$BRAINSTORM_DIR" -name "*.md" -type f | sort -r | head -n 1)
+    fi
+    
+    # Check legacy locations if not found
+    if [[ -z "$BRAINSTORM_FILE" && -d "$FEATURE_DIR/brainstorms" ]]; then
         BRAINSTORM_FILE=$(find "$FEATURE_DIR/brainstorms" -name "brainstorm-*.md" -type f | sort -r | head -n 1)
     fi
-    
-    # Check global if not found
-    if [[ -z "$BRAINSTORM_FILE" ]]; then
-        if [[ -d "$REPO_ROOT/docs/brainstorms" ]]; then
-            BRAINSTORM_FILE=$(find "$REPO_ROOT/docs/brainstorms" -name "brainstorm-*.md" -type f | sort -r | head -n 1)
-        fi
-    fi
-    
-    # Check fallback legacy path
-    if [[ -z "$BRAINSTORM_FILE" && -f "$FEATURE_DIR/brainstorming.md" ]]; then
-        BRAINSTORM_FILE="$FEATURE_DIR/brainstorming.md"
-    fi
-    if [[ -z "$BRAINSTORM_FILE" && -f "$REPO_ROOT/docs/brainstorming.md" ]]; then
-        BRAINSTORM_FILE="$REPO_ROOT/docs/brainstorming.md"
+    if [[ -z "$BRAINSTORM_FILE" && -d "$REPO_ROOT/docs/brainstorms" ]]; then
+        BRAINSTORM_FILE=$(find "$REPO_ROOT/docs/brainstorms" -name "brainstorm-*.md" -type f | sort -r | head -n 1)
     fi
 fi
 

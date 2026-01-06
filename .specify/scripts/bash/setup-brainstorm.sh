@@ -12,7 +12,7 @@ for arg in "$@"; do
             JSON_MODE=true 
             ;;
         --help|-h) 
-            echo "Usage: $0 [--json] [feature-dir]"
+            echo "Usage: $0 [--json] [brainstorm topic]"
             echo "  --json    Output results in JSON format"
             echo "  --help    Show this help message"
             exit 0 
@@ -30,66 +30,38 @@ source "$SCRIPT_DIR/common.sh"
 # Get all paths and variables from common functions
 eval $(get_feature_paths)
 
-# Handle optional feature directory argument
-IS_FEATURE_SPECIFIC=false
+# Helper function to slugify text
+slugify() {
+    echo "$1" | tr '[:upper:]' '[:lower:]' | sed 's/[^a-z0-9]/-/g' | sed 's/-\+/-/g' | sed 's/^-//' | sed 's/-$//'
+}
 
-if [[ ${#ARGS[@]} -gt 0 ]]; then
-    FEATURE_ARG="${ARGS[0]}"
-    if [[ -d "$FEATURE_ARG" ]]; then
-        # Resolve absolute path
-        FEATURE_DIR="$(cd "$FEATURE_ARG" && pwd)"
-        echo "Using specified feature directory: $FEATURE_DIR"
-        
-        # Override derived paths
-        FEATURE_SPEC="$FEATURE_DIR/spec.md"
-        IMPL_PLAN="$FEATURE_DIR/plan.md"
-        TASKS="$FEATURE_DIR/tasks.md"
-        
-        FEATURE_NAME=$(basename "$FEATURE_DIR")
-        IS_FEATURE_SPECIFIC=true
-    elif [[ -d "$REPO_ROOT/$FEATURE_ARG" ]]; then
-        FEATURE_DIR="$(cd "$REPO_ROOT/$FEATURE_ARG" && pwd)"
-        echo "Using specified feature directory: $FEATURE_DIR"
-        
-        FEATURE_SPEC="$FEATURE_DIR/spec.md"
-        IMPL_PLAN="$FEATURE_DIR/plan.md"
-        TASKS="$FEATURE_DIR/tasks.md"
-        
-        FEATURE_NAME=$(basename "$FEATURE_DIR")
-        IS_FEATURE_SPECIFIC=true
-    else
-        echo "Error: Directory '$FEATURE_ARG' not found."
-        exit 1
-    fi
-else
-    # If no argument, but we are on a valid feature branch (and not main), use it?
-    # Or default to global if no arg is explicit?
-    # Let's check if CURRENT_BRANCH looks like a feature branch
-    if [[ "$CURRENT_BRANCH" =~ ^[0-9]{3}- ]]; then
-         FEATURE_NAME="$CURRENT_BRANCH"
-         IS_FEATURE_SPECIFIC=true
-    else
-         # Fallback to global brainstorming if on main and no arg
-         FEATURE_NAME="global"
-    fi
-fi
+# Determine Output Directory
+# User requested: .zo/brainstorms/
+BRAINSTORM_DIR="$REPO_ROOT/.zo/brainstorms"
+mkdir -p "$BRAINSTORM_DIR"
 
-# Determine Output Directory and File
+# Determine Filename
+TOPIC_INPUT="${ARGS[*]}"
 DATE_STR=$(date +%Y-%m-%d-%H%M)
 
-if $IS_FEATURE_SPECIFIC; then
-    # Save to the feature directory
-    BRAINSTORM_DIR="$FEATURE_DIR/brainstorms"
-    # Fallback to feature name if needed
-    NAME_TAG="$FEATURE_NAME"
+if [[ -n "$TOPIC_INPUT" ]]; then
+    # Slugify the input topic
+    TOPIC_SLUG=$(slugify "$TOPIC_INPUT")
+    # Add date to avoid collisions if same topic is used again? 
+    # User asked for "file-name-should-cover-the-goal", didn't explicitly ask for date.
+    # But files need to be unique.
+    # I'll stick to a clean name if possible, maybe appending short date if exists?
+    # Let's try just the slug first, but if it exists, maybe append date?
+    # Or just always append date for safety. "improve-login-flow-2026-01-06.md"
+    FILENAME="${TOPIC_SLUG}-${DATE_STR}.md"
+    NAME_TAG="$TOPIC_SLUG"
 else
-    # Save to global docs
-    BRAINSTORM_DIR="$REPO_ROOT/docs/brainstorms"
-    NAME_TAG="global"
+    # Fallback if no topic provided
+    FILENAME="brainstorm-session-${DATE_STR}.md"
+    NAME_TAG="General Session"
 fi
 
-mkdir -p "$BRAINSTORM_DIR"
-OUTPUT_FILE="$BRAINSTORM_DIR/brainstorm-${NAME_TAG}-${DATE_STR}.md"
+OUTPUT_FILE="$BRAINSTORM_DIR/$FILENAME"
 
 # Use Template if available
 TEMPLATE="$REPO_ROOT/.specify/templates/brainstorm-template.md"
@@ -112,11 +84,10 @@ fi
 
 # Output results
 if $JSON_MODE; then
-    printf '{"OUTPUT_FILE":"%s","FEATURE_SPEC":"%s","IMPL_PLAN":"%s","TASKS":"%s","FEATURE_DIR":"%s","BRANCH":"%s"}\n' \
-        "$OUTPUT_FILE" "$FEATURE_SPEC" "$IMPL_PLAN" "$TASKS" "$FEATURE_DIR" "$CURRENT_BRANCH"
+    # We only output the file path now, as other context is less relevant for the pure brainstorm command
+    # but we keep structure for compatibility if needed.
+    printf '{"OUTPUT_FILE":"%s","BRAINSTORM_DIR":"%s","TOPIC":"%s"}\n' \
+        "$OUTPUT_FILE" "$BRAINSTORM_DIR" "$NAME_TAG"
 else
     echo "OUTPUT_FILE: $OUTPUT_FILE"
-    echo "FEATURE_SPEC: $FEATURE_SPEC"
-    echo "IMPL_PLAN: $IMPL_PLAN" 
-    echo "TASKS: $TASKS"
 fi
