@@ -188,7 +188,7 @@ After the loop ends:
     # Specify specific ideas by ID
     /zo.specify.idea 1,3,5
 
-    # Specify with design system integration
+    # Specify with design system integration (Recommended if ideas involve UI/UX)
     /zo.specify.idea 1,3,5 --design
     ```
 
@@ -200,8 +200,13 @@ After the loop ends:
     # Basic feature specification
     /zo.specify Add user authentication with OAuth2 support
 
-    # With design system integration
+    # With design system integration (Recommended if feature involves UI/UX)
     /zo.specify "Create analytics dashboard with real-time charts" --design
     ```
 
-    **Recommendation**: Use Option A (`/zo.specify.idea`) when you want to leverage the brainstorm content directly. Use Option B (`/zo.specify`) when you want to start fresh or combine ideas in a custom way.
+    **Design System Integration**:
+    - If your ideas involve UI components, user interactions, or visual design: **Use `--design` flag**
+    - This will reference the global design system (`.zo/design-system.md`) and create feature-specific designs
+    - No global design system exists yet? Run `/zo.design init` first to create it
+
+    **Recommendation**: Use Option A (`/zo.specify.idea`) when you want to leverage the brainstorm content directly. Use Option B (`/zo.specify`) when you want to start fresh or combine ideas in a custom way. **Always use `--design` flag for features with UI/UX components.**
