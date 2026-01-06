@@ -110,58 +110,55 @@ If `--design` or `-d` flag was present in `$ARGUMENTS`:
     *   Are there user interactions that need design?
     *   If NO UI/UX involved, skip to validation and inform user.
 
-2.  **Initialize Design File**:
-    *   Create `.zo/templates/design-template.md` if not exists
+2.  **Check for Global Design System**:
+    *   Check if `.zo/design-system.md` exists
+    *   If exists, read it to understand the global design tokens
+    *   Extract version number for reference in feature design
+
+3.  **Initialize Design File**:
+    *   Create `.zo/templates/design-template.md` if not exists (updated to reference global system)
     *   Initialize `FEATURE_DIR/design.md` with the template
 
-3.  **Use UI/UX Pro Max Skill** for design intelligence:
+4.  **Determine Design Strategy**:
 
-    **Step 5.1: Analyze & Search**
+    **Case 1: Global Design System EXISTS**
 
-    Based on the feature requirements in `spec.md`, execute the following search sequence:
-    *Replace `<keyword>` with relevant terms from the spec and brainstorm ideas.*
+    If `.zo/design-system.md` exists:
+    1.  **Reference Global System**: Fill in the global design system reference in `design.md`:
+        *   Set `**Global Design System**: .zo/design-system.md v[X.X]` with actual version
+        *   Document that this feature uses the global design system
+    2.  **Identify Feature-Specific Needs**:
+        *   Review the feature spec to identify components not in global system
+        *   Look for feature-specific layouts or page structures
+        *   Check if any global tokens need to be overridden for this feature
+    3.  **Create Feature-Specific Design**:
+        *   Only document feature-specific components in `design.md`
+        *   Reference global tokens instead of duplicating them
+        *   If feature needs to extend/override global tokens, create `design-extensions.md`
+    4.  **Use UI/UX Pro Max for Feature Components** (if applicable):
+        *   Execute searches only for feature-specific components
+        *   Skip searches for colors, typography, spacing (use global tokens)
+        *   Focus on: Product Type, Component Patterns specific to this feature
 
-    a. **Product Type**:
-       ```bash
-       python3 .zo/system/ui-ux-pro-max/scripts/search.py "<feature type>" --domain product
-       ```
-    b. **Style & Aesthetics**:
-       ```bash
-       python3 .zo/system/ui-ux-pro-max/scripts/search.py "<desired mood>" --domain style
-       ```
-    c. **Typography**:
-       ```bash
-       python3 .zo/system/ui-ux-pro-max/scripts/search.py "<mood>" --domain typography
-       ```
-    d. **Color Palette**:
-       ```bash
-       python3 .zo/system/ui-ux-pro-max/scripts/search.py "<features/industry>" --domain color
-       ```
-    e. **Component Patterns** (if applicable):
-       ```bash
-       python3 .zo/system/ui-ux-pro-max/scripts/search.py "<component name>" --domain ux
-       ```
+    **Case 2: No Global Design System**
 
-    **Step 5.2: Synthesize & Document**
+    If `.zo/design-system.md` does NOT exist:
+    1.  **Warn User**: Inform that no global design system exists
+    2.  **Recommend**: Suggest creating global design system first with `/zo.design init`
+    3.  **Proceed with Feature-Only Design**: Create `design.md` with feature-specific components only
+    4.  **Note**: User can create global design system later and update this feature design
 
-    Use the data gathered to fill out `FEATURE_DIR/design.md`:
-    1.  **Design System**: Fill in Color Palette (specific hex codes), Typography (Font names + sizes), UI Element rules
-    2.  **Component Guidelines**: Define visual rules for key components from spec
-    3.  **Page Layouts**: Describe layout structure based on product search results
-    4.  **UX Rules**: Add accessibility/interaction rules from UX domain search
-
-    **Step 5.3: Verification**
+5.  **Verification**:
 
     Review generated `design.md` against quality rules:
-    - [ ] **Colors**: Specific hex codes (no "blue", "red"), adequate contrast ratios (≥4.5:1)
-    - [ ] **Icons**: Icon set specified by name (Lucide/Heroicons/other), no emoji placeholders
-    - [ ] **Typography**: Harmonious font pairing, complete type scale with sizes/weights
-    - [ ] **Components**: All UI elements from spec have guidelines with specific measurements
-    - [ ] **Interactions**: Hover, focus, active, disabled states defined
-    - [ ] **Animations**: Timings specified in milliseconds (not "fast", "slow")
-    - [ ] **Accessibility**: Touch targets ≥44×44px, keyboard navigation, ARIA support
-    - [ ] **Responsive**: Breakpoints defined for mobile/tablet/desktop
-    - [ ] **Completeness**: All template sections filled with specific values
+    - [ ] **Global System Referenced**: If global system exists, it's properly referenced with version
+    - [ ] **No Duplication**: Global tokens (colors, typography, spacing) are NOT duplicated
+    - [ ] **Feature-Specific Only**: Only feature-specific components and layouts are documented
+    - [ ] **Extensions Separated**: If overrides exist, they're in `design-extensions.md`
+    - [ ] **Completeness**: All feature-specific UI elements from spec have guidelines
+    - [ ] **Interactions**: Hover, focus, active, disabled states defined (or reference global)
+    - [ ] **Accessibility**: Touch targets, keyboard navigation, ARIA support (or reference global)
+    - [ ] **Responsive**: Breakpoints defined (or reference global system)
 
 ### 6. Specification Quality Validation (Mandatory)
 
@@ -205,17 +202,14 @@ After writing the initial draft, you **MUST** validate it against the quality cr
     ## Design Integration (if --design flag used)
 
     - [ ] Design specification created at design.md
-    - [ ] Color palette has specific hex codes (no generic names)
-    - [ ] Color contrast ratios meet WCAG AA (≥4.5:1 for normal text)
-    - [ ] Typography system is harmonious (heading + body font pairing)
-    - [ ] Font weights and sizes are specified for all text scales
-    - [ ] Component guidelines cover all UI elements from spec
-    - [ ] Icon set specified with library name (Lucide/Heroicons/other, no emojis)
-    - [ ] Interactive states defined (hover, focus, active, disabled)
-    - [ ] Animation timings specified (duration in ms)
-    - [ ] Touch targets meet minimum size (44×44px for mobile)
-    - [ ] Responsive breakpoints defined (mobile, tablet, desktop)
-    - [ ] Accessibility considered (keyboard nav, ARIA labels, semantic HTML)
+    - [ ] Global design system referenced with version (if exists)
+    - [ ] No duplication of global tokens (colors, typography, spacing, icons)
+    - [ ] Feature-specific components documented (not global components)
+    - [ ] Feature-specific layouts documented (not standard layouts)
+    - [ ] Design extensions created in separate file if overrides needed
+    - [ ] Interactive states defined or reference global states
+    - [ ] Accessibility requirements met or reference global standards
+    - [ ] Responsive breakpoints reference global system (if exists)
 
     ## Notes
 
@@ -310,24 +304,16 @@ Success criteria must be:
 
 When using the `--design` flag:
 
-1. **Assess applicability**: Not all features need UI/UX design (API-only features, backend refactors)
-2. **Use the skill**: Always use UI/UX Pro Max search scripts - don't guess design patterns
-3. **Be specific with values**:
-   - Colors: Use specific hex codes (#3B82F6), not generic names (blue, red)
-   - Typography: Specify font names (Space Grotesk), weights (400, 700), sizes (16px, 1.5rem)
-   - Spacing: Use specific values (12px, 1rem), not "small", "large"
-   - Timings: Use milliseconds (200ms, 300ms), not "fast", "slow"
-4. **Verify accessibility**:
-   - Contrast ratios ≥4.5:1 for normal text, ≥3:1 for large text
-   - Touch targets minimum 44×44px for mobile
-   - Keyboard navigation and focus states defined
-   - ARIA labels for interactive elements
-5. **Document all states**:
-   - Interactive elements: hover, focus, active, disabled
-   - Error, warning, success, info states
-   - Loading and empty states
-6. **Consider responsive design**:
-   - Define breakpoints (mobile <640px, tablet 640-1023px, desktop ≥1024px)
-   - Layout adaptations for each breakpoint
-   - Touch-friendly controls on mobile
-7. **Iterate if needed**: If design search doesn't yield good results, refine search terms with more specific keywords
+1. **Check for Global Design System**: Always check if `.zo/design-system.md` exists first
+2. **Reference Global System**: If global system exists, reference it with version number in feature design
+3. **Avoid Duplication**: Do NOT duplicate global tokens (colors, typography, spacing, icons) in feature design
+4. **Document Feature-Specific Only**: Only document components and layouts that are unique to this feature
+5. **Use Extensions for Overrides**: If feature needs to override global tokens, create `design-extensions.md`
+6. **Use UI/UX Pro Max**: For feature-specific components, use search scripts - don't guess design patterns
+7. **Verify Completeness**: Ensure all feature-specific UI elements from spec have guidelines
+8. **Leverage Brainstorm Context**: Brainstorm ideas often contain design hints and preferences
+
+**Global Design System Reference**:
+- If `.zo/design-system.md` exists: Reference it as `**Global Design System**: .zo/design-system.md v[X.X]`
+- If NOT exists: Warn user and recommend creating with `/zo.design init`
+- Feature designs should only contain feature-specific components and layouts

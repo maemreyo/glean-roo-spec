@@ -2,44 +2,41 @@
 
 **Status**: Draft
 **Related Spec**: [Link to spec.md]
-**Design Strategy**: [e.g., "Minimalist Dashboard", "Playful E-commerce"]
+**Global Design System**: `.zo/design-system.md` v[X.X]
+**Design Extensions**: `design-extensions.md` (optional)
 
-## 1. Design System
+> **NOTE**: This design references the global design system at `.zo/design-system.md`. Only feature-specific components and layouts are documented here. Feature-specific overrides, if any, are in `design-extensions.md`.
 
-### Color Palette ([Mode: Light/Dark])
+## 1. Global Design System Reference
 
-| Role | Color Name | Hex Code | Tailwind Token | Usage |
-|------|------------|----------|----------------|-------|
-| Primary | [Name] | `#[Hex]` | `bg-primary` | Main actions, highlights |
-| Secondary | [Name] | `#[Hex]` | `bg-secondary` | Accents, secondary actions |
-| Background | [Name] | `#[Hex]` | `bg-background` | Page background |
-| Surface | [Name] | `#[Hex]` | `bg-surface` | Cards, modals, panels |
-| Text Main | [Name] | `#[Hex]` | `text-primary` | Headings, body text |
-| Text Muted | [Name] | `#[Hex]` | `text-muted` | Metadata, subtitles |
-| Border | [Name] | `#[Hex]` | `border-default` | Dividers, inputs |
-| Success | [Name] | `#[Hex]` | `text-success` | Success states |
-| Error | [Name] | `#[Hex]` | `text-error` | Error states |
+This feature uses the global design system defined in [`.zo/design-system.md`](../../../.zo/design-system.md).
 
-### Typography
+**Global tokens include**:
+- Color palette (brand, semantic, neutral colors)
+- Typography system (fonts, type scale, weights, line heights)
+- Spacing system (spacing scale, layout grid)
+- Icon system (icon library, sizes, colors)
+- Elevation & shadows (shadow levels, z-index scale)
+- Border radius (radius scale)
+- Animation & transitions (timing functions, duration scale)
+- Accessibility standards (WCAG requirements, touch targets)
+- Responsive breakpoints (breakpoint scale, container widths)
 
-**Font Family**: `[Font Name]` (Headings) / `[Font Name]` (Body)
-**Import**: `[Google Fonts Link]`
+**Usage**: Refer to the global design system for all standard tokens. Only feature-specific components and layouts are documented below.
 
-| Scale | Weight | Size (px/rem) | Token | Usage |
-|-------|--------|---------------|-------|-------|
-| H1 | [Bold] | [Size] | `text-4xl` | Page Titles |
-| H2 | [Semi] | [Size] | `text-2xl` | Section Headings |
-| Body | [Reg] | [Size] | `text-base` | Main Content |
-| Small | [Reg] | [Size] | `text-sm` | Metadata, Labels |
+## 2. Feature-Specific Design Extensions (Optional)
 
-### UI Elements & Effects
+If this feature requires any overrides or extensions to the global design system, document them in `design-extensions.md`. Otherwise, this section can be removed.
 
-- **Border Radius**: `rounded-[size]` (e.g., `rounded-xl` for cards, `rounded-lg` for buttons)
-- **Shadows**: `shadow-[size]` (e.g., `shadow-sm` for cards, `shadow-lg` for dropdowns)
-- **Glassmorphism**: [Yes/No] (e.g., `bg-white/80 backdrop-blur-md`)
-- **Spacing Scale**: [Tight/Relaxed] (Base unit: `4` or `1rem`)
+**Common reasons for extensions**:
+- Feature requires a new color not in global palette
+- Feature uses different typography for specific purpose
+- Feature has unique spacing requirements
+- Feature needs custom component variants
 
-## 2. Component Guidelines
+## 3. Feature-Specific Component Guidelines
+
+> **NOTE**: Only document components that are specific to this feature. Standard components (buttons, inputs, modals) should use the global design system.
 
 ### [Component Name 1] (e.g., "Action Card")
 
@@ -54,13 +51,15 @@
 - **Structure**: [Describe layout]
 - **Interactions**: [Row hover, sort headers]
 
-## 3. Page Layouts & Flows
+## 4. Feature Layouts & Flows
+
+> **NOTE**: Document only feature-specific page layouts. Standard layouts (header, sidebar, footer) should use the global design system.
 
 ### [Page/Screen Name]
 
 - **Layout Structure**:
-    - Header: [Sticky/Fixed]
-    - Sidebar: [Collapsible/Fixed]
+    - Header: [Sticky/Fixed] (if custom for this feature)
+    - Sidebar: [Collapsible/Fixed] (if custom for this feature)
     - Content Area: [Grid/List]
 - **Key Sections**:
     1.  [Hero/Top Section]: [Description]
@@ -68,11 +67,14 @@
 - **Responsive Behavior**:
     - Mobile: [Stacked, hidden sidebar]
     - Desktop: [Two columns]
+    - (Reference global breakpoints from global design system)
 
-## 4. Accessibility & UX Rules
+## 5. Accessibility & UX Requirements
+
+> **NOTE**: Standard accessibility requirements are defined in the global design system. Only document feature-specific requirements here.
 
 - [ ] Interactive elements have `cursor-pointer`
-- [ ] Contrast ratio meets WCAG AA (4.5:1)
+- [ ] Contrast ratio meets WCAG AA (4.5:1) - verify using global color tokens
 - [ ] Images include `alt` text placeholders
-- [ ] Focus rings visible for keyboard users
+- [ ] Focus rings visible for keyboard users (use global focus styles)
 - [ ] No layout shift on hover
