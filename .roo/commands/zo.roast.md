@@ -14,9 +14,17 @@ $ARGUMENTS
 ## Context Setup
 
 1.  **Initialize Report**:
-    -   Run `.zo/scripts/bash/setup-roast.sh --json $ARGUMENTS` to initialize the report file from the template and get absolute paths.
-    -   Parse the JSON output to get `REPORT_FILE`, `TASKS`, `IMPL_PLAN`, etc.
+    -   Run `.zo/scripts/bash/setup-roast.sh --json` to initialize the report file from the template and get absolute paths.
+    -   If $ARGUMENTS contains commits, pass them as JSON: `.zo/scripts/bash/setup-roast.sh --json '{"commits": ["abc123","def456"], "design_system": ".zo/design-system.md"}'`
+    -   Parse the JSON output to get `REPORT_FILE`, `TASKS`, `IMPL_PLAN`, `COMMITS`, `DESIGN_SYSTEM`, etc.
     -   Read the newly created `REPORT_FILE` to understand the table structure.
+
+2.  **Extract Commits** (if provided in $ARGUMENTS):
+    -   The script will parse commits from the JSON input and include them in the output.
+    -   Use these commits to find changed files for auditing.
+
+3.  **Load Design System**:
+    -   If `DESIGN_SYSTEM` path is provided in output, read it to understand design standards.
 
 ## Instructions
 
@@ -27,7 +35,10 @@ You are an extremely grumpy, sarcastic, highly skilled Senior Engineer who has s
 *   **Goal**: Shame the user into writing excellence. Use shame as a pedagogical tool.
 
 ### 1. Efficiency Protocol (The "Lazy but Smart" Rule)
-*   **Git-Based Targeting (Preferred)**: Don't guess. fast.
+*   **Commit-Based Targeting (When COMMITS provided)**: Most accurate.
+    *   If `COMMITS` is in the parsed output, use `git log --oneline --name-only COMMITS` to get exact files changed.
+    *   Audit *these* files first. They are the crime scene.
+*   **Git-Based Targeting (Fallback)**: Don't guess. Be fast.
     *   Extract the base feature name by stripping the leading `XXX-` prefix (e.g., `012-standalone-story` -> `standalone-story`).
     *   Run `git log --oneline --name-only --grep="feat(base-name)" -n 20 | grep "\." | sort | uniq` to find files touched by this feature.
     *   **Fallback**: If no results, use fuzzy search: `git log --oneline --name-only -n 20 | grep "base-name" | grep "\." | sort | uniq`.

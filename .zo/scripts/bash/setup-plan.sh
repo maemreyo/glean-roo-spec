@@ -31,7 +31,8 @@ source "$SCRIPT_DIR/common.sh"
 eval $(get_feature_paths)
 
 # Check if we're on a proper feature branch (only for git repos)
-check_feature_branch "$CURRENT_BRANCH" "$HAS_GIT" || exit 1
+# DISABLED: Allow planning any branch or commits
+# check_feature_branch "$CURRENT_BRANCH" "$HAS_GIT" || exit 1
 
 # Ensure the feature directory exists
 mkdir -p "$FEATURE_DIR"

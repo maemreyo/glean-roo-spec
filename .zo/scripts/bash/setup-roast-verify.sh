@@ -61,10 +61,10 @@ else
 fi
 
 # Check if we're on a proper feature branch (only for git repos)
-# If explicit feature dir provided, skip branch check or warn?
-if [[ ${#ARGS[@]} -eq 0 ]]; then
-    check_feature_branch "$CURRENT_BRANCH" "$HAS_GIT" || exit 1
-fi
+# DISABLED: Allow verifying roasts on any branch
+# if [[ ${#ARGS[@]} -eq 0 ]]; then
+#     check_feature_branch "$CURRENT_BRANCH" "$HAS_GIT" || exit 1
+# fi
 
 DOCS_DIR="$FEATURE_DIR/roasts"
 
