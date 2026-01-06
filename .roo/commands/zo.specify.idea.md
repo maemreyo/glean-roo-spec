@@ -152,11 +152,16 @@ If `--design` or `-d` flag was present in `$ARGUMENTS`:
 
     **Step 5.3: Verification**
 
-    Review generated `design.md` against common rules:
-    - [ ] Colors: Are contrast ratios legible? (No low-contrast gray-on-gray)
-    - [ ] Icons: Did you specify an icon set (e.g., Lucide/Heroicons)? No emojis as icons
-    - [ ] Typography: Is the font pairing harmonious?
-    - [ ] Completeness: Are all sections of the template filled?
+    Review generated `design.md` against quality rules:
+    - [ ] **Colors**: Specific hex codes (no "blue", "red"), adequate contrast ratios (≥4.5:1)
+    - [ ] **Icons**: Icon set specified by name (Lucide/Heroicons/other), no emoji placeholders
+    - [ ] **Typography**: Harmonious font pairing, complete type scale with sizes/weights
+    - [ ] **Components**: All UI elements from spec have guidelines with specific measurements
+    - [ ] **Interactions**: Hover, focus, active, disabled states defined
+    - [ ] **Animations**: Timings specified in milliseconds (not "fast", "slow")
+    - [ ] **Accessibility**: Touch targets ≥44×44px, keyboard navigation, ARIA support
+    - [ ] **Responsive**: Breakpoints defined for mobile/tablet/desktop
+    - [ ] **Completeness**: All template sections filled with specific values
 
 ### 6. Specification Quality Validation (Mandatory)
 
@@ -200,10 +205,17 @@ After writing the initial draft, you **MUST** validate it against the quality cr
     ## Design Integration (if --design flag used)
 
     - [ ] Design specification created at design.md
-    - [ ] Color palette has adequate contrast ratios
-    - [ ] Typography system is harmonious
+    - [ ] Color palette has specific hex codes (no generic names)
+    - [ ] Color contrast ratios meet WCAG AA (≥4.5:1 for normal text)
+    - [ ] Typography system is harmonious (heading + body font pairing)
+    - [ ] Font weights and sizes are specified for all text scales
     - [ ] Component guidelines cover all UI elements from spec
-    - [ ] Icon set specified (no emoji placeholders)
+    - [ ] Icon set specified with library name (Lucide/Heroicons/other, no emojis)
+    - [ ] Interactive states defined (hover, focus, active, disabled)
+    - [ ] Animation timings specified (duration in ms)
+    - [ ] Touch targets meet minimum size (44×44px for mobile)
+    - [ ] Responsive breakpoints defined (mobile, tablet, desktop)
+    - [ ] Accessibility considered (keyboard nav, ARIA labels, semantic HTML)
 
     ## Notes
 
@@ -300,6 +312,22 @@ When using the `--design` flag:
 
 1. **Assess applicability**: Not all features need UI/UX design (API-only features, backend refactors)
 2. **Use the skill**: Always use UI/UX Pro Max search scripts - don't guess design patterns
-3. **Be specific**: Use actual hex codes, font names, and specific measurements
-4. **Verify quality**: Check contrast, accessibility, and completeness
-5. **Iterate if needed**: If design search doesn't yield good results, refine search terms
+3. **Be specific with values**:
+   - Colors: Use specific hex codes (#3B82F6), not generic names (blue, red)
+   - Typography: Specify font names (Space Grotesk), weights (400, 700), sizes (16px, 1.5rem)
+   - Spacing: Use specific values (12px, 1rem), not "small", "large"
+   - Timings: Use milliseconds (200ms, 300ms), not "fast", "slow"
+4. **Verify accessibility**:
+   - Contrast ratios ≥4.5:1 for normal text, ≥3:1 for large text
+   - Touch targets minimum 44×44px for mobile
+   - Keyboard navigation and focus states defined
+   - ARIA labels for interactive elements
+5. **Document all states**:
+   - Interactive elements: hover, focus, active, disabled
+   - Error, warning, success, info states
+   - Loading and empty states
+6. **Consider responsive design**:
+   - Define breakpoints (mobile <640px, tablet 640-1023px, desktop ≥1024px)
+   - Layout adaptations for each breakpoint
+   - Touch-friendly controls on mobile
+7. **Iterate if needed**: If design search doesn't yield good results, refine search terms with more specific keywords
