@@ -85,4 +85,33 @@ For EACH of the 8 ideas, follow this sequence:
 
 After the loop ends:
 1.  List the titles of all ideas that were saved to `OUTPUT_FILE`.
-2.  Suggest the next logical step (e.g., "Run `/zo.specify` on [Saved Idea] to start building it").
+2.  Suggest the next logical step based on how the user wants to proceed:
+
+    **Option A: Convert specific brainstorm ideas to feature spec (Recommended)**
+
+    Use `/zo.specify.idea` to turn brainstorm ideas directly into a feature specification:
+
+    ```bash
+    # Specify all ideas from the brainstorm
+    /zo.specify.idea all
+
+    # Specify specific ideas by ID
+    /zo.specify.idea 1,3,5
+
+    # Specify with design system integration
+    /zo.specify.idea 1,3,5 --design
+    ```
+
+    **Option B: Create fresh feature spec from natural language**
+
+    Use `/zo.specify` if you want to describe the feature in your own words:
+
+    ```bash
+    # Basic feature specification
+    /zo.specify Add user authentication with OAuth2 support
+
+    # With design system integration
+    /zo.specify "Create analytics dashboard with real-time charts" --design
+    ```
+
+    **Recommendation**: Use Option A (`/zo.specify.idea`) when you want to leverage the brainstorm content directly. Use Option B (`/zo.specify`) when you want to start fresh or combine ideas in a custom way.
