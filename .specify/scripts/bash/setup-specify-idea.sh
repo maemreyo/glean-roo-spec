@@ -54,8 +54,9 @@ fi
 TEMPLATE="$REPO_ROOT/.specify/templates/spec-from-idea.md"
 
 if $JSON_MODE; then
-    printf '{"BRAINSTORM_FILE":"%s","SPEC_TEMPLATE":"%s"}\n' "$BRAINSTORM_FILE" "$TEMPLATE"
+    printf '{"BRAINSTORM_FILE":"%s","SPEC_TEMPLATE":"%s","DESIGN_FILE":"%s"}\n' "$BRAINSTORM_FILE" "$TEMPLATE" "$DESIGN_FILE"
 else
     echo "BRAINSTORM_FILE: $BRAINSTORM_FILE"
     echo "SPEC_TEMPLATE: $TEMPLATE"
+    echo "DESIGN_FILE: $DESIGN_FILE"
 fi

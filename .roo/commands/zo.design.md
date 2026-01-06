@@ -40,23 +40,23 @@ Based on the feature requirements in `spec.md`, execute the following search seq
 
 1.  **Product Type**:
     ```bash
-    python3 .roo/skills/ui-ux-pro-max/scripts/search.py "<feature type>" --domain product
+    python3 .zo/system/ui-ux-pro-max/scripts/search.py "<feature type>" --domain product
     ```
 2.  **Style & Aesthetics**:
     ```bash
-    python3 .roo/skills/ui-ux-pro-max/scripts/search.py "<desired mood>" --domain style
+    python3 .zo/system/ui-ux-pro-max/scripts/search.py "<desired mood>" --domain style
     ```
 3.  **Typography**:
     ```bash
-    python3 .roo/skills/ui-ux-pro-max/scripts/search.py "<mood>" --domain typography
+    python3 .zo/system/ui-ux-pro-max/scripts/search.py "<mood>" --domain typography
     ```
 4.  **Color Palette**:
     ```bash
-    python3 .roo/skills/ui-ux-pro-max/scripts/search.py "<features/industry>" --domain color
+    python3 .zo/system/ui-ux-pro-max/scripts/search.py "<features/industry>" --domain color
     ```
 5.  **Component Patterns** (if applicable):
     ```bash
-    python3 .roo/skills/ui-ux-pro-max/scripts/search.py "<component name>" --domain ux
+    python3 .zo/system/ui-ux-pro-max/scripts/search.py "<component name>" --domain ux
     ```
 
 **Step 2.2: Synthesize & Document**

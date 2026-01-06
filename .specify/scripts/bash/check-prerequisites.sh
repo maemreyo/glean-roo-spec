@@ -123,42 +123,44 @@ fi
 docs=()
 
 # Always check these optional docs
-[[ -f "$RESEARCH" ]] && docs+=("research.md")
-[[ -f "$DATA_MODEL" ]] && docs+=("data-model.md")
+    [[ -f "$RESEARCH" ]] && docs+=("research.md")
+    [[ -f "$DATA_MODEL" ]] && docs+=("data-model.md")
+    [[ -f "$DESIGN_FILE" ]] && docs+=("design.md")
 
-# Check contracts directory (only if it exists and has files)
-if [[ -d "$CONTRACTS_DIR" ]] && [[ -n "$(ls -A "$CONTRACTS_DIR" 2>/dev/null)" ]]; then
-    docs+=("contracts/")
-fi
-
-[[ -f "$QUICKSTART" ]] && docs+=("quickstart.md")
-
-# Include tasks.md if requested and it exists
-if $INCLUDE_TASKS && [[ -f "$TASKS" ]]; then
-    docs+=("tasks.md")
-fi
-
-# Output results
-if $JSON_MODE; then
-    # Build JSON array of documents
-    if [[ ${#docs[@]} -eq 0 ]]; then
-        json_docs="[]"
-    else
-        json_docs=$(printf '"%s",' "${docs[@]}")
-        json_docs="[${json_docs%,}]"
+    # Check contracts directory (only if it exists and has files)
+    if [[ -d "$CONTRACTS_DIR" ]] && [[ -n "$(ls -A "$CONTRACTS_DIR" 2>/dev/null)" ]]; then
+        docs+=("contracts/")
     fi
-    
-    printf '{"FEATURE_DIR":"%s","AVAILABLE_DOCS":%s}\n' "$FEATURE_DIR" "$json_docs"
-else
-    # Text output
-    echo "FEATURE_DIR:$FEATURE_DIR"
-    echo "AVAILABLE_DOCS:"
-    
-    # Show status of each potential document
-    check_file "$RESEARCH" "research.md"
-    check_file "$DATA_MODEL" "data-model.md"
-    check_dir "$CONTRACTS_DIR" "contracts/"
-    check_file "$QUICKSTART" "quickstart.md"
+
+    [[ -f "$QUICKSTART" ]] && docs+=("quickstart.md")
+
+    # Include tasks.md if requested and it exists
+    if $INCLUDE_TASKS && [[ -f "$TASKS" ]]; then
+        docs+=("tasks.md")
+    fi
+
+    # Output results
+    if $JSON_MODE; then
+        # Build JSON array of documents
+        if [[ ${#docs[@]} -eq 0 ]]; then
+            json_docs="[]"
+        else
+            json_docs=$(printf '"%s",' "${docs[@]}")
+            json_docs="[${json_docs%,}]"
+        fi
+        
+        printf '{"FEATURE_DIR":"%s","AVAILABLE_DOCS":%s}\n' "$FEATURE_DIR" "$json_docs"
+    else
+        # Text output
+        echo "FEATURE_DIR:$FEATURE_DIR"
+        echo "AVAILABLE_DOCS:"
+        
+        # Show status of each potential document
+        check_file "$RESEARCH" "research.md"
+        check_file "$DATA_MODEL" "data-model.md"
+        check_file "$DESIGN_FILE" "design.md"
+        check_dir "$CONTRACTS_DIR" "contracts/"
+        check_file "$QUICKSTART" "quickstart.md"
     
     if $INCLUDE_TASKS; then
         check_file "$TASKS" "tasks.md"

@@ -23,8 +23,9 @@ $ARGUMENTS
     ```bash
     .specify/scripts/bash/setup-specify-idea.sh --json $ARGUMENTS
     ```
-2.  Parse JSON output to get `BRAINSTORM_FILE` and `SPEC_TEMPLATE`.
+2.  Parse JSON output to get `BRAINSTORM_FILE`, `SPEC_TEMPLATE`, and `DESIGN_FILE`.
 3.  **Read the content** of `BRAINSTORM_FILE` and `SPEC_TEMPLATE`.
+4.  **Read** `DESIGN_FILE` if it exists (to understand existing design patterns).
 
 ### 2. Idea Extraction & Synthesis
 
