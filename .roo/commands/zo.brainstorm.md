@@ -41,9 +41,99 @@ First, establish the project context by finding the correct specification and pl
     *   **Git-Based Context**: Run `git log --oneline --name-only -n 20 --grep="feat" | grep "\." | sort | uniq` (filtering for relevant feature name if known) to see what code has actually been touched recently. This helps avoid suggesting things that were just built.
     *   If `TASKS` exists, read it as well.
 
-### 2. Analysis & Generation
+### 2. Deep Research Phase (Context Mining)
 
-Based on the loaded context, Git history, and the User Input (`$ARGUMENTS`), internally (hidden thought process) generate **8 prioritized improvement ideas**.
+Before generating ideas, conduct comprehensive research to understand the current implementation and pain points.
+
+1.  **Identify Research Focus**:
+    *   Extract keywords from `$ARGUMENTS` (e.g., "standalone story", "input flow", "URL encoding", "login flow", "authentication")
+    *   Identify relevant components, utilities, or modules mentioned
+    *   Note any specific pain points described by the user
+
+2.  **Explore Spec Directory**:
+    ```bash
+    ls -la specs/
+    ```
+    *   Find any spec files related to the research focus
+    *   Note feature numbers and names that seem relevant
+    *   Identify patterns in feature organization
+
+3.  **Read Existing Specs & Plans** (if found):
+    *   Read relevant `spec.md` files to understand requirements
+    *   Read relevant `plan.md` files to understand implementation approach
+    *   Read relevant `tasks.md` files to see what's been built
+    *   Document key constraints, dependencies, and technical decisions
+
+4.  **Examine Implementation Files**:
+    *   Based on findings, read key implementation files:
+      *   Utility files (e.g., `lib/*/utils/*.ts`, `utils/*.ts`)
+      *   Type definitions (e.g., `lib/*/types.ts`, `types/*.ts`)
+      *   Component files (e.g., `components/**/*.tsx`, `lib/**/*.tsx`)
+      *   Configuration files (e.g., `*.config.ts`, `routes.ts`, `constants.ts`)
+    *   Understand data flow, architectural patterns, and integration points
+
+5.  **Git History Deep Dive**:
+    ```bash
+    # Search for relevant feature commits
+    git log --oneline --name-only -n 30 --all --grep="<keyword1>|<keyword2>" | grep "\." | sort | uniq
+    ```
+    *   Replace `<keyword>` with relevant terms from research focus
+    *   Look for recent changes, refactors, or feature additions
+    *   Identify patterns in how features have evolved
+
+6.  **Code Quality & Pain Points Discovery**:
+    *   Search for TODO/FIXME comments related to focus:
+      ```bash
+      grep -r "TODO\|FIXME\|HACK\|XXX" --include="*.ts" --include="*.tsx" lib/ components/ src/ | grep -i "<keyword>"
+      ```
+    *   Look for complex or duplicated code patterns
+    *   Identify anti-patterns or code smells
+    *   Note performance bottlenecks or security concerns
+
+7.  **Synthesize Research Summary**:
+
+    Output a comprehensive summary including:
+
+    ```markdown
+    ## Research Summary: [Research Focus]
+
+    **Feature Context**:
+    - Related specs: [list of spec files found, e.g., specs/012-standalone-story/spec.md]
+    - Current implementation: [brief description of how it works now]
+    - User's pain points: [specific issues mentioned in $ARGUMENTS]
+
+    **Implementation Details**:
+    - Key files examined:
+      - [file path]: [purpose and key findings]
+      - [file path]: [purpose and key findings]
+    - Data structures: [types and interfaces found]
+    - Current approach: [architectural pattern, data flow, integration points]
+
+    **Pain Points Identified**:
+    - [Specific pain point 1 from code analysis, e.g., "Manual URL encoding required for story input"]
+    - [Specific pain point 2 from git history or comments]
+    - [Specific pain point 3 from architectural analysis]
+    - [Specific pain point 4 from user feedback]
+
+    **Related Components**:
+    - [Component 1]: [purpose, integration points]
+    - [Component 2]: [purpose, integration points]
+    - [Utility 1]: [purpose, usage pattern]
+
+    **Recent Changes**:
+    - [Relevant commit 1]: [what changed]
+    - [Relevant commit 2]: [what changed]
+
+    **Technical Constraints**:
+    - [Constraint 1 from architecture]
+    - [Constraint 2 from dependencies]
+
+    This context will guide the brainstorm ideas generation.
+    ```
+
+### 3. Analysis & Generation
+
+Based on the loaded context, Research Summary, Git history, and the User Input (`$ARGUMENTS`), internally (hidden thought process) generate **8 prioritized improvement ideas**.
 
 **CRITICAL: You must maintain this exact mix of ideas:**
 
@@ -54,7 +144,7 @@ Based on the loaded context, Git history, and the User Input (`$ARGUMENTS`), int
 **Compliance Check**:
 Before presenting, mentally check your "Blue Sky" ideas against the project's `Constitution` (usually in `.zo/memory/constitution.md` or implicitly defined in `plan.md`'s constraints). Ensure innovation doesn't violate core security or architectural principles.
 
-### 3. Interactive Presentation Loop
+### 4. Interactive Presentation Loop
 
 **DO NOT dump all ideas at once.** You must present them one by one to allow the user to focus.
 
@@ -81,7 +171,7 @@ For EACH of the 8 ideas, follow this sequence:
 
 3.  **Repeat** until all 8 ideas are processed or user says stop.
 
-### 4. Completion
+### 5. Completion
 
 After the loop ends:
 1.  List the titles of all ideas that were saved to `OUTPUT_FILE`.
