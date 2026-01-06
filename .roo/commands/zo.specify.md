@@ -1,6 +1,6 @@
 ---
-description: Create or update the feature specification from a natural language feature description.
-handoffs: 
+description: Create or update the feature specification from a natural language feature description with optional UI/UX design.
+handoffs:
   - label: Build Technical Plan
     agent: zo.plan
     prompt: Create a plan for the spec. I am building with...
@@ -17,6 +17,8 @@ $ARGUMENTS
 ```
 
 You **MUST** consider the user input before proceeding (if not empty).
+
+**Optional Design Flag**: If `$ARGUMENTS` contains `--design` or `-d`, generate design specification alongside the feature spec.
 
 ## Outline
 
@@ -98,26 +100,83 @@ Given that feature description, do this:
 
 5. Write the specification to SPEC_FILE using the template structure, replacing placeholders with concrete details derived from the feature description (arguments) while preserving section order and headings.
 
-6. **Specification Quality Validation**: After writing the initial spec, validate it against quality criteria:
+6. **Design System Integration (Optional)**:
+
+   If `$ARGUMENTS` contains `--design` or `-d` flag:
+
+   a. **Check if design is applicable**:
+      - Does the feature have UI components?
+      - Are there user interactions that need design?
+      - If NO UI/UX involved, skip to validation and inform user.
+
+   b. **Initialize Design File**:
+      - Create `.zo/templates/design-template.md` if not exists
+      - Initialize `FEATURE_DIR/design.md` with the template
+
+   c. **Use UI/UX Pro Max Skill** for design intelligence:
+
+      **Step 6.1: Analyze & Search**
+
+      Based on the feature requirements in `spec.md`, execute the following search sequence:
+      *Replace `<keyword>` with relevant terms from the spec.*
+
+      i. **Product Type**:
+         ```bash
+         python3 .zo/system/ui-ux-pro-max/scripts/search.py "<feature type>" --domain product
+         ```
+      ii. **Style & Aesthetics**:
+         ```bash
+         python3 .zo/system/ui-ux-pro-max/scripts/search.py "<desired mood>" --domain style
+         ```
+      iii. **Typography**:
+         ```bash
+         python3 .zo/system/ui-ux-pro-max/scripts/search.py "<mood>" --domain typography
+         ```
+      iv. **Color Palette**:
+         ```bash
+         python3 .zo/system/ui-ux-pro-max/scripts/search.py "<features/industry>" --domain color
+         ```
+      v. **Component Patterns** (if applicable):
+         ```bash
+         python3 .zo/system/ui-ux-pro-max/scripts/search.py "<component name>" --domain ux
+         ```
+
+      **Step 6.2: Synthesize & Document**
+
+      Use the data gathered to fill out `FEATURE_DIR/design.md`:
+      1.  **Design System**: Fill in Color Palette (specific hex codes), Typography (Font names + sizes), UI Element rules
+      2.  **Component Guidelines**: Define visual rules for key components from spec
+      3.  **Page Layouts**: Describe layout structure based on product search results
+      4.  **UX Rules**: Add accessibility/interaction rules from UX domain search
+
+      **Step 6.3: Verification**
+
+      Review generated `design.md` against common rules:
+      - [ ] Colors: Are contrast ratios legible? (No low-contrast gray-on-gray)
+      - [ ] Icons: Did you specify an icon set (e.g., Lucide/Heroicons)? No emojis as icons
+      - [ ] Typography: Is the font pairing harmonious?
+      - [ ] Completeness: Are all sections of the template filled?
+
+7. **Specification Quality Validation**: After writing the initial spec, validate it against quality criteria:
 
    a. **Create Spec Quality Checklist**: Generate a checklist file at `FEATURE_DIR/checklists/requirements.md` using the checklist template structure with these validation items:
 
       ```markdown
       # Specification Quality Checklist: [FEATURE NAME]
-      
+
       **Purpose**: Validate specification completeness and quality before proceeding to planning
       **Created**: [DATE]
       **Feature**: [Link to spec.md]
-      
+
       ## Content Quality
-      
+
       - [ ] No implementation details (languages, frameworks, APIs)
       - [ ] Focused on user value and business needs
       - [ ] Written for non-technical stakeholders
       - [ ] All mandatory sections completed
-      
+
       ## Requirement Completeness
-      
+
       - [ ] No [NEEDS CLARIFICATION] markers remain
       - [ ] Requirements are testable and unambiguous
       - [ ] Success criteria are measurable
@@ -126,17 +185,26 @@ Given that feature description, do this:
       - [ ] Edge cases are identified
       - [ ] Scope is clearly bounded
       - [ ] Dependencies and assumptions identified
-      
+
       ## Feature Readiness
-      
+
       - [ ] All functional requirements have clear acceptance criteria
       - [ ] User scenarios cover primary flows
       - [ ] Feature meets measurable outcomes defined in Success Criteria
       - [ ] No implementation details leak into specification
-      
+
+      ## Design Integration (if --design flag used)
+
+      - [ ] Design specification created at design.md
+      - [ ] Color palette has adequate contrast ratios
+      - [ ] Typography system is harmonious
+      - [ ] Component guidelines cover all UI elements from spec
+      - [ ] Icon set specified (no emoji placeholders)
+
       ## Notes
-      
+
       - Items marked incomplete require spec updates before `/zo.clarify` or `/zo.plan`
+      - Design integration can be added later with `/zo.design` if not done now
       ```
 
    b. **Run Validation Check**: Review the spec against each checklist item:
@@ -190,7 +258,7 @@ Given that feature description, do this:
 
    d. **Update Checklist**: After each validation iteration, update the checklist file with current pass/fail status
 
-7. Report completion with branch name, spec file path, checklist results, and readiness for the next phase (`/zo.clarify` or `/zo.plan`).
+7. Report completion with branch name, spec file path, design file path (if --design was used), checklist results, and readiness for the next phase (`/zo.clarify` or `/zo.plan`).
 
 **NOTE:** The script creates and checks out the new branch and initializes the spec file before writing.
 
@@ -256,3 +324,14 @@ Success criteria must be:
 - "Database can handle 1000 TPS" (implementation detail, use user-facing metric)
 - "React components render efficiently" (framework-specific)
 - "Redis cache hit rate above 80%" (technology-specific)
+
+### Design Integration Guidelines
+
+When using the `--design` or `-d` flag:
+
+1. **Assess applicability**: Not all features need UI/UX design (API-only features, backend refactors)
+2. **Use the skill**: Always use UI/UX Pro Max search scripts - don't guess design patterns
+3. **Be specific**: Use actual hex codes, font names, and specific measurements
+4. **Verify quality**: Check contrast, accessibility, and completeness
+5. **Iterate if needed**: If design search doesn't yield good results, refine search terms
+6. **Can be done later**: Design can always be added later with `/zo.design` command
