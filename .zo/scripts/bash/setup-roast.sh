@@ -77,7 +77,7 @@ DATE_STR=$(date +%Y-%m-%d-%H%M)
 REPORT_FILE="$DOCS_DIR/roast-report-${FEATURE_NAME}-${DATE_STR}.md"
 
 # Copy template if it exists
-TEMPLATE="$REPO_ROOT/.specify/templates/roast-template.md"
+TEMPLATE="$REPO_ROOT/.zo/templates/roast-template.md"
 if [[ -f "$TEMPLATE" ]]; then
     # Start fresh for a new roast or append? 
     # User said "update a file report after each subtask review", implying we need a stable file during the run.

@@ -51,7 +51,7 @@ if [[ -z "$BRAINSTORM_FILE" ]]; then
     exit 1
 fi
 
-TEMPLATE="$REPO_ROOT/.specify/templates/spec-from-idea.md"
+TEMPLATE="$REPO_ROOT/.zo/templates/spec-from-idea.md"
 
 if $JSON_MODE; then
     printf '{"BRAINSTORM_FILE":"%s","SPEC_TEMPLATE":"%s","DESIGN_FILE":"%s"}\n' "$BRAINSTORM_FILE" "$TEMPLATE" "$DESIGN_FILE"

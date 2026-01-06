@@ -66,7 +66,7 @@ fi
 DESIGN_FILE="$FEATURE_DIR/design.md"
 
 # Use Template if available
-TEMPLATE="$REPO_ROOT/.specify/templates/design-template.md"
+TEMPLATE="$REPO_ROOT/.zo/templates/design-template.md"
 if [[ ! -f "$DESIGN_FILE" ]] && [[ -f "$TEMPLATE" ]]; then
     cp "$TEMPLATE" "$DESIGN_FILE"
     # Replace basic placeholders

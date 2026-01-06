@@ -23,7 +23,7 @@ $ARGUMENTS
 
 1.  Run the setup script:
     ```bash
-    .specify/scripts/bash/setup-design.sh --json $ARGUMENTS
+    .zo/scripts/bash/setup-design.sh --json $ARGUMENTS
     ```
 2.  Parse JSON output only to get `DESIGN_FILE` and `FEATURE_SPEC`.
 3.  **Read** `FEATURE_SPEC` to understand the product type, target audience, and key functionalities.

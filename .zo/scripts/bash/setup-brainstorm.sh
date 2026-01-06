@@ -64,7 +64,7 @@ fi
 OUTPUT_FILE="$BRAINSTORM_DIR/$FILENAME"
 
 # Use Template if available
-TEMPLATE="$REPO_ROOT/.specify/templates/brainstorm-template.md"
+TEMPLATE="$REPO_ROOT/.zo/templates/brainstorm-template.md"
 if [[ -f "$TEMPLATE" ]]; then
     cp "$TEMPLATE" "$OUTPUT_FILE"
     # Replace placeholders

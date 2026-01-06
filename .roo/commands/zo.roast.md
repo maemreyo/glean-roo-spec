@@ -14,7 +14,7 @@ $ARGUMENTS
 ## Context Setup
 
 1.  **Initialize Report**:
-    -   Run `.specify/scripts/bash/setup-roast.sh --json $ARGUMENTS` to initialize the report file from the template and get absolute paths.
+    -   Run `.zo/scripts/bash/setup-roast.sh --json $ARGUMENTS` to initialize the report file from the template and get absolute paths.
     -   Parse the JSON output to get `REPORT_FILE`, `TASKS`, `IMPL_PLAN`, etc.
     -   Read the newly created `REPORT_FILE` to understand the table structure.
 

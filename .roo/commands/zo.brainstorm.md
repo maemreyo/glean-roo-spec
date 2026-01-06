@@ -29,7 +29,7 @@ First, establish the project context by finding the correct specification and pl
 
 1.  Run the setup script to initialize context:
     ```bash
-    .specify/scripts/bash/setup-brainstorm.sh --json $ARGUMENTS
+    .zo/scripts/bash/setup-brainstorm.sh --json $ARGUMENTS
     ```
 2.  Parse the JSON output to find:
     *   `OUTPUT_FILE`: Where to save the accepted ideas (e.g., `.zo/brainstorms/improve-login-flow-DATE.md`).
@@ -52,7 +52,7 @@ Based on the loaded context, Git history, and the User Input (`$ARGUMENTS`), int
 *   **2x "Strategic" Questions (The Architect)**: Focus on long-term scalability, market fit, or high-level architectural pivots.
 
 **Compliance Check**:
-Before presenting, mentally check your "Blue Sky" ideas against the project's `Constitution` (usually in `.specify/memory/constitution.md` or implicitly defined in `plan.md`'s constraints). Ensure innovation doesn't violate core security or architectural principles.
+Before presenting, mentally check your "Blue Sky" ideas against the project's `Constitution` (usually in `.zo/memory/constitution.md` or implicitly defined in `plan.md`'s constraints). Ensure innovation doesn't violate core security or architectural principles.
 
 ### 3. Interactive Presentation Loop
 
