@@ -261,7 +261,7 @@ def main():
     template_path = os.path.join(repo_root, '.zo', 'templates', 'roast-template.md')
     create_roast_report(report_file, template_path, json_data)
     
-    # Output results
+    # Output results - use compact JSON to match bash
     if json_mode:
         result = {
             'REPORT_FILE': report_file,
@@ -271,7 +271,7 @@ def main():
             'COMMITS': commits_str,
             'DESIGN_SYSTEM': design_system
         }
-        print(json.dumps(result))
+        print(json.dumps(result, separators=(',', ':')))
     else:
         print(f"REPORT_FILE: {report_file}")
         print(f"TASKS: {tasks}")

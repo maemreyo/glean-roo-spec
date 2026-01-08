@@ -95,6 +95,11 @@ def extract_research_focus(input_text: str) -> str:
     """
     Extract research focus from user input by removing common words.
     
+    Matches bash behavior:
+    input=$(echo "$input" | tr '[:upper:]' '[:lower:]')
+    for word in $COMMON_WORDS; do input=$(echo "$input" | sed "s/\\b${word}\\b//g"); done
+    focus=$(echo "$input" | tr -s '[:space:]' ' ' | tr ' ' '-' | tr -d '.,!?:;()[]{}' | sed 's/-\+/-/g' | sed 's/^-\+//;s/-\+$//')
+    
     Args:
         input_text: User input text
         
@@ -108,13 +113,17 @@ def extract_research_focus(input_text: str) -> str:
     for word in COMMON_WORDS:
         input_text = re.sub(rf'\b{word}\b', '', input_text)
     
-    # Remove extra whitespace, punctuation, and convert spaces to hyphens
-    focus = re.sub(r'\s+', ' ', input_text)  # Normalize whitespace
+    # Normalize whitespace (tr -s '[:space:]' ' ')
+    focus = re.sub(r'\s+', ' ', input_text)
     focus = focus.strip()
-    focus = re.sub(r'[.,!?:;()()\[\]{}]', '', focus)  # Remove punctuation
-    focus = focus.replace(' ', '-')  # Convert spaces to hyphens
-    focus = re.sub(r'-+', '-', focus)  # Remove duplicate hyphens
-    focus = focus.strip('-')  # Remove leading/trailing hyphens
+    # Remove punctuation (tr -d '.,!?:;()[]{}')
+    focus = re.sub(r'[.,!?:;()\[\]{}]', '', focus)
+    # Convert spaces to hyphens (tr ' ' '-')
+    focus = focus.replace(' ', '-')
+    # Remove duplicate hyphens (sed 's/-\+/-/g')
+    focus = re.sub(r'-+', '-', focus)
+    # Remove leading/trailing hyphens (sed 's/^-\+//;s/-\+$//')
+    focus = focus.strip('-')
     
     return focus
 
@@ -244,7 +253,7 @@ def generate_json(
         'RESEARCH_FOCUS': research_focus,
         'SPEC_DIR': spec_dir or ''
     }
-    return json.dumps(result, indent=2)
+    return json.dumps(result, separators=(',', ':'))
 
 
 def parse_args():
@@ -283,10 +292,19 @@ def parse_args():
     
     parser.add_argument(
         'request',
+        nargs='?',
         help='Brainstorm request text'
     )
     
-    return parser.parse_args()
+    # Parse known args to handle unknown options gracefully (like bash)
+    args, unknown = parser.parse_known_args()
+    
+    # If there are unknown args starting with -, bash exits with code 1
+    for arg in unknown:
+        if arg.startswith('-'):
+            error(f"Unknown option: {arg}")
+    
+    return args
 
 
 def main():

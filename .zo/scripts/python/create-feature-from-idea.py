@@ -79,19 +79,35 @@ def parse_arguments():
         help='Feature description (positional argument)'
     )
 
-    args = parser.parse_args()
+    # Parse known args to handle unknown options gracefully (like bash)
+    args, unknown = parser.parse_known_args()
+
+    # If there are unknown args starting with -, bash exits with code 1
+    for arg in unknown:
+        if arg.startswith('-'):
+            print(f"Error: Unknown option: {arg}", file=sys.stderr)
+            sys.exit(1)
 
     # Handle --help flag
     if args.help:
-        parser.print_help()
-        print("\nExamples:")
-        print("  python create-feature-from-idea.py 'Add user authentication system' --short-name 'user-auth'")
-        print("  python create-feature-from-idea.py 'Implement OAuth2 integration for API' --number 5")
+        script_name = os.path.basename(sys.argv[0])
+        print(f"Usage: {script_name} [--json] [--short-name <name>] [--number N] <feature_description>")
+        print("")
+        print("Options:")
+        print("  --json              Output in JSON format")
+        print("  --short-name <name> Provide a custom short name (2-4 words) for the branch")
+        print("  --number N          Specify branch number manually (overrides auto-detection)")
+        print("  --help, -h          Show this help message")
+        print("")
+        print("Examples:")
+        print(f"  {script_name} 'Add user authentication system' --short-name 'user-auth'")
+        print(f"  {script_name} 'Implement OAuth2 integration for API' --number 5")
         sys.exit(0)
 
     # Validate feature description
     if not args.feature_description:
-        print(f"Usage: {sys.argv[0]} [--json] [--short-name <name>] [--number N] <feature_description>",
+        script_name = os.path.basename(sys.argv[0])
+        print(f"Usage: {script_name} [--json] [--short-name <name>] [--number N] <feature_description>",
               file=sys.stderr)
         sys.exit(1)
 
@@ -183,14 +199,14 @@ def main():
     # Set SPECIFY_FEATURE environment variable
     os.putenv('SPECIFY_FEATURE', branch_name)
 
-    # Output results
+    # Output results - use compact JSON to match bash
     if args.json:
         output = {
             'BRANCH_NAME': branch_name,
             'SPEC_FILE': spec_file,
             'FEATURE_NUM': feature_num
         }
-        print(json.dumps(output))
+        print(json.dumps(output, separators=(',', ':')))
     else:
         print(f"BRANCH_NAME: {branch_name}")
         print(f"SPEC_FILE: {spec_file}")

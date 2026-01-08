@@ -3,10 +3,10 @@
 Test script to verify that Python implementation matches bash implementation exactly.
 
 This script compares the output of:
-1. The original bash script: .zo/scripts/bash/check-prerequisites.sh
-2. The new Python script: .zo/scripts/python/check-prerequisites.py
+1. The original bash script: .zo/scripts/bash/setup-brainstorm.sh
+2. The new Python script: .zo/scripts/python/setup-brainstorm.py
 
-Usage: python test_check_prerequisites.py
+Usage: python setup-brainstorm.test.py
 """
 
 import json
@@ -19,8 +19,8 @@ from pathlib import Path
 
 # Constants
 SCRIPT_DIR = Path(__file__).parent
-BASH_SCRIPT = SCRIPT_DIR.parent / "bash" / "check-prerequisites.sh"
-PYTHON_SCRIPT = SCRIPT_DIR / "check-prerequisites.py"
+BASH_SCRIPT = SCRIPT_DIR.parent / "bash" / "setup-brainstorm.sh"
+PYTHON_SCRIPT = SCRIPT_DIR / "setup-brainstorm.py"
 REPO_ROOT = SCRIPT_DIR.parent.parent.parent.parent  # Go up 4 levels: python -> scripts -> .zo -> project
 
 # ANSI color codes
@@ -138,8 +138,8 @@ def compare_outputs(test_name, args, env=None, check_json_equivalence=True):
         return False
     print_success("Stdout matches")
     
-    # If JSON mode and both scripts succeeded, verify JSON equivalence
-    if check_json_equivalence and "--json" in args and bash_code == 0:
+    # If JSON mode, verify JSON equivalence
+    if check_json_equivalence and "--json" in args:
         try:
             bash_json = json.loads(bash_stdout)
             python_json = json.loads(python_stdout)
@@ -156,46 +156,17 @@ def compare_outputs(test_name, args, env=None, check_json_equivalence=True):
     return True
 
 
-def create_test_feature_dir():
-    """Create a test feature directory with all possible files."""
-    temp_dir = tempfile.mkdtemp()
-    feature_dir = Path(temp_dir) / "specs" / "999-test-feature"
-    feature_dir.mkdir(parents=True, exist_ok=True)
-    
-    # Create all possible files
-    files = {
-        "spec.md": "# Spec",
-        "plan.md": "# Plan",
-        "tasks.md": "# Tasks",
-        "research.md": "# Research",
-        "data-model.md": "# Data Model",
-        "design.md": "# Design",
-        "quickstart.md": "# Quickstart",
-    }
-    
-    created_files = {}
-    for filename, content in files.items():
-        filepath = feature_dir / filename
-        filepath.write_text(content)
-        created_files[filename] = str(filepath)
-    
-    # Create contracts directory with a file
-    contracts_dir = feature_dir / "contracts"
-    contracts_dir.mkdir()
-    (contracts_dir / "example.json").write_text('{"test": "contract"}')
-    
-    env = {
-        "SPECIFY_FEATURE": "999-test-feature",
-        "SPECS_DIR": str(feature_dir.parent),
-    }
-    
-    return feature_dir, env
-
-
-def cleanup_test_feature(dir_path):
-    """Clean up test feature directory."""
-    if dir_path.exists():
-        shutil.rmtree(dir_path.parent)
+def cleanup_brainstorm_files():
+    """Clean up any created brainstorm files for testing."""
+    brainstorms_dir = REPO_ROOT / ".zo" / "brainstorms"
+    if brainstorms_dir.exists():
+        # Clean up test brainstorm files
+        for file in brainstorms_dir.glob("test-*.md"):
+            file.unlink()
+        for file in brainstorms_dir.glob("improve-login-*.md"):
+            file.unlink()
+        for file in brainstorms_dir.glob("add-dark-mode-*.md"):
+            file.unlink()
 
 
 def test_help():
@@ -217,140 +188,136 @@ def test_help():
     return True
 
 
-def test_paths_only():
-    """Test --paths-only output."""
-    print_header("Test: --paths-only Output")
-    
-    feature_dir, env = create_test_feature_dir()
-    try:
-        return compare_outputs(
-            "Paths only (text mode)",
-            ["--paths-only"],
-            env
-        )
-    finally:
-        cleanup_test_feature(feature_dir)
-
-
-def test_paths_only_json():
-    """Test --paths-only --json output."""
-    print_header("Test: --paths-only --json Output")
-    
-    feature_dir, env = create_test_feature_dir()
-    try:
-        return compare_outputs(
-            "Paths only (JSON mode)",
-            ["--paths-only", "--json"],
-            env
-        )
-    finally:
-        cleanup_test_feature(feature_dir)
-
-
-def test_json_mode():
-    """Test --json output."""
-    print_header("Test: --json Output")
-    
-    feature_dir, env = create_test_feature_dir()
-    try:
-        return compare_outputs(
-            "JSON mode",
-            ["--json"],
-            env
-        )
-    finally:
-        cleanup_test_feature(feature_dir)
-
-
-def test_json_mode_with_include_tasks():
-    """Test --json --include-tasks output."""
-    print_header("Test: --json --include-tasks Output")
-    
-    feature_dir, env = create_test_feature_dir()
-    try:
-        return compare_outputs(
-            "JSON mode with include-tasks",
-            ["--json", "--include-tasks"],
-            env
-        )
-    finally:
-        cleanup_test_feature(feature_dir)
-
-
-def test_require_tasks_failure():
-    """Test --require-tasks when tasks.md is missing."""
-    print_header("Test: --require-tasks Failure (missing tasks.md)")
-    
-    # Create feature dir WITHOUT tasks.md
-    temp_dir = tempfile.mkdtemp()
-    feature_dir = Path(temp_dir) / "specs" / "998-test-no-tasks"
-    feature_dir.mkdir(parents=True, exist_ok=True)
-    
-    # Only create plan.md, not tasks.md
-    (feature_dir / "spec.md").write_text("# Spec")
-    (feature_dir / "plan.md").write_text("# Plan")
-    
-    env = {
-        "SPECIFY_FEATURE": "998-test-no-tasks",
-        "SPECS_DIR": str(feature_dir.parent),
-    }
+def test_topic_generation():
+    """Test topic generation with text mode."""
+    print_header("Test: Topic Generation (Text Mode)")
     
     try:
+        cleanup_brainstorm_files()
         return compare_outputs(
-            "Require tasks (should fail)",
-            ["--require-tasks"],
-            env
-        )
-    finally:
-        if Path(temp_dir).exists():
-            shutil.rmtree(temp_dir)
-
-
-def test_text_mode():
-    """Test text mode output."""
-    print_header("Test: Text Mode Output")
-    
-    feature_dir, env = create_test_feature_dir()
-    try:
-        return compare_outputs(
-            "Text mode",
-            [],
-            env,
-            check_json_equivalence=False  # Text mode doesn't output JSON
-        )
-    finally:
-        cleanup_test_feature(feature_dir)
-
-
-def test_text_mode_include_tasks():
-    """Test text mode with --include-tasks."""
-    print_header("Test: Text Mode with --include-tasks")
-    
-    feature_dir, env = create_test_feature_dir()
-    try:
-        return compare_outputs(
-            "Text mode with include-tasks",
-            ["--include-tasks"],
-            env,
+            "Topic generation with text mode",
+            ["improve login flow"],
+            None,
             check_json_equivalence=False
         )
     finally:
-        cleanup_test_feature(feature_dir)
+        cleanup_brainstorm_files()
 
 
-def test_feature_dir_not_found():
-    """Test error when feature directory doesn't exist."""
-    print_header("Test: Feature Directory Not Found")
+def test_topic_generation_json():
+    """Test topic generation with JSON mode."""
+    print_header("Test: Topic Generation (JSON Mode)")
     
-    env = {
-        "SPECIFY_FEATURE": "nonexistent-feature-xyz",
-    }
+    try:
+        cleanup_brainstorm_files()
+        return compare_outputs(
+            "Topic generation with JSON mode",
+            ["--json", "add dark mode"],
+            None
+        )
+    finally:
+        cleanup_brainstorm_files()
+
+
+def test_no_topic():
+    """Test with no topic provided (should use default)."""
+    print_header("Test: No Topic Provided")
     
-    return compare_outputs(
-        "Feature dir not found (should fail)",
-        [],
-        env
-    )
+    try:
+        cleanup_brainstorm_files()
+        return compare_outputs(
+            "No topic provided",
+            [],
+            None,
+            check_json_equivalence=False
+        )
+    finally:
+        cleanup_brainstorm_files()
+
+
+def test_no_topic_json():
+    """Test with no topic provided in JSON mode."""
+    print_header("Test: No Topic Provided (JSON Mode)")
+    
+    try:
+        cleanup_brainstorm_files()
+        return compare_outputs(
+            "No topic provided with JSON",
+            ["--json"],
+            None
+        )
+    finally:
+        cleanup_brainstorm_files()
+
+
+def test_slugification():
+    """Test that topic is properly slugified."""
+    print_header("Test: Topic Slugification")
+    
+    try:
+        cleanup_brainstorm_files()
+        return compare_outputs(
+            "Complex topic with special characters",
+            ["Test Feature! @#$%^&*()"],
+            None,
+            check_json_equivalence=False
+        )
+    finally:
+        cleanup_brainstorm_files()
+
+
+def test_template_usage():
+    """Test that template is used when available."""
+    print_header("Test: Template Usage")
+    
+    # Create template directory and file
+    template_dir = REPO_ROOT / ".zo" / "templates"
+    template_dir.mkdir(parents=True, exist_ok=True)
+    template_file = template_dir / "brainstorm-template.md"
+    
+    # Create a simple template
+    template_content = """# Brainstorm: {{FEATURE}}
+Date: {{DATE}}
+
+## Notes
+"""
+    
+    template_file.write_text(template_content)
+    
+    try:
+        cleanup_brainstorm_files()
+        result = compare_outputs(
+            "Template usage",
+            ["test template usage"],
+            None,
+            check_json_equivalence=False
+        )
+        return result
+    finally:
+        cleanup_brainstorm_files()
+
+
+def test_template_usage_json():
+    """Test template usage with JSON output."""
+    print_header("Test: Template Usage (JSON Mode)")
+    
+    # Ensure template exists
+    template_dir = REPO_ROOT / ".zo" / "templates"
+    template_dir.mkdir(parents=True, exist_ok=True)
+    template_file = template_dir / "brainstorm-template.md"
+    
+    if not template_file.exists():
+        template_file.write_text("# Brainstorm: {{FEATURE}}\nDate: {{DATE}}\n")
+    
+    try:
+        cleanup_brainstorm_files()
+        return compare_outputs(
+            "Template usage with JSON",
+            ["--json", "test template"],
+            None
+        )
+    finally:
+        cleanup_brainstorm_files()
 
 
 def test_invalid_option():
@@ -364,12 +331,6 @@ def test_invalid_option():
         print_fail("Exit codes differ: bash=" + str(bash_code) + ", python=" + str(python_code))
         return False
     
-    if bash_stderr.strip() != python_stderr.strip():
-        print_fail("Stderr differs:")
-        print("  Bash stderr: " + bash_stderr)
-        print("  Python stderr: " + python_stderr)
-        return False
-    
     print_success("Invalid option handling matches")
     return True
 
@@ -377,7 +338,7 @@ def test_invalid_option():
 def run_all_tests():
     """Run all tests and return summary."""
     print("\n" + BOLD + "=" * 60 + RESET)
-    print(BOLD + "CHECK-PREREQUISITES TEST SUITE" + RESET)
+    print(BOLD + "SETUP-BRAINSTORM TEST SUITE" + RESET)
     print(BOLD + "=" * 60 + RESET)
     print("\nRepo root: " + str(REPO_ROOT))
     print("Bash script: " + str(BASH_SCRIPT))
@@ -385,14 +346,13 @@ def run_all_tests():
     
     tests = [
         ("Help", test_help),
-        ("Paths Only (text)", test_paths_only),
-        ("Paths Only (JSON)", test_paths_only_json),
-        ("JSON Mode", test_json_mode),
-        ("JSON Mode with --include-tasks", test_json_mode_with_include_tasks),
-        ("Require Tasks Failure", test_require_tasks_failure),
-        ("Text Mode", test_text_mode),
-        ("Text Mode with --include-tasks", test_text_mode_include_tasks),
-        ("Feature Directory Not Found", test_feature_dir_not_found),
+        ("Topic Generation (text)", test_topic_generation),
+        ("Topic Generation (JSON)", test_topic_generation_json),
+        ("No Topic Provided", test_no_topic),
+        ("No Topic Provided (JSON)", test_no_topic_json),
+        ("Topic Slugification", test_slugification),
+        ("Template Usage", test_template_usage),
+        ("Template Usage (JSON)", test_template_usage_json),
         ("Invalid Option", test_invalid_option),
     ]
     

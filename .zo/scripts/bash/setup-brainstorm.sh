@@ -32,7 +32,8 @@ eval $(get_feature_paths)
 
 # Helper function to slugify text
 slugify() {
-    echo "$1" | tr '[:upper:]' '[:lower:]' | sed 's/[^a-z0-9]/-/g' | sed 's/-\+/-/g' | sed 's/^-//' | sed 's/-$//'
+    # Convert to lowercase, replace non-alphanumeric with hyphens, collapse consecutive hyphens
+    echo "$1" | tr '[:upper:]' '[:lower:]' | sed 's/[^a-z0-9]/-/g' | tr -s '-' | sed 's/^-//' | sed 's/-$//'
 }
 
 # Determine Output Directory

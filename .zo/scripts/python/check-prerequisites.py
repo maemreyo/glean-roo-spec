@@ -19,7 +19,7 @@ OPTIONS:
 OUTPUTS:
   JSON mode: {"FEATURE_DIR":"...", "AVAILABLE_DOCS":["..."]}
   Text mode: FEATURE_DIR:... \n AVAILABLE_DOCS: \n ✓/✗ file.md
-  Paths only: REPO_ROOT: ... \n BRANCH: ... \n FEATURE_DIR: ... \n GLOBAL_DESIGN_SYSTEM: ...
+  Paths only: REPO_ROOT: ... \n BRANCH: ... \n FEATURE_DIR: ... etc.
 """
 
 import argparse
@@ -59,7 +59,7 @@ def format_json_paths(paths: dict) -> str:
         paths: Dictionary of path variables
         
     Returns:
-        JSON formatted string
+        JSON formatted string (compact, no indentation)
     """
     return json.dumps({
         'REPO_ROOT': paths['REPO_ROOT'],
@@ -68,8 +68,7 @@ def format_json_paths(paths: dict) -> str:
         'FEATURE_SPEC': paths['FEATURE_SPEC'],
         'IMPL_PLAN': paths['IMPL_PLAN'],
         'TASKS': paths['TASKS'],
-        'GLOBAL_DESIGN_SYSTEM': paths['GLOBAL_DESIGN_SYSTEM'],
-    }, indent=2)
+    }, separators=(',', ':'))
 
 
 def format_json_result(feature_dir: str, available_docs: list) -> str:
@@ -81,13 +80,13 @@ def format_json_result(feature_dir: str, available_docs: list) -> str:
         available_docs: List of available document names
         
     Returns:
-        JSON formatted string
+        JSON formatted string (compact)
     """
     result = {
         'FEATURE_DIR': feature_dir,
         'AVAILABLE_DOCS': available_docs,
     }
-    return json.dumps(result, indent=2)
+    return json.dumps(result, separators=(',', ':'))
 
 
 def check_file_status(file_path: str, display_name: str) -> str:
@@ -126,7 +125,7 @@ def check_dir_status(dir_path: str, display_name: str) -> str:
 
 def print_help():
     """Print help message."""
-    help_text = """Usage: check-prerequisites.py [OPTIONS]
+    help_text = """Usage: check-prerequisites.sh [OPTIONS]
 
 Consolidated prerequisite checking for Spec-Driven Development workflow.
 
@@ -139,13 +138,14 @@ OPTIONS:
 
 EXAMPLES:
   # Check task prerequisites (plan.md required)
-  python check-prerequisites.py --json
+  ./check-prerequisites.sh --json
   
   # Check implementation prerequisites (plan.md + tasks.md required)
-  python check-prerequisites.py --json --require-tasks --include-tasks
+  ./check-prerequisites.sh --json --require-tasks --include-tasks
   
   # Get feature paths only (no validation)
-  python check-prerequisites.py --paths-only
+  ./check-prerequisites.sh --paths-only
+  
 """
     print(help_text)
 
@@ -164,7 +164,11 @@ def main():
     parser.add_argument('--paths-only', action='store_true', help='Only output path variables (no validation)')
     parser.add_argument('--help', '-h', action='store_true', help='Show help message')
     
-    args = parser.parse_args()
+    # Check for unknown arguments
+    args, unknown = parser.parse_known_args()
+    if unknown:
+        print(f"ERROR: Unknown option '{unknown[0]}'. Use --help for usage information.", file=sys.stderr)
+        sys.exit(1)
     
     # Handle help flag
     if args.help:
@@ -197,7 +201,6 @@ def main():
             print(f"FEATURE_SPEC: {paths['FEATURE_SPEC']}")
             print(f"IMPL_PLAN: {paths['IMPL_PLAN']}")
             print(f"TASKS: {paths['TASKS']}")
-            print(f"GLOBAL_DESIGN_SYSTEM: {paths['GLOBAL_DESIGN_SYSTEM']}")
         sys.exit(0)
     
     # Validate required directories and files
@@ -208,13 +211,13 @@ def main():
     
     if not os.path.isfile(paths['IMPL_PLAN']):
         print(f"ERROR: plan.md not found in {paths['FEATURE_DIR']}", file=sys.stderr)
-        print("RunCommand 'zo.plan' (see below for command content) first to create the implementation plan.", file=sys.stderr)
+        print("Run /zo.plan first to create the implementation plan.", file=sys.stderr)
         sys.exit(1)
     
     # Check for tasks.md if required
     if args.require_tasks and not os.path.isfile(paths['TASKS']):
         print(f"ERROR: tasks.md not found in {paths['FEATURE_DIR']}", file=sys.stderr)
-        print("RunCommand 'zo.tasks' (see below for command content) first to create the task list.", file=sys.stderr)
+        print("Run /zo.tasks first to create the task list.", file=sys.stderr)
         sys.exit(1)
     
     # Build list of available documents

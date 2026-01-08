@@ -152,7 +152,8 @@ check_existing_branches() {
 # Function to clean and format a branch name
 clean_branch_name() {
     local name="$1"
-    echo "$name" | tr '[:upper:]' '[:lower:]' | sed 's/[^a-z0-9]/-/g' | sed 's/-\+/-/g' | sed 's/^-//' | sed 's/-$//'
+    # Convert to lowercase, replace non-alphanumeric with hyphens, collapse consecutive hyphens
+    echo "$name" | tr '[:upper:]' '[:lower:]' | sed 's/[^a-z0-9]/-/g' | tr -s '-' | sed 's/^-//' | sed 's/-$//'
 }
 
 # Resolve repository root. Prefer git information when available, but fall back

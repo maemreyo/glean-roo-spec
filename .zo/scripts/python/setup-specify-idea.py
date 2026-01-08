@@ -129,14 +129,14 @@ def main():
         spec_template = Path(repo_root) / '.zo' / 'templates' / 'spec-from-idea.md'
         design_file = Path(feature_dir) / 'design.md'
         
-        # Output results
+        # Output results - use compact JSON to match bash
         if args.json:
             result = {
                 'BRAINSTORM_FILE': str(brainstorm_file),
                 'SPEC_TEMPLATE': str(spec_template),
                 'DESIGN_FILE': str(design_file)
             }
-            print(json.dumps(result))
+            print(json.dumps(result, separators=(',', ':')))
         else:
             print(f"BRAINSTORM_FILE: {brainstorm_file}")
             print(f"SPEC_TEMPLATE: {spec_template}")

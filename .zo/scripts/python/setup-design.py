@@ -79,7 +79,16 @@ def parse_args():
         help='Feature directory (optional)'
     )
     
-    return parser.parse_args()
+    # Parse known args to handle unknown options gracefully (like bash)
+    args, unknown = parser.parse_known_args()
+    
+    # If there are unknown args starting with -, bash exits with code 1
+    for arg in unknown:
+        if arg.startswith('-'):
+            print(f"Error: Unknown option: {arg}", file=sys.stderr)
+            sys.exit(1)
+    
+    return args
 
 
 def setup_global_design(repo_root: str, json_mode: bool) -> dict:
@@ -215,9 +224,9 @@ def main():
     else:
         result = setup_feature_design(repo_root, args.feature_dir, args.json)
     
-    # Output results
+    # Output results - use compact JSON to match bash
     if args.json:
-        print(json.dumps(result))
+        print(json.dumps(result, separators=(',', ':')))
     else:
         if result['MODE'] == 'global':
             print(f"MODE: {result['MODE']}")

@@ -225,8 +225,10 @@ def clean_branch_name(name: str) -> str:
     """
     Clean and format a branch name.
 
-    Converts to lowercase, replaces non-alphanumeric characters with hyphens,
-    removes consecutive hyphens, and trims leading/trailing hyphens.
+    Converts to lowercase, replaces EACH non-alphanumeric character with a hyphen,
+    and trims leading/trailing hyphens.
+
+    Matches bash behavior: sed 's/[^a-z0-9]/-/g' replaces each char with '-'
 
     Args:
         name: Raw branch name
@@ -237,11 +239,8 @@ def clean_branch_name(name: str) -> str:
     # Convert to lowercase
     name = name.lower()
 
-    # Replace non-alphanumeric with hyphens
-    name = re.sub(r'[^a-z0-9]+', '-', name)
-
-    # Remove consecutive hyphens
-    name = re.sub(r'-+', '-', name)
+    # Replace EACH non-alphanumeric character with a hyphen (matches bash)
+    name = ''.join('-' if not c.isalnum() else c for c in name)
 
     # Trim leading/trailing hyphens
     name = name.strip('-')

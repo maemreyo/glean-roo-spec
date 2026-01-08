@@ -53,16 +53,28 @@ def parse_args():
         help='Show this help message'
     )
     
-    return parser.parse_args()
+    # Parse known args to handle unknown options gracefully (like bash)
+    args, unknown = parser.parse_known_args()
+    
+    # If there are unknown args starting with -, bash exits with code 1
+    for arg in unknown:
+        if arg.startswith('-'):
+            print(f"Error: Unknown option: {arg}", file=sys.stderr)
+            sys.exit(1)
+    
+    return args
 
 
 def main():
     """Main entry point."""
     args = parse_args()
     
-    # Handle help
+    # Handle help - match bash help format
     if args.help:
-        print(__doc__)
+        script_name = os.path.basename(sys.argv[0])
+        print(f"Usage: {script_name} [--json]")
+        print("  --json    Output results in JSON format")
+        print("  --help    Show this help message")
         sys.exit(0)
     
     # Get all feature paths from common module
@@ -97,7 +109,7 @@ def main():
         # Create a basic plan file if template doesn't exist
         Path(impl_plan).touch()
     
-    # Output results
+    # Output results - use compact JSON to match bash
     if args.json:
         result = {
             'FEATURE_SPEC': feature_spec,
@@ -107,7 +119,7 @@ def main():
             'BRANCH': current_branch,
             'HAS_GIT': has_git
         }
-        print(json.dumps(result))
+        print(json.dumps(result, separators=(',', ':')))
     else:
         print(f"FEATURE_SPEC: {feature_spec}")
         print(f"IMPL_PLAN: {impl_plan}")

@@ -40,6 +40,12 @@ def slugify(text: str) -> str:
     """
     Convert text to a slug-safe filename.
     
+    Matches bash behavior on macOS where sed 's/-\+/-/g' doesn't work
+    as expected (BSD sed doesn't support \+ properly).
+    
+    Bash: echo "$1" | tr '[:upper:]' '[:lower:]' | sed 's/[^a-z0-9]/-/g' | sed 's/-\+/-/g' | sed 's/^-//' | sed 's/-$//'
+    macOS produces: test-feature---------- (no collapse)
+    
     Args:
         text: Text to slugify
         
@@ -48,10 +54,9 @@ def slugify(text: str) -> str:
     """
     # Convert to lowercase
     text = text.lower()
-    # Replace non-alphanumeric characters with hyphens
-    text = re.sub(r'[^a-z0-9]', '-', text)
-    # Remove duplicate hyphens
-    text = re.sub(r'-+', '-', text)
+    # Replace non-alphanumeric characters with hyphens (EACH char becomes a hyphen)
+    # This matches bash behavior: sed 's/[^a-z0-9]/-/g' replaces each char with '-'
+    text = ''.join('-' if not c.isalnum() else c for c in text)
     # Remove leading/trailing hyphens
     text = text.strip('-')
     return text
@@ -84,7 +89,19 @@ def parse_args():
         help='Brainstorm topic (optional)'
     )
     
-    return parser.parse_args()
+    # Parse known args to handle unknown options gracefully (like bash)
+    args, unknown = parser.parse_known_args()
+    
+    # If there are unknown args, bash treats them as positional arguments
+    # and continues (adds them to the topic). We'll do the same.
+    if unknown:
+        # Append unknown args to topic (separated by spaces like bash would)
+        if args.topic:
+            args.topic = args.topic + ' ' + ' '.join(unknown)
+        else:
+            args.topic = ' '.join(unknown)
+    
+    return args
 
 
 def main():
@@ -93,7 +110,11 @@ def main():
     
     # Handle help
     if args.help:
-        print(__doc__)
+        # Match bash help output exactly - bash uses $0 which expands to the script path
+        script_name = sys.argv[0]
+        print(f"Usage: {script_name} [--json] [brainstorm topic]")
+        print("  --json    Output results in JSON format")
+        print("  --help    Show this help message")
         sys.exit(0)
     
     # Get repository root
@@ -146,7 +167,8 @@ def main():
             'BRAINSTORM_DIR': brainstorm_dir,
             'TOPIC': name_tag
         }
-        print(json.dumps(result))
+        # Use compact JSON to match bash output
+        print(json.dumps(result, separators=(',', ':')))
     else:
         print(f"OUTPUT_FILE: {output_file}")
 

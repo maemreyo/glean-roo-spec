@@ -206,14 +206,14 @@ def main():
         # Assumes format: roast-report-[name]-YYYY-MM-DD-HHMM.md
         report_file = find_latest_roast_report(roasts_dir, feature_name)
     
-    # Output results
+    # Output results - use compact JSON to match bash
     if args.json:
         result = {
             'REPORT_FILE': report_file,
             'TASKS': tasks,
             'BRANCH': current_branch
         }
-        print(json.dumps(result))
+        print(json.dumps(result, separators=(',', ':')))
     else:
         print(f"REPORT_FILE: {report_file}")
         print(f"TASKS: {tasks}")
