@@ -19,6 +19,8 @@ Auto-generated from all feature plans. Last updated: 2026-01-03
 - BroadcastChannel API (011-music-player-widget)
 - TypeScript 5.3+ (strict mode) + React 18.2+, Next.js 14+ + Zustand 4.4+, Framer Motion, Sonner (toasts), ReactPlayer, Supabase 2.39+, Tailwind CSS, shadcn/ui (011-music-player-widget)
 - localStorage (primary, <1KB), Supabase Storage (audio files, 50MB/file, 500MB total) (011-music-player-widget)
+- [e.g., Python 3.11, Swift 5.9, Rust 1.75 or NEEDS CLARIFICATION] + [e.g., FastAPI, UIKit, LLVM or NEEDS CLARIFICATION] (999-test-feature)
+- [if applicable, e.g., PostgreSQL, CoreData, files or N/A] (999-test-feature)
 
 - TypeScript 5.3+ with strict mode + React 18.2+, Next.js 14+, Zustand 4.4+, Supabase 2.39+, Google Fonts API, react-colorful (001-ui-config-system)
 
@@ -39,9 +41,9 @@ npm test && npm run lint
 TypeScript 5.3+ with strict mode: Follow standard conventions
 
 ## Recent Changes
-- 011-music-player-widget: Added TypeScript 5.3+ (strict mode) + React 18.2+, Next.js 14+ + Zustand 4.4+, Framer Motion, Sonner (toasts), ReactPlayer, Supabase 2.39+, Tailwind CSS, shadcn/ui
-- 011-music-player-widget: Added Web Audio API, BroadcastChannel API
-- 009-fix-preview: Added TypeScript 5.3+ (strict mode) + React 18.2+, Next.js 14+ + Zustand 4.4+, Supabase 2.39+, Tailwind CSS, shadcn/ui, Radix UI components, Framer Motion, Sonner (toasts)
+- 999-test-feature: Added [e.g., Python 3.11, Swift 5.9, Rust 1.75 or NEEDS CLARIFICATION] + [e.g., FastAPI, UIKit, LLVM or NEEDS CLARIFICATION]
+- 999-test-feature: Added [if applicable, e.g., PostgreSQL, CoreData, files or N/A]
+- 999-test-feature: Added [e.g., Python 3.11, Swift 5.9, Rust 1.75 or NEEDS CLARIFICATION] + [e.g., FastAPI, UIKit, LLVM or NEEDS CLARIFICATION]
 
 
 <!-- MANUAL ADDITIONS START -->
