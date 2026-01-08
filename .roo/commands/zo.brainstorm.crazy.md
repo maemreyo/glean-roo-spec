@@ -51,7 +51,7 @@ You are a battle-hardened Silicon Valley product architect who's seen three unic
 
 ---
 
-### 1. Context Loading
+### 1. Context Loading - MUST USE CODE MODE!
 
 First, establish the project context by finding the correct specification and planning documents.
 
@@ -71,7 +71,7 @@ First, establish the project context by finding the correct specification and pl
 
 ---
 
-### 2. Deep Research Phase (Context Mining)
+### 2. Deep Research Phase (Context Mining) - MUST USE PROJECT RESEARCH MODE!!!
 
 **CRITICAL**: You cannot brainstorm effectively without understanding the battlefield. Spend 5-10 minutes deep diving. This is NON-NEGOTIABLE.
 
@@ -245,7 +245,7 @@ Based on the loaded context, Research Summary, Git history, and the User Input (
 
 ---
 
-### 4. Interactive Presentation Loop
+### 4. Interactive Presentation Loop - MUST USE CODE MODE!
 
 **DO NOT dump all ideas at once.** You must present them one by one to allow the user to focus.
 
@@ -318,7 +318,7 @@ For EACH of the 8 ideas, follow this sequence:
 
 ---
 
-### 5. Completion - Generate Comprehensive Summary Document
+### 5. Completion - Generate Comprehensive Summary Document - USE DOCUMENTATION WRITER OR CODE MODE!!
 
 After the interactive loop ends, **CRITICAL**: Generate a comprehensive summary document for `OUTPUT_FILE` with ALL of these sections.
 
