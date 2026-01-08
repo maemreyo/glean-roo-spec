@@ -2,6 +2,26 @@
 description: Generate a custom checklist for the current feature based on user requirements.
 ---
 
+> **Prerequisite Script**: This command uses `.zo/scripts/python/check-prerequisites.py` for context initialization.
+>
+> ```text
+> Consolidated prerequisite checking script for Spec-Driven Development workflow.
+> 
+> Usage: python check-prerequisites.py [OPTIONS]
+> 
+> OPTIONS:
+>   --json              Output in JSON format
+>   --require-tasks     Require tasks.md to exist (for implementation phase)
+>   --include-tasks     Include tasks.md in AVAILABLE_DOCS list
+>   --paths-only        Only output path variables (no validation)
+>   --help, -h          Show help message
+> 
+> OUTPUTS:
+>   JSON mode: {"FEATURE_DIR":"...", "AVAILABLE_DOCS":["..."]}
+>   Text mode: FEATURE_DIR:... \n AVAILABLE_DOCS: \n ✓/✗ file.md
+>   Paths only: REPO_ROOT: ... \n BRANCH: ... \n FEATURE_DIR: ... etc.
+> ```
+
 ## Checklist Purpose: "Unit Tests for English"
 
 **CRITICAL CONCEPT**: Checklists are **UNIT TESTS FOR REQUIREMENTS WRITING** - they validate the quality, clarity, and completeness of requirements in a given domain.
@@ -33,7 +53,7 @@ You **MUST** consider the user input before proceeding (if not empty).
 
 ## Execution Steps
 
-1. **Setup**: Run `.zo/scripts/bash/check-prerequisites.sh --json` from repo root and parse JSON for FEATURE_DIR and AVAILABLE_DOCS list.
+1. **Setup**: Run `.zo/scripts/python/check-prerequisites.py --json` from repo root and parse JSON for FEATURE_DIR and AVAILABLE_DOCS list.
    - All file paths must be absolute.
    - For single quotes in args like "I'm Groot", use escape syntax: e.g 'I'\''m Groot' (or double-quote if possible: "I'm Groot").
 

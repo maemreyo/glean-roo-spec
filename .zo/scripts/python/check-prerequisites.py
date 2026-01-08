@@ -17,7 +17,7 @@ OPTIONS:
 OUTPUTS:
   JSON mode: {"FEATURE_DIR":"...", "AVAILABLE_DOCS":["..."]}
   Text mode: FEATURE_DIR:... \n AVAILABLE_DOCS: \n ✓/✗ file.md
-  Paths only: REPO_ROOT: ... \n BRANCH: ... \n FEATURE_DIR: ... etc.
+  Paths only: REPO_ROOT: ... \n BRANCH: ... \n FEATURE_DIR: ... \n GLOBAL_DESIGN_SYSTEM: ...
 """
 
 import argparse
@@ -251,6 +251,7 @@ def get_feature_paths() -> dict:
         'QUICKSTART': os.path.join(feature_dir, 'quickstart.md'),
         'CONTRACTS_DIR': os.path.join(feature_dir, 'contracts'),
         'DESIGN_FILE': os.path.join(feature_dir, 'design.md'),
+        'GLOBAL_DESIGN_SYSTEM': os.path.join(repo_root, '.zo/design-system.md'),
     }
 
 
@@ -307,6 +308,7 @@ def format_json_paths(paths: dict) -> str:
         'FEATURE_SPEC': paths['FEATURE_SPEC'],
         'IMPL_PLAN': paths['IMPL_PLAN'],
         'TASKS': paths['TASKS'],
+        'GLOBAL_DESIGN_SYSTEM': paths['GLOBAL_DESIGN_SYSTEM'],
     }, indent=2)
 
 
@@ -435,6 +437,7 @@ def main():
             print(f"FEATURE_SPEC: {paths['FEATURE_SPEC']}")
             print(f"IMPL_PLAN: {paths['IMPL_PLAN']}")
             print(f"TASKS: {paths['TASKS']}")
+            print(f"GLOBAL_DESIGN_SYSTEM: {paths['GLOBAL_DESIGN_SYSTEM']}")
         sys.exit(0)
     
     # Validate required directories and files
