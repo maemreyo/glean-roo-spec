@@ -1,11 +1,11 @@
 #!/bin/bash
 #
-# setup-brainstorm.sh
-# Initialize context for a brainstorm session by parsing user input,
-# finding related specification/planning documents, and outputting JSON.
+# setup-brainstorm-crazy.sh
+# Initialize context for a "crazy" brainstorm session with enhanced template support.
+# Uses brainstorm-template-crazy.md for output formatting.
 #
 # Usage:
-#   ./setup-brainstorm.sh [OPTIONS] "brainstorm request"
+#   ./setup-brainstorm-crazy.sh [OPTIONS] "brainstorm request"
 #
 # Options:
 #   --json       Output JSON (default)
@@ -14,9 +14,9 @@
 #   -v, --verbose  Verbose output
 #
 # Examples:
-#   ./setup-brainstorm.sh "improve login flow"
-#   ./setup-brainstorm.sh -v "add offline support"
-#   ./setup-brainstorm.sh --dry-run "story creator"
+#   ./setup-brainstorm-crazy.sh "improve login flow"
+#   ./setup-brainstorm-crazy.sh -v "add offline support"
+#   ./setup-brainstorm-crazy.sh --dry-run "story creator"
 #
 
 set -euo pipefail
@@ -26,6 +26,7 @@ SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 PROJECT_ROOT="$(cd "$(dirname "$(dirname "$(dirname "${SCRIPT_DIR}")")")" && pwd)"
 SPECS_DIR="${PROJECT_ROOT}/specs"
 BRAINSTORMS_DIR="${PROJECT_ROOT}/.zo/brainstorms"
+TEMPLATES_DIR="${PROJECT_ROOT}/.zo/templates"
 
 # Common words to remove when extracting research focus
 COMMON_WORDS="a an the and or but if then else when at of for to in on with by from as is are was were be been being have has had do does did will would could should might must may might about above after again against all also any are around as at because been before being below between both but by can could did do does doing down during each few for from further had has have having he her here hers herself him himself his how i if in into is it its itself just like me more most my myself no nor not now of off on once only or other ought our ours ourselves out over own same she should since so some such than that the their theirs them themselves then there these they this those through to too under until up very was we were what when where which while who whom why with would you your yours yourself yourselves"
@@ -74,10 +75,10 @@ parse_args() {
 # Show help message
 show_help() {
     cat << 'EOF'
-setup-brainstorm.sh - Initialize context for a brainstorm session
+setup-brainstorm-crazy.sh - Initialize context for a "crazy" brainstorm session
 
 USAGE:
-    ./setup-brainstorm.sh [OPTIONS] "brainstorm request"
+    ./setup-brainstorm-crazy.sh [OPTIONS] "brainstorm request"
 
 OPTIONS:
     --json       Output JSON (default behavior)
@@ -87,17 +88,17 @@ OPTIONS:
 
 EXAMPLES:
     # Basic usage
-    ./setup-brainstorm.sh "improve login flow"
+    ./setup-brainstorm-crazy.sh "improve login flow"
 
     # With verbose output
-    ./setup-brainstorm.sh -v "add offline support"
+    ./setup-brainstorm-crazy.sh -v "add offline support"
 
     # Dry run to see what would be found
-    ./setup-brainstorm.sh --dry-run "story creator"
+    ./setup-brainstorm-crazy.sh --dry-run "story creator"
 
 OUTPUT:
     JSON object with paths and information for the brainstorm session:
-    - OUTPUT_FILE: Path to the brainstorm output file
+    - OUTPUT_FILE: Path to the brainstorm output file (created from template if available)
     - FEATURE_SPEC: Path to the feature specification document
     - IMPL_PLAN: Path to the implementation plan document
     - TASKS: Path to the tasks document
@@ -291,6 +292,26 @@ main() {
     fi
 
     log_verbose "Output file: $OUTPUT_FILE"
+
+    # Use Template if available (only if not dry-run)
+    TEMPLATE="${TEMPLATES_DIR}/brainstorm-template-crazy.md"
+    if [[ -f "$TEMPLATE" && "$DRY_RUN" == "false" ]]; then
+        log_verbose "Using template: $TEMPLATE"
+        cp "$TEMPLATE" "$OUTPUT_FILE"
+        # Replace placeholders
+        if [[ "$OSTYPE" == "darwin"* ]]; then
+            # MacOS sed
+            sed -i '' "s/{{DATE}}/$DATE/g" "$OUTPUT_FILE"
+            sed -i '' "s/{{FEATURE}}/$RESEARCH_FOCUS/g" "$OUTPUT_FILE"
+        else
+            # Linux sed
+            sed -i "s/{{DATE}}/$DATE/g" "$OUTPUT_FILE"
+            sed -i "s/{{FEATURE}}/$RESEARCH_FOCUS/g" "$OUTPUT_FILE"
+        fi
+    elif [[ "$DRY_RUN" == "false" ]]; then
+        # Fallback to empty file if template missing
+        touch "$OUTPUT_FILE"
+    fi
 
     # Output JSON
     if [[ "$OUTPUT_JSON" == "true" ]]; then
