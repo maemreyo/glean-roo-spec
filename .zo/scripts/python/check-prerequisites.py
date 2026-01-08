@@ -80,7 +80,8 @@ def get_repo_root() -> str:
     
     # Fall back to script location for non-git repos
     script_dir = Path(__file__).parent.resolve()
-    repo_root = script_dir / '..' / '..'
+    # Go up 3 levels: python -> scripts -> .zo -> project
+    repo_root = script_dir.parent.parent.parent
     return str(repo_root.resolve())
 
 
