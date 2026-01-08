@@ -667,13 +667,32 @@ You have several paths forward. Choose based on your current phase and resources
 
 **When**: You have open Strategic questions that need research before committing
 
-```bash
-# Run user research for specific question
-/zo.research "user interviews on [strategic question topic]"
+**Available Options**:
 
-# Or do competitive analysis
-/zo.research "competitive landscape for [feature]"
-```
+1. **Deep-dive with git history and code analysis**:
+   ```bash
+   # Search for related patterns and past decisions
+   git log --oneline --all --grep="[keyword]" | head -20
+   
+   # Analyze existing implementations
+   grep -r "[keyword]" --include="*.ts" --include="*.tsx" .
+   ```
+
+2. **Re-brainstorm with research focus**:
+   ```bash
+   /zo.brainstorm "research: [strategic question topic] - analyze competitors, user needs, and technical feasibility"
+   ```
+
+3. **Document research gaps in the Strategic Question itself**:
+   - Add "What We Don't Know Yet" section with specific research questions
+   - Create a separate research document in `docs/research/`
+   - Link it from the strategic question
+   ```markdown
+   **Research Needed**:
+   
+   - See `docs/research/[topic]-analysis.md` for initial findings
+   - Key question to answer: [specific question]
+   ```
 
 **Recommended**: If you have P0/P1 Strategic questions, do NOT proceed to Path A/B until validated.
 
