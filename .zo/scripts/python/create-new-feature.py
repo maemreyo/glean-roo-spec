@@ -1,0 +1,202 @@
+#!/usr/bin/env python3
+"""
+Create a new feature from a user description.
+
+This script creates a new feature branch and spec file from a user feature
+description. It auto-detects the next branch number from existing git branches
+and spec directories, generates a branch name from the description using stop
+word filtering, and creates the spec file from the spec-template.
+
+Usage:
+    python create-new-feature.py [--json] [--short-name <name>] [--number N] <feature_description>
+
+Options:
+    --json              Output in JSON format
+    --short-name <name> Provide a custom short name (2-4 words) for the branch
+    --number N          Specify branch number manually (overrides auto-detection)
+    --help, -h          Show this help message
+
+Examples:
+    python create-new-feature.py 'Add user authentication system' --short-name 'user-auth'
+    python create-new-feature.py 'Implement OAuth2 integration for API' --number 5
+
+Output:
+    BRANCH_NAME: The created branch name (e.g., 001-user-auth)
+    SPEC_FILE: Path to the created spec file
+    FEATURE_NUM: The feature number (e.g., 001)
+    SPECIFY_FEATURE environment variable is set to the branch name
+"""
+
+import argparse
+import json
+import os
+import shutil
+import sys
+from datetime import datetime
+from pathlib import Path
+
+# Add parent directory to path to import feature_utils
+script_dir = Path(__file__).parent
+sys.path.insert(0, str(script_dir))
+
+import feature_utils
+
+
+def parse_arguments():
+    """Parse command line arguments."""
+    parser = argparse.ArgumentParser(
+        description='Create a new feature from a user description.',
+        add_help=False
+    )
+
+    parser.add_argument(
+        '--json',
+        action='store_true',
+        help='Output in JSON format'
+    )
+    parser.add_argument(
+        '--short-name',
+        metavar='<name>',
+        type=str,
+        default='',
+        help='Provide a custom short name (2-4 words) for the branch'
+    )
+    parser.add_argument(
+        '--number',
+        metavar='N',
+        type=str,
+        default='',
+        help='Specify branch number manually (overrides auto-detection)'
+    )
+    parser.add_argument(
+        '-h', '--help',
+        action='store_true',
+        help='Show this help message'
+    )
+    parser.add_argument(
+        'feature_description',
+        nargs='*',
+        help='Feature description (positional argument)'
+    )
+
+    args = parser.parse_args()
+
+    # Handle --help flag
+    if args.help:
+        parser.print_help()
+        print("\nExamples:")
+        print("  python create-new-feature.py 'Add user authentication system' --short-name 'user-auth'")
+        print("  python create-new-feature.py 'Implement OAuth2 integration for API' --number 5")
+        sys.exit(0)
+
+    # Validate feature description
+    if not args.feature_description:
+        print(f"Usage: {sys.argv[0]} [--json] [--short-name <name>] [--number N] <feature_description>",
+              file=sys.stderr)
+        sys.exit(1)
+
+    return args
+
+
+def determine_branch_number(args_number: str, specs_dir: str, has_git_repo: bool) -> int:
+    """
+    Determine the branch number.
+
+    Args:
+        args_number: User-provided number (empty string if not provided)
+        specs_dir: Path to specs directory
+        has_git_repo: Whether git repository is available
+
+    Returns:
+        Branch number as integer
+    """
+    if args_number:
+        # User provided a number - force decimal interpretation
+        # Use int() instead of int(..., 10) to strip leading zeros properly
+        return int(args_number)
+
+    if has_git_repo:
+        # Check existing branches on remotes
+        return feature_utils.check_existing_branches(specs_dir)
+    else:
+        # Fall back to local directory check
+        highest = feature_utils.get_highest_from_specs(specs_dir)
+        return highest + 1
+
+
+def main():
+    """Main entry point."""
+    args = parse_arguments()
+
+    # Join feature description words
+    feature_description = ' '.join(args.feature_description)
+
+    # Get repository root
+    repo_root = feature_utils.get_repo_root()
+
+    # Check if git is available
+    has_git_repo = feature_utils.has_git()
+
+    # Set up specs directory
+    specs_dir = os.path.join(repo_root, 'specs')
+    os.makedirs(specs_dir, exist_ok=True)
+
+    # Generate branch name suffix
+    if args.short_name:
+        # Use provided short name, just clean it up
+        branch_suffix = feature_utils.clean_branch_name(args.short_name)
+    else:
+        # Generate from description with smart filtering
+        branch_suffix = feature_utils.generate_branch_name(feature_description)
+
+    # Determine branch number
+    branch_number = determine_branch_number(args.number, specs_dir, has_git_repo)
+
+    # Format feature number as 3-digit with leading zeros
+    # Use base-10 interpretation (int() handles this automatically)
+    feature_num = f"{branch_number:03d}"
+
+    # Build branch name
+    branch_name = f"{feature_num}-{branch_suffix}"
+
+    # Truncate if exceeds GitHub limit
+    branch_name = feature_utils.truncate_branch_name(branch_name)
+
+    # Create git branch if available
+    if has_git_repo:
+        feature_utils.create_git_branch(branch_name, repo_root)
+
+    # Create feature directory
+    feature_dir = os.path.join(specs_dir, branch_name)
+    os.makedirs(feature_dir, exist_ok=True)
+
+    # Copy template to spec file
+    template_path = os.path.join(repo_root, '.zo', 'templates', 'spec-template.md')
+    spec_file = os.path.join(feature_dir, 'spec.md')
+
+    if os.path.exists(template_path):
+        shutil.copy(template_path, spec_file)
+    else:
+        # Create empty file if template doesn't exist
+        Path(spec_file).touch()
+
+    # Set SPECIFY_FEATURE environment variable
+    os.putenv('SPECIFY_FEATURE', branch_name)
+
+    # Output results
+    if args.json:
+        output = {
+            'BRANCH_NAME': branch_name,
+            'SPEC_FILE': spec_file,
+            'FEATURE_NUM': feature_num
+        }
+        print(json.dumps(output))
+    else:
+        print(f"BRANCH_NAME: {branch_name}")
+        print(f"SPEC_FILE: {spec_file}")
+        print(f"FEATURE_NUM: {feature_num}")
+        print(f"SPECIFY_FEATURE environment variable set to: {branch_name}")
+
+
+if __name__ == '__main__':
+    main()
