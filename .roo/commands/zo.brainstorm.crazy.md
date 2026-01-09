@@ -16,7 +16,7 @@ handoffs:
 > Initialize context for a "crazy" brainstorm session with enhanced template support.
 > Uses brainstorm-template-crazy.md for output formatting.
 > 
-> Usage: python setup-brainstorm-crazy.py [OPTIONS] "brainstorm request"
+> Usage: python3 setup-brainstorm-crazy.py [OPTIONS] "brainstorm request"
 > 
 > OPTIONS:
 >   --json              Output JSON (default)
@@ -34,9 +34,9 @@ handoffs:
 >   - SPEC_DIR: Path to the specification directory
 > 
 > EXAMPLES:
->   python setup-brainstorm-crazy.py "improve login flow"
->   python setup-brainstorm-crazy.py -v "add offline support"
->   python setup-brainstorm-crazy.py --dry-run "story creator"
+>   python3 setup-brainstorm-crazy.py "improve login flow"
+>   python3 setup-brainstorm-crazy.py -v "add offline support"
+>   python3 setup-brainstorm-crazy.py --dry-run "story creator"
 > ```
 
 ## User Input
@@ -87,7 +87,7 @@ First, establish the project context by finding the correct specification and pl
 
 1.  Run the setup script to initialize context:
     ```bash
-    python .zo/scripts/python/setup-brainstorm-crazy.py --json $ARGUMENTS
+    python3 .zo/scripts/python/setup-brainstorm-crazy.py --json $ARGUMENTS
     ```
 2.  Parse the JSON output to find:
     - `OUTPUT_FILE`: Where to save the accepted ideas (e.g., `.zo/brainstorms/improve-login-flow-DATE.md`).

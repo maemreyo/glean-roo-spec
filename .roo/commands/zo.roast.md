@@ -12,7 +12,7 @@ handoffs:
 > setup-roast.py
 > Initialize a roast report for code review.
 > 
-> Usage: python setup-roast.py [--json] [--json=JSON_DATA] [feature_dir]
+> Usage: python3 setup-roast.py [--json] [--json=JSON_DATA] [feature_dir]
 > 
 > OPTIONS:
 >   --json              Output results in JSON format
@@ -34,9 +34,9 @@ handoffs:
 >   FEATURE_DIR/roasts/roast-report-FEATURE_NAME-YYYY-MM-DD-HHMM.md
 > 
 > EXAMPLES:
->   python setup-roast.py --json
->   python setup-roast.py --json '{"commits":["abc123"]}'
->   python setup-roast.py --json path/to/feature
+>   python3 setup-roast.py --json
+>   python3 setup-roast.py --json '{"commits":["abc123"]}'
+>   python3 setup-roast.py --json path/to/feature
 > ```
 
 ## User Input
@@ -47,8 +47,8 @@ $ARGUMENTS
 ## Context Setup
 
 1.  **Initialize Report**:
-    -   Run `python .zo/scripts/python/setup-roast.py --json` to initialize the report file from the template and get absolute paths.
-    -   If $ARGUMENTS contains commits, pass them as JSON: `python .zo/scripts/python/setup-roast.py --json '{"commits": ["abc123","def456"], "design_system": ".zo/design-system.md"}'`
+    -   Run `python3 .zo/scripts/python/setup-roast.py --json` to initialize the report file from the template and get absolute paths.
+    -   If $ARGUMENTS contains commits, pass them as JSON: `python3 .zo/scripts/python/setup-roast.py --json '{"commits": ["abc123","def456"], "design_system": ".zo/design-system.md"}'`
     -   Parse the JSON output to get `REPORT_FILE`, `TASKS`, `IMPL_PLAN`, `COMMITS`, `DESIGN_SYSTEM`, etc.
     -   Read the newly created `REPORT_FILE` to understand the table structure.
 

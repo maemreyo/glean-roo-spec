@@ -37,7 +37,7 @@ MAIN FUNCTIONS:
    - Creates default Claude file if no agent files exist
 
 Usage:
-    python update-agent-context.py [agent_type]
+    python3 update-agent-context.py [agent_type]
     
 Agent types:
     claude|gemini|copilot|cursor-agent|qwen|opencode|codex|windsurf|kilocode|auggie|codebuddy|shai|q|bob|qoder

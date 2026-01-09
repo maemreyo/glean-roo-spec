@@ -6,7 +6,7 @@ This script locates the appropriate brainstorm file and outputs paths needed
 for creating a spec from an idea. It supports both JSON and plain text output.
 
 Usage:
-    python setup-specify-idea.py [--json] [brainstorm_file]
+    python3 setup-specify-idea.py [--json] [brainstorm_file]
     
 Arguments:
     --json, -h    Output results in JSON format
@@ -19,9 +19,9 @@ The script searches for brainstorm files in the following order:
 4. docs/brainstorms/ (legacy)
 
 Example:
-    python setup-specify-idea.py
-    python setup-specify-idea.py --json
-    python setup-specify-idea.py path/to/brainstorm.md
+    python3 setup-specify-idea.py
+    python3 setup-specify-idea.py --json
+    python3 setup-specify-idea.py path/to/brainstorm.md
 """
 
 import argparse

@@ -15,7 +15,7 @@ handoffs:
 > Find brainstorm file and spec template for spec creation.
 >
 > ```text
-> Usage: python setup-specify-idea.py [--json] [brainstorm_file]
+> Usage: python3 setup-specify-idea.py [--json] [brainstorm_file]
 >
 > OPTIONS:
 >   --json, -h          Output results in JSON format
@@ -34,16 +34,16 @@ handoffs:
 >   4. docs/brainstorms/ (legacy)
 >
 > EXAMPLES:
->   python setup-specify-idea.py
->   python setup-specify-idea.py --json
->   python setup-specify-idea.py path/to/brainstorm.md
+>   python3 setup-specify-idea.py
+>   python3 setup-specify-idea.py --json
+>   python3 setup-specify-idea.py path/to/brainstorm.md
 > ```
 >
 > ### 2. create-feature-from-idea.py
 > Create a new feature from an idea description.
 >
 > ```text
-> Usage: python create-feature-from-idea.py [--json] [--short-name <name>] [--number N] <feature_description>
+> Usage: python3 create-feature-from-idea.py [--json] [--short-name <name>] [--number N] <feature_description>
 >
 > OPTIONS:
 >   --json              Output in JSON format
@@ -62,8 +62,8 @@ handoffs:
 >   - SPECIFY_FEATURE: Set to the branch name
 >
 > EXAMPLES:
->   python create-feature-from-idea.py --json "Add user authentication system" --short-name "user-auth"
->   python create-feature-from-idea.py --json "Implement OAuth2 integration for API" --number 5
+>   python3 create-feature-from-idea.py --json "Add user authentication system" --short-name "user-auth"
+>   python3 create-feature-from-idea.py --json "Implement OAuth2 integration for API" --number 5
 > ```
 
 ## User Input
@@ -83,7 +83,7 @@ $ARGUMENTS
 
 1.  Run the setup script to find the brainstorm file:
     ```bash
-    python .zo/scripts/python/setup-specify-idea.py --json $ARGUMENTS
+    python3 .zo/scripts/python/setup-specify-idea.py --json $ARGUMENTS
     ```
 2.  Parse JSON output to get `BRAINSTORM_FILE`, `SPEC_TEMPLATE`, `DESIGN_FILE`, and check for `--design` flag.
 3.  **Read the content** of `BRAINSTORM_FILE` and `SPEC_TEMPLATE`.
@@ -125,7 +125,7 @@ Given the synthesized feature description:
        - Use N+1 for the new branch number
 
 3.  **Create Branch**:
-    *   Run `python .zo/scripts/python/create-feature-from-idea.py --json --number N+1 --short-name "short-name" "Synthesized Description"`
+    *   Run `python3 .zo/scripts/python/create-feature-from-idea.py --json --number N+1 --short-name "short-name" "Synthesized Description"`
     *   Parse JSON output to get `BRANCH_NAME` and `SPEC_FILE`.
 
 ### 4. Specification Generation

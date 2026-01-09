@@ -16,7 +16,7 @@ handoffs:
 > setup-plan.py
 > Initialize implementation plan for a feature.
 > 
-> Usage: python setup-plan.py [--json]
+> Usage: python3 setup-plan.py [--json]
 > 
 > OPTIONS:
 >   --json              Output results in JSON format
@@ -42,7 +42,7 @@ You **MUST** consider the user input before proceeding (if not empty).
 
 ## Outline
 
-1. **Setup**: Run `python .zo/scripts/python/setup-plan.py --json` from repo root and parse JSON for FEATURE_SPEC, IMPL_PLAN, DESIGN_FILE, SPECS_DIR, BRANCH. For single quotes in args like "I'm Groot", use escape syntax: e.g 'I'\''m Groot' (or double-quote if possible: "I'm Groot").
+1. **Setup**: Run `python3 .zo/scripts/python/setup-plan.py --json` from repo root and parse JSON for FEATURE_SPEC, IMPL_PLAN, DESIGN_FILE, SPECS_DIR, BRANCH. For single quotes in args like "I'm Groot", use escape syntax: e.g 'I'\''m Groot' (or double-quote if possible: "I'm Groot").
 2. **Load context**: Read FEATURE_SPEC and `.zo/memory/constitution.md`. Read DESIGN_FILE if it exists. Load IMPL_PLAN template (already copied).
 
    **Design System Loading** (if DESIGN_FILE exists):
@@ -103,7 +103,7 @@ You **MUST** consider the user input before proceeding (if not empty).
    - Output OpenAPI/GraphQL schema to `/contracts/`
 
 3. **Agent context update**:
-    - Run `python .zo/scripts/python/update-agent-context.py roo`
+    - Run `python3 .zo/scripts/python/update-agent-context.py roo`
    - These scripts detect which AI agent is in use
    - Update the appropriate agent-specific context file
    - Add only new technology from current plan

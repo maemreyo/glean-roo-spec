@@ -15,7 +15,7 @@ handoffs:
 > setup-brainstorm.py
 > Initialize a brainstorm session in .zo/brainstorms/ directory.
 > 
-> Usage: python setup-brainstorm.py [--json] [brainstorm topic]
+> Usage: python3 setup-brainstorm.py [--json] [brainstorm topic]
 > 
 > OPTIONS:
 >   --json              Output results in JSON format
@@ -29,8 +29,8 @@ handoffs:
 >   - TOPIC: The topic slug used for the file
 > 
 > EXAMPLES:
->   python setup-brainstorm.py "improve login flow"
->   python setup-brainstorm.py --json "add dark mode"
+>   python3 setup-brainstorm.py "improve login flow"
+>   python3 setup-brainstorm.py --json "add dark mode"
 > ```
 
 ## User Input
@@ -57,7 +57,7 @@ First, establish the project context by finding the correct specification and pl
 
 1.  Run the setup script to initialize context:
     ```bash
-    python .zo/scripts/python/setup-brainstorm.py --json $ARGUMENTS
+    python3 .zo/scripts/python/setup-brainstorm.py --json $ARGUMENTS
     ```
 2.  Parse the JSON output to find:
     *   `OUTPUT_FILE`: Where to save the accepted ideas (e.g., `.zo/brainstorms/improve-login-flow-DATE.md`).

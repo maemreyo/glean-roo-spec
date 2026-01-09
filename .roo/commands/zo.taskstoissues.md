@@ -8,7 +8,7 @@ tools: ['github/github-mcp-server/issue_write']
 > ```text
 > Consolidated prerequisite checking script for Spec-Driven Development workflow.
 > 
-> Usage: python check-prerequisites.py [OPTIONS]
+> Usage: python3 check-prerequisites.py [OPTIONS]
 > 
 > OPTIONS:
 >   --json              Output in JSON format

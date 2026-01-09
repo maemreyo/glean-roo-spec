@@ -12,7 +12,7 @@ Usage:
     
     # Get feature paths for bash sourcing
     import subprocess
-    result = subprocess.run(['python', 'common.py'], capture_output=True, text=True)
+    result = subprocess.run(['python3', 'common.py'], capture_output=True, text=True)
     # Then eval the output in bash: eval $(python common.py)
 
 Functions:

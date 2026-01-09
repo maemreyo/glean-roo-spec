@@ -7,7 +7,7 @@ description: Perform a non-destructive cross-artifact consistency and quality an
 > ```text
 > Consolidated prerequisite checking script for Spec-Driven Development workflow.
 > 
-> Usage: python check-prerequisites.py [OPTIONS]
+> Usage: python3 check-prerequisites.py [OPTIONS]
 > 
 > OPTIONS:
 >   --json              Output in JSON format

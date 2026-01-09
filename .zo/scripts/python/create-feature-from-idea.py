@@ -8,7 +8,7 @@ directories, generates a branch name from the description using stop word
 filtering, and creates the spec file from the spec-from-idea template.
 
 Usage:
-    python create-feature-from-idea.py [--json] [--short-name <name>] [--number N] <feature_description>
+    python3 create-feature-from-idea.py [--json] [--short-name <name>] [--number N] <feature_description>
 
 Options:
     --json              Output in JSON format
@@ -17,8 +17,8 @@ Options:
     --help, -h          Show this help message
 
 Examples:
-    python create-feature-from-idea.py 'Add user authentication system' --short-name 'user-auth'
-    python create-feature-from-idea.py 'Implement OAuth2 integration for API' --number 5
+    python3 create-feature-from-idea.py 'Add user authentication system' --short-name 'user-auth'
+    python3 create-feature-from-idea.py 'Implement OAuth2 integration for API' --number 5
 
 Output:
     BRANCH_NAME: The created branch name (e.g., 001-user-auth)
