@@ -63,6 +63,7 @@ from python.common import (
     get_feature_dir,
     get_workspace_path,
     resolve_path,
+    validate_execution_environment,
 )
 
 # Configure logging with debug mode support
