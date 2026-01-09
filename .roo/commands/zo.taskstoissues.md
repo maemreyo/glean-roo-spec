@@ -5,6 +5,12 @@ tools: ['github/github-mcp-server/issue_write']
 
 > **Prerequisite Script**: This command uses `.zo/scripts/python/check-prerequisites.py` for context initialization.
 >
+> **Debug Mode**: Enable debug output with:
+> ```sh
+> ZO_DEBUG=1 python3 .zo/scripts/python/check-prerequisites.py --json --require-tasks --include-tasks
+> ```
+> This shows detailed path resolution, workspace detection, and validation messages.
+>
 > ```text
 > Consolidated prerequisite checking script for Spec-Driven Development workflow.
 > 
