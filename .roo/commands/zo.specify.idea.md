@@ -26,7 +26,7 @@ $ARGUMENTS
 
 1.  Run the setup script to find the brainstorm file:
     ```bash
-    .zo/scripts/bash/setup-specify-idea.sh --json $ARGUMENTS
+    python .zo/scripts/python/setup-specify-idea.py --json $ARGUMENTS
     ```
 2.  Parse JSON output to get `BRAINSTORM_FILE`, `SPEC_TEMPLATE`, `DESIGN_FILE`, and check for `--design` flag.
 3.  **Read the content** of `BRAINSTORM_FILE` and `SPEC_TEMPLATE`.
@@ -68,7 +68,7 @@ Given the synthesized feature description:
        - Use N+1 for the new branch number
 
 3.  **Create Branch**:
-    *   Run `.zo/scripts/bash/create-feature-from-idea.sh --json --number N+1 --short-name "short-name" "Synthesized Description"`
+    *   Run `python .zo/scripts/python/create-feature-from-idea.py --json --number N+1 --short-name "short-name" "Synthesized Description"`
     *   Parse JSON output to get `BRANCH_NAME` and `SPEC_FILE`.
 
 ### 4. Specification Generation

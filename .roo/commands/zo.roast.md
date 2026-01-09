@@ -14,8 +14,8 @@ $ARGUMENTS
 ## Context Setup
 
 1.  **Initialize Report**:
-    -   Run `.zo/scripts/bash/setup-roast.sh --json` to initialize the report file from the template and get absolute paths.
-    -   If $ARGUMENTS contains commits, pass them as JSON: `.zo/scripts/bash/setup-roast.sh --json '{"commits": ["abc123","def456"], "design_system": ".zo/design-system.md"}'`
+    -   Run `python .zo/scripts/python/setup-roast.py --json` to initialize the report file from the template and get absolute paths.
+    -   If $ARGUMENTS contains commits, pass them as JSON: `python .zo/scripts/python/setup-roast.py --json '{"commits": ["abc123","def456"], "design_system": ".zo/design-system.md"}'`
     -   Parse the JSON output to get `REPORT_FILE`, `TASKS`, `IMPL_PLAN`, `COMMITS`, `DESIGN_SYSTEM`, etc.
     -   Read the newly created `REPORT_FILE` to understand the table structure.
 

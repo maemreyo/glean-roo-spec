@@ -56,10 +56,9 @@ Given that feature description, do this:
       - Find the highest number N
       - Use N+1 for the new branch number
 
-   d. Run the script `.zo/scripts/bash/create-new-feature.sh --json "$ARGUMENTS"` with the calculated number and short-name:
+   d. Run the script `python .zo/scripts/python/create-new-feature.py --json "$ARGUMENTS"` with the calculated number and short-name:
       - Pass `--number N+1` and `--short-name "your-short-name"` along with the feature description
-      - Bash example: `.zo/scripts/bash/create-new-feature.sh --json "$ARGUMENTS" --json --number 5 --short-name "user-auth" "Add user authentication"`
-      - PowerShell example: `.zo/scripts/bash/create-new-feature.sh --json "$ARGUMENTS" -Json -Number 5 -ShortName "user-auth" "Add user authentication"`
+      - Python example: `python .zo/scripts/python/create-new-feature.py --json "$ARGUMENTS" --number 5 --short-name "user-auth" "Add user authentication"`
 
    **IMPORTANT**:
    - Check all three sources (remote branches, local branches, specs directories) to find the highest number
@@ -74,29 +73,29 @@ Given that feature description, do this:
 
 4. Follow this execution flow:
 
-    1. Parse user description from Input
-       If empty: ERROR "No feature description provided"
-    2. Extract key concepts from description
-       Identify: actors, actions, data, constraints
-    3. For unclear aspects:
-       - Make informed guesses based on context and industry standards
-       - Only mark with [NEEDS CLARIFICATION: specific question] if:
-         - The choice significantly impacts feature scope or user experience
-         - Multiple reasonable interpretations exist with different implications
-         - No reasonable default exists
-       - **LIMIT: Maximum 3 [NEEDS CLARIFICATION] markers total**
-       - Prioritize clarifications by impact: scope > security/privacy > user experience > technical details
-    4. Fill User Scenarios & Testing section
-       If no clear user flow: ERROR "Cannot determine user scenarios"
-    5. Generate Functional Requirements
-       Each requirement must be testable
-       Use reasonable defaults for unspecified details (document assumptions in Assumptions section)
-    6. Define Success Criteria
-       Create measurable, technology-agnostic outcomes
-       Include both quantitative metrics (time, performance, volume) and qualitative measures (user satisfaction, task completion)
-       Each criterion must be verifiable without implementation details
-    7. Identify Key Entities (if data involved)
-    8. Return: SUCCESS (spec ready for planning)
+     1. Parse user description from Input
+        If empty: ERROR "No feature description provided"
+     2. Extract key concepts from description
+        Identify: actors, actions, data, constraints
+     3. For unclear aspects:
+        - Make informed guesses based on context and industry standards
+        - Only mark with [NEEDS CLARIFICATION: specific question] if:
+          - The choice significantly impacts feature scope or user experience
+          - Multiple reasonable interpretations exist with different implications
+          - No reasonable default exists
+        - **LIMIT: Maximum 3 [NEEDS CLARIFICATION] markers total**
+        - Prioritize clarifications by impact: scope > security/privacy > user experience > technical details
+     4. Fill User Scenarios & Testing section
+        If no clear user flow: ERROR "Cannot determine user scenarios"
+     5. Generate Functional Requirements
+        Each requirement must be testable
+        Use reasonable defaults for unspecified details (document assumptions in Assumptions section)
+     6. Define Success Criteria
+        Create measurable, technology-agnostic outcomes
+        Include both quantitative metrics (time, performance, volume) and qualitative measures (user satisfaction, task completion)
+        Each criterion must be verifiable without implementation details
+     7. Identify Key Entities (if data involved)
+     8. Return: SUCCESS (spec ready for planning)
 
 5. Write the specification to SPEC_FILE using the template structure, replacing placeholders with concrete details derived from the feature description (arguments) while preserving section order and headings.
 

@@ -57,7 +57,7 @@ First, establish the project context by finding the correct specification and pl
 
 1.  Run the setup script to initialize context:
     ```bash
-    .zo/scripts/bash/setup-brainstorm-crazy.sh --json $ARGUMENTS
+    python .zo/scripts/python/setup-brainstorm-crazy.py --json $ARGUMENTS
     ```
 2.  Parse the JSON output to find:
     - `OUTPUT_FILE`: Where to save the accepted ideas (e.g., `.zo/brainstorms/improve-login-flow-DATE.md`).
