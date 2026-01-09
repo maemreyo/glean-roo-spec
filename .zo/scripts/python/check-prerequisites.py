@@ -7,7 +7,7 @@ It replaces the functionality previously spread across multiple bash scripts.
 
 This script uses the shared `common.py` module for core utility functions.
 
-Usage: python3 check-prerequisites.py [OPTIONS]
+Usage: ZO_DEBUG=1 python3check-prerequisites.py [OPTIONS]
 
 OPTIONS:
   --json              Output in JSON format

@@ -16,7 +16,7 @@ handoffs:
 > Initialize context for a "crazy" brainstorm session with enhanced template support.
 > Uses brainstorm-template-crazy.md for output formatting.
 > 
-> Usage: python3 setup-brainstorm-crazy.py [OPTIONS] "brainstorm request"
+> Usage: ZO_DEBUG=1 python3setup-brainstorm-crazy.py [OPTIONS] "brainstorm request"
 > 
 > OPTIONS:
 >   --json              Output JSON (default)

@@ -15,7 +15,7 @@ handoffs:
 > Find brainstorm file and spec template for spec creation.
 >
 > ```text
-> Usage: python3 setup-specify-idea.py [--json] [brainstorm_file]
+> Usage: ZO_DEBUG=1 python3setup-specify-idea.py [--json] [brainstorm_file]
 >
 > OPTIONS:
 >   --json, -h          Output results in JSON format
@@ -43,7 +43,7 @@ handoffs:
 > Create a new feature from an idea description.
 >
 > ```text
-> Usage: python3 create-feature-from-idea.py [--json] [--short-name <name>] [--number N] <feature_description>
+> Usage: ZO_DEBUG=1 python3create-feature-from-idea.py [--json] [--short-name <name>] [--number N] <feature_description>
 >
 > OPTIONS:
 >   --json              Output in JSON format
@@ -125,7 +125,7 @@ Given the synthesized feature description:
        - Use N+1 for the new branch number
 
 3.  **Create Branch**:
-    *   Run `python3 .zo/scripts/python/create-feature-from-idea.py --json --number N+1 --short-name "short-name" "Synthesized Description"`
+    *   Run `ZO_DEBUG=1 python3 .zo/scripts/python/create-feature-from-idea.py --json --number N+1 --short-name "short-name" "Synthesized Description"`
     *   Parse JSON output to get `BRANCH_NAME` and `SPEC_FILE`.
 
 ### 4. Specification Generation

@@ -16,7 +16,7 @@ handoffs:
 > create-new-feature.py
 > Create a new feature from a user description.
 > 
-> Usage: python3 create-new-feature.py [--json] [--short-name <name>] [--number N] <feature_description>
+> Usage: ZO_DEBUG=1 python3create-new-feature.py [--json] [--short-name <name>] [--number N] <feature_description>
 > 
 > OPTIONS:
 >   --json              Output in JSON format
@@ -85,9 +85,9 @@ Given that feature description, do this:
       - Find the highest number N
       - Use N+1 for the new branch number
 
-   d. Run the script `python3 .zo/scripts/python/create-new-feature.py --json "$ARGUMENTS"` with the calculated number and short-name:
+   d. Run the script `ZO_DEBUG=1 python3 .zo/scripts/python/create-new-feature.py --json "$ARGUMENTS"` with the calculated number and short-name:
       - Pass `--number N+1` and `--short-name "your-short-name"` along with the feature description
-      - Python example: `python3 .zo/scripts/python/create-new-feature.py --json "$ARGUMENTS" --number 5 --short-name "user-auth" "Add user authentication"`
+      - Python example: `ZO_DEBUG=1 python3 .zo/scripts/python/create-new-feature.py --json "$ARGUMENTS" --number 5 --short-name "user-auth" "Add user authentication"`
 
    **IMPORTANT**:
    - Check all three sources (remote branches, local branches, specs directories) to find the highest number

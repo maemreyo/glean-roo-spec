@@ -22,7 +22,7 @@ handoffs:
 > ```text
 > Consolidated prerequisite checking script for Spec-Driven Development workflow.
 > 
-> Usage: python3 check-prerequisites.py [OPTIONS]
+> Usage: ZO_DEBUG=1 python3check-prerequisites.py [OPTIONS]
 > 
 > OPTIONS:
 >   --json              Output in JSON format

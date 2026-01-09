@@ -15,7 +15,7 @@ handoffs:
 > setup-brainstorm.py
 > Initialize a brainstorm session in .zo/brainstorms/ directory.
 > 
-> Usage: python3 setup-brainstorm.py [--json] [brainstorm topic]
+> Usage: ZO_DEBUG=1 python3setup-brainstorm.py [--json] [brainstorm topic]
 > 
 > OPTIONS:
 >   --json              Output results in JSON format

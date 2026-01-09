@@ -13,7 +13,7 @@ description: Perform a non-destructive cross-artifact consistency and quality an
 > ```text
 > Consolidated prerequisite checking script for Spec-Driven Development workflow.
 > 
-> Usage: python3 check-prerequisites.py [OPTIONS]
+> Usage: ZO_DEBUG=1 python3check-prerequisites.py [OPTIONS]
 > 
 > OPTIONS:
 >   --json              Output in JSON format

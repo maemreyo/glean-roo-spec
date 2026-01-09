@@ -12,7 +12,7 @@ handoffs:
 > setup-roast.py
 > Initialize a roast report for code review.
 > 
-> Usage: python3 setup-roast.py [--json] [--json=JSON_DATA] [feature_dir]
+> Usage: ZO_DEBUG=1 python3setup-roast.py [--json] [--json=JSON_DATA] [feature_dir]
 > 
 > OPTIONS:
 >   --json              Output results in JSON format
@@ -47,8 +47,8 @@ $ARGUMENTS
 ## Context Setup
 
 1.  **Initialize Report**:
-    -   Run `python3 .zo/scripts/python/setup-roast.py --json` to initialize the report file from the template and get absolute paths.
-    -   If $ARGUMENTS contains commits, pass them as JSON: `python3 .zo/scripts/python/setup-roast.py --json '{"commits": ["abc123","def456"], "design_system": ".zo/design-system.md"}'`
+    -   Run `ZO_DEBUG=1 python3 .zo/scripts/python/setup-roast.py --json` to initialize the report file from the template and get absolute paths.
+    -   If $ARGUMENTS contains commits, pass them as JSON: `ZO_DEBUG=1 python3 .zo/scripts/python/setup-roast.py --json '{"commits": ["abc123","def456"], "design_system": ".zo/design-system.md"}'`
     -   Parse the JSON output to get `REPORT_FILE`, `TASKS`, `IMPL_PLAN`, `COMMITS`, `DESIGN_SYSTEM`, etc.
     -   Read the newly created `REPORT_FILE` to understand the table structure.
 

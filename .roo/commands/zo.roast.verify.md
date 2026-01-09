@@ -12,7 +12,7 @@ handoffs:
 > setup-roast-verify.py
 > Verify and locate the latest roast report for a feature.
 > 
-> Usage: python3 setup-roast-verify.py [--json] [--report=path/to/report.md] [feature_dir]
+> Usage: ZO_DEBUG=1 python3setup-roast-verify.py [--json] [--report=path/to/report.md] [feature_dir]
 > 
 > OPTIONS:
 >   --json              Output results in JSON format
@@ -43,7 +43,7 @@ $ARGUMENTS
 ## Context Setup
 
 1.  **Initialize Verification**:
-    -   Run `python3 .zo/scripts/python/setup-roast-verify.py --json $ARGUMENTS` to locate the target roast report.
+    -   Run `ZO_DEBUG=1 python3 .zo/scripts/python/setup-roast-verify.py --json $ARGUMENTS` to locate the target roast report.
     -   Parse the JSON output to get `REPORT_FILE`.
     -   Read `REPORT_FILE` to access the **Audit & Roast Checklist**.
 
