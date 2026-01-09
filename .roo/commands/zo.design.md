@@ -194,27 +194,27 @@ Based on project type and requirements, execute searches:
 
 1. **Project Type/Domain**:
    ```bash
-   ZO_DEBUG=1 python3 .zo/system/ui-ux-pro-max/scripts/search.py "[project-type]" --domain product
+   python3 .zo/system/ui-ux-pro-max/scripts/search.py "[project-type]" --domain product
    ```
 
 2. **Style & Aesthetics**:
    ```bash
-   ZO_DEBUG=1 python3 .zo/system/ui-ux-pro-max/scripts/search.py "[desired-mood]" --domain style
+   python3 .zo/system/ui-ux-pro-max/scripts/search.py "[desired-mood]" --domain style
    ```
 
 3. **Typography**:
    ```bash
-   ZO_DEBUG=1 python3 .zo/system/ui-ux-pro-max/scripts/search.py "[mood]" --domain typography
+   python3 .zo/system/ui-ux-pro-max/scripts/search.py "[mood]" --domain typography
    ```
 
 4. **Color Palette**:
    ```bash
-   ZO_DEBUG=1 python3 .zo/system/ui-ux-pro-max/scripts/search.py "[industry/features]" --domain color
+   python3 .zo/system/ui-ux-pro-max/scripts/search.py "[industry/features]" --domain color
    ```
 
 5. **Component Patterns**:
    ```bash
-   ZO_DEBUG=1 python3 .zo/system/ui-ux-pro-max/scripts/search.py "[component-type]" --domain ux
+   python3 .zo/system/ui-ux-pro-max/scripts/search.py "[component-type]" --domain ux
    ```
 
 **Step 3.2.2: Synthesize & Document**
