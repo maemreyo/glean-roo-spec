@@ -29,6 +29,15 @@ import sys
 from pathlib import Path
 from typing import Optional, Tuple
 
+# Import shared utilities from common module
+from common import (
+    get_workspace_path,
+    validate_execution_environment,
+    normalize_task_id,
+    strip_duplicate_workspace_prefix,
+    resolve_path as common_resolve_path
+)
+
 # Configure logging with debug mode support
 if os.environ.get('DEBUG') or os.environ.get('ZO_DEBUG'):
     logging.basicConfig(level=logging.DEBUG, format='%(levelname)s: %(message)s')
@@ -38,160 +47,6 @@ else:
         format='%(levelname)s: %(message)s'
     )
 logger = logging.getLogger(__name__)
-
-
-def get_workspace_path() -> str:
-    """Get the workspace root path from environment or current directory."""
-    pwd = os.environ.get('PWD', '')
-    workspace = os.environ.get('WORKSPACE', os.environ.get('HOME', ''))
-    
-    if pwd and os.path.exists(pwd):
-        return os.path.abspath(pwd)
-    
-    return os.path.abspath(os.getcwd())
-
-
-def normalize_task_id(task_id: str) -> str:
-    """
-    Normalize task ID to standard format TXXX.
-    
-    Handles common variations:
-    - [T001] -> T001
-    - task_T001 -> T001
-    - T001 -> T001
-    
-    Args:
-        task_id: Raw task ID input
-    
-    Returns:
-        Normalized task ID in format T001
-    """
-    original = task_id
-    
-    # Remove brackets if present: [T001] -> T001
-    task_id = task_id.strip()
-    if task_id.startswith('[') and task_id.endswith(']'):
-        task_id = task_id[1:-1]
-    
-    # Remove 'task_' prefix if present: task_T001 -> T001
-    if task_id.lower().startswith('task_'):
-        task_id = task_id[5:]
-    
-    # Ensure uppercase T prefix
-    if not task_id.startswith('T') and re.match(r'^\d{3}$', task_id):
-        task_id = 'T' + task_id
-    
-    if original != task_id:
-        logger.debug(f"Normalized task ID: '{original}' -> '{task_id}'")
-    
-    return task_id
-
-
-def strip_duplicate_workspace_prefix(task_file: str, workspace: str) -> str:
-    """
-    Strip duplicate workspace prefix from path.
-    
-    Handles cases like:
-    /Users/xxx/Documents/zaob-dev/glean-v2/Users/xxx/Documents/zaob-dev/glean-v2/specs/...
-    
-    Args:
-        task_file: The input file path
-        workspace: The workspace root path
-    
-    Returns:
-        Path with duplicate prefix stripped if detected
-    """
-    # Check for doubled workspace path (e.g., /path/to/workspace/path/to/workspace/...)
-    doubled_pattern = workspace + workspace
-    if task_file.startswith(doubled_pattern):
-        corrected = task_file[len(workspace):]
-        logger.warning(f"Detected doubled workspace path, corrected: {task_file[:50]}... -> {corrected[:50]}...")
-        return corrected
-    
-    # Check if path starts with workspace + '/Users/xxx/...' pattern
-    if task_file.startswith(workspace):
-        after_workspace = task_file[len(workspace):].lstrip('/')
-        
-        if after_workspace.startswith('Users/') or after_workspace.startswith('User/'):
-            second_occurrence = task_file.find(after_workspace)
-            if second_occurrence > len(workspace):
-                corrected = '/' + after_workspace
-                logger.warning(f"Detected duplicate workspace segment, corrected: {task_file[:50]}... -> {corrected}")
-                return corrected
-    
-    return task_file
-
-
-def resolve_path(task_file: str) -> str:
-    """
-    Resolve task file path, handling common AI mistakes.
-    
-    This function handles:
-    1. Double workspace path (AI mistakenly prepends workspace twice)
-    2. Non-existent paths from wrong CWD (tries common locations)
-    3. Relative paths from different directories
-    
-    Args:
-        task_file: The input file path (possibly incorrect)
-    
-    Returns:
-        Resolved absolute path to the file, or original if not found
-    """
-    workspace = get_workspace_path()
-    original_path = task_file
-    
-    # Case A: Strip duplicate workspace prefix
-    task_file = strip_duplicate_workspace_prefix(task_file, workspace)
-    
-    # Case B: Try multiple locations if file doesn't exist
-    if not os.path.exists(task_file):
-        possible_paths = []
-        
-        # Original path (just in case)
-        possible_paths.append(task_file)
-        
-        # Try relative to workspace
-        ws_relative = os.path.join(workspace, task_file)
-        possible_paths.append(ws_relative)
-        
-        # Try with 'specs/' prefix if not already present
-        basename = os.path.basename(task_file)
-        possible_paths.append(os.path.join(workspace, 'specs', basename))
-        
-        # Try with 'specs/' prefix for full path
-        if not task_file.startswith('specs/'):
-            possible_paths.append(os.path.join(workspace, 'specs', task_file))
-        
-        # Try parent directories (for when AI assumes wrong CWD)
-        parts = task_file.split(os.sep)
-        if len(parts) > 1:
-            possible_paths.append(os.path.join(workspace, parts[-1]))
-        
-        # Try current working directory
-        cwd = os.getcwd()
-        if cwd != workspace:
-            possible_paths.append(os.path.join(cwd, task_file))
-            possible_paths.append(os.path.join(cwd, 'specs', os.path.basename(task_file)))
-        
-        # Find the first existing path
-        for path in possible_paths:
-            if os.path.exists(path):
-                abs_path = os.path.abspath(path)
-                if abs_path != original_path:
-                    logger.warning(f"Path not found at '{original_path}', resolved to: {abs_path}")
-                return abs_path
-        
-        # If file exists after normalization, use it
-        if os.path.exists(task_file):
-            return os.path.abspath(task_file)
-    
-    # Return absolute path if file exists
-    if os.path.exists(task_file):
-        return os.path.abspath(task_file)
-    
-    # Return original if nothing works (will fail at file check later)
-    logger.warning(f"Could not resolve path, using original: {task_file}")
-    return task_file
 
 
 def parse_args():
@@ -325,6 +180,11 @@ def update_task_status_bracket(content: str, task_id: str) -> Tuple[str, bool]:
 
 def main():
     """Main entry point."""
+    # Validate execution environment first
+    if not validate_execution_environment():
+        logger.error("Execution environment validation failed. Please check the workspace path.")
+        sys.exit(1)
+    
     args = parse_args()
     
     # Set logging level
@@ -341,7 +201,7 @@ def main():
         sys.exit(1)
     
     # Resolve path (handle common AI path mistakes)
-    resolved_path = resolve_path(args.tasks_file)
+    resolved_path = common_resolve_path(args.tasks_file)
     
     # Check if tasks file exists
     if not os.path.isfile(resolved_path):
