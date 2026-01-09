@@ -15,12 +15,23 @@ Functions:
     truncate_branch_name() - Truncate branch name to GitHub limit
 """
 
+import logging
 import os
 import re
 import subprocess
 import sys
 from pathlib import Path
 from typing import Optional
+
+# Configure logging with debug mode support
+if os.environ.get('DEBUG') or os.environ.get('ZO_DEBUG'):
+    logging.basicConfig(level=logging.DEBUG, format='%(levelname)s: %(message)s')
+else:
+    logging.basicConfig(
+        level=logging.INFO,
+        format='%(levelname)s: %(message)s'
+    )
+logger = logging.getLogger(__name__)
 
 # Stop words to filter out when generating branch names
 STOP_WORDS = re.compile(
@@ -127,8 +138,7 @@ def get_repo_root() -> str:
     if repo_root:
         return repo_root
     
-    print("Error: Could not determine repository root. "
-          "Please run this script from within the repository.", file=sys.stderr)
+    logger.error("Could not determine repository root. Please run this script from within the repository.")
     sys.exit(1)
 
 
@@ -163,7 +173,7 @@ def get_highest_from_specs(specs_dir: str) -> int:
                     if number > highest:
                         highest = number
     except OSError as e:
-        print(f"Warning: Error reading specs directory: {e}", file=sys.stderr)
+        logger.warning(f"Error reading specs directory: {e}")
 
     return highest
 
@@ -352,10 +362,10 @@ def truncate_branch_name(branch_name: str) -> str:
 
     new_branch_name = prefix + truncated_suffix
 
-    # Print warning to stderr
-    print(f"[specify] Warning: Branch name exceeded GitHub's 244-byte limit", file=sys.stderr)
-    print(f"[specify] Original: {branch_name} ({byte_length} bytes)", file=sys.stderr)
-    print(f"[specify] Truncated to: {new_branch_name} ({len(new_branch_name.encode('utf-8'))} bytes)", file=sys.stderr)
+    # Log warning
+    logger.warning(f"Branch name exceeded GitHub's 244-byte limit")
+    logger.warning(f"Original: {branch_name} ({byte_length} bytes)")
+    logger.warning(f"Truncated to: {new_branch_name} ({len(new_branch_name.encode('utf-8'))} bytes)")
 
     return new_branch_name
 
@@ -372,8 +382,7 @@ def create_git_branch(branch_name: str, repo_root: str) -> bool:
         True if successful, False otherwise
     """
     if not has_git():
-        print(f"[specify] Warning: Git repository not detected; "
-              f"skipped branch creation for {branch_name}", file=sys.stderr)
+        logger.warning(f"Git repository not detected; skipped branch creation for {branch_name}")
         return False
 
     result = run_git_command(['checkout', '-b', branch_name], cwd=repo_root)

@@ -30,6 +30,7 @@ Output:
 
 import argparse
 import json
+import logging
 import os
 import re
 import sys
@@ -37,11 +38,23 @@ from datetime import datetime
 from pathlib import Path
 from typing import Optional, Tuple
 
+# Configure logging with debug mode support
+DEBUG = os.getenv('DEBUG', '').lower() in ('1', 'true', 'yes')
+ZO_DEBUG = os.getenv('ZO_DEBUG', '').lower() in ('1', 'true', 'yes')
+VERBOSE = DEBUG or ZO_DEBUG
+
+logging.basicConfig(
+    level=logging.DEBUG if VERBOSE else logging.INFO,
+    format='%(asctime)s - %(levelname)s - %(message)s',
+    datefmt='%Y-%m-%d %H:%M:%S'
+)
+logger = logging.getLogger(__name__)
+
 # Add parent directory to path to import common module
 script_dir = Path(__file__).parent.resolve()
 sys.path.insert(0, str(script_dir))
 
-from common import get_repo_root, check_file_exists
+from common import get_repo_root, check_file_exists, validate_execution_environment
 
 
 # Common words to remove when extracting research focus
@@ -66,29 +79,6 @@ COMMON_WORDS = set([
     'who', 'whom', 'why', 'with', 'would', 'you', 'your', 'yours', 'yourself',
     'yourselves'
 ])
-
-
-def log_verbose(message: str, verbose: bool):
-    """
-    Log verbose messages to stderr.
-    
-    Args:
-        message: Message to log
-        verbose: Whether verbose mode is enabled
-    """
-    if verbose:
-        print(f"[VERBOSE] {message}", file=sys.stderr)
-
-
-def error(message: str):
-    """
-    Print error message and exit.
-    
-    Args:
-        message: Error message to display
-    """
-    print(f"Error: {message}", file=sys.stderr)
-    sys.exit(1)
 
 
 def extract_research_focus(input_text: str) -> str:
@@ -128,20 +118,19 @@ def extract_research_focus(input_text: str) -> str:
     return focus
 
 
-def find_spec_folder(focus: str, specs_dir: str, verbose: bool) -> Optional[str]:
+def find_spec_folder(focus: str, specs_dir: str) -> Optional[str]:
     """
     Find matching spec folder based on research focus keywords.
     
     Args:
         focus: Research focus (hyphenated keywords)
         specs_dir: Path to specs directory
-        verbose: Whether to enable verbose logging
         
     Returns:
         Best matching folder name, or None if no match found
     """
     if not os.path.isdir(specs_dir):
-        log_verbose(f"Specs directory not found: {specs_dir}", verbose)
+        logger.debug(f"Specs directory not found: {specs_dir}")
         return None
     
     # Get list of spec folders, sorted in reverse (newest first)
@@ -151,7 +140,7 @@ def find_spec_folder(focus: str, specs_dir: str, verbose: bool) -> Optional[str]
             reverse=True
         )
     except OSError:
-        log_verbose(f"Error reading specs directory: {specs_dir}", verbose)
+        logger.debug(f"Error reading specs directory: {specs_dir}")
         return None
     
     best_match = None
@@ -183,13 +172,12 @@ def find_spec_folder(focus: str, specs_dir: str, verbose: bool) -> Optional[str]
     return best_match
 
 
-def find_related_files(spec_dir: str, verbose: bool) -> Tuple[Optional[str], Optional[str], Optional[str]]:
+def find_related_files(spec_dir: str) -> Tuple[Optional[str], Optional[str], Optional[str]]:
     """
     Find related files (spec.md, plan.md, tasks.md) in spec directory.
     
     Args:
         spec_dir: Path to spec directory
-        verbose: Whether to enable verbose logging
         
     Returns:
         Tuple of (feature_spec_path, impl_plan_path, tasks_path)
@@ -216,9 +204,9 @@ def find_related_files(spec_dir: str, verbose: bool) -> Tuple[Optional[str], Opt
     elif check_file_exists(os.path.join(spec_dir, 'TASKS.md')):
         tasks = os.path.join(spec_dir, 'TASKS.md')
     
-    log_verbose(f"Feature spec: {feature_spec or 'none'}", verbose)
-    log_verbose(f"Implementation plan: {impl_plan or 'none'}", verbose)
-    log_verbose(f"Tasks: {tasks or 'none'}", verbose)
+    logger.debug(f"Feature spec: {feature_spec or 'none'}")
+    logger.debug(f"Implementation plan: {impl_plan or 'none'}")
+    logger.debug(f"Tasks: {tasks or 'none'}")
     
     return feature_spec, impl_plan, tasks
 
@@ -302,7 +290,8 @@ def parse_args():
     # If there are unknown args starting with -, bash exits with code 1
     for arg in unknown:
         if arg.startswith('-'):
-            error(f"Unknown option: {arg}")
+            logger.error(f"Unknown option: {arg}")
+            sys.exit(1)
     
     return args
 
@@ -316,6 +305,11 @@ def main():
         print(__doc__)
         sys.exit(0)
     
+    # Validate execution environment
+    if not validate_execution_environment():
+        logger.error("Execution environment validation failed")
+        sys.exit(1)
+    
     # Get paths
     repo_root = get_repo_root()
     specs_dir = os.path.join(repo_root, 'specs')
@@ -324,20 +318,22 @@ def main():
     
     # Validate arguments
     if not args.request:
-        error("No brainstorm request provided. Use --help for usage.")
+        logger.error("No brainstorm request provided. Use --help for usage.")
+        sys.exit(1)
     
-    log_verbose(f"Input: {args.request}", args.verbose)
+    logger.debug(f"Input: {args.request}")
     
     # Extract research focus
     research_focus = extract_research_focus(args.request)
     
     if not research_focus:
-        error("Could not extract research focus from input")
+        logger.error("Could not extract research focus from input")
+        sys.exit(1)
     
-    log_verbose(f"Research focus: {research_focus}", args.verbose)
+    logger.debug(f"Research focus: {research_focus}")
     
     # Find matching spec folder
-    spec_folder = find_spec_folder(research_focus, specs_dir, args.verbose)
+    spec_folder = find_spec_folder(research_focus, specs_dir)
     
     spec_dir = None
     feature_spec = None
@@ -346,10 +342,10 @@ def main():
     
     if spec_folder:
         spec_dir = os.path.join(specs_dir, spec_folder)
-        log_verbose(f"Found spec folder: {spec_folder}", args.verbose)
-        feature_spec, impl_plan, tasks = find_related_files(spec_dir, args.verbose)
+        logger.debug(f"Found spec folder: {spec_folder}")
+        feature_spec, impl_plan, tasks = find_related_files(spec_dir)
     else:
-        log_verbose("No matching spec folder found", args.verbose)
+        logger.debug("No matching spec folder found")
     
     # Generate output file path
     date_str = datetime.now().strftime('%Y-%m-%d')
@@ -359,15 +355,15 @@ def main():
     if not args.dry_run:
         os.makedirs(brainstorms_dir, exist_ok=True)
     else:
-        log_verbose("Dry run - not creating directory", args.verbose)
+        logger.debug("Dry run - not creating directory")
     
-    log_verbose(f"Output file: {output_file}", args.verbose)
+    logger.debug(f"Output file: {output_file}")
     
     # Use template if available (only if not dry-run)
     template_path = os.path.join(templates_dir, 'brainstorm-template-crazy.md')
     
     if not args.dry_run and os.path.isfile(template_path):
-        log_verbose(f"Using template: {template_path}", args.verbose)
+        logger.debug(f"Using template: {template_path}")
         
         # Read template
         with open(template_path, 'r') as f:

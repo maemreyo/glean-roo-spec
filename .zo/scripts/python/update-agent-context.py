@@ -65,11 +65,14 @@ from python.common import (
     resolve_path,
 )
 
-# Configure logging
-logging.basicConfig(
-    level=logging.INFO,
-    format='%(levelname)s: %(message)s'
-)
+# Configure logging with debug mode support
+if os.environ.get('DEBUG') or os.environ.get('ZO_DEBUG'):
+    logging.basicConfig(level=logging.DEBUG, format='%(levelname)s: %(message)s')
+else:
+    logging.basicConfig(
+        level=logging.INFO,
+        format='%(levelname)s: %(message)s'
+    )
 logger = logging.getLogger(__name__)
 
 
@@ -754,6 +757,11 @@ Leave agent_type empty to update all existing agent files.
     args = parser.parse_args()
     
     try:
+        # Validate execution environment first
+        if not validate_execution_environment():
+            logger.error("Execution environment validation failed")
+            sys.exit(1)
+        
         # Get repository paths
         repo_root = get_repo_root()
         current_branch = get_current_branch()

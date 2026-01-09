@@ -24,6 +24,7 @@ If --report is specified, it uses that exact report file instead of searching.
 
 import argparse
 import json
+import logging
 import os
 import sys
 from pathlib import Path
@@ -32,7 +33,17 @@ from pathlib import Path
 script_dir = Path(__file__).parent.resolve()
 sys.path.insert(0, str(script_dir))
 
-from common import get_feature_paths
+from common import get_feature_paths, validate_execution_environment
+
+# Configure logging with debug mode support
+if os.environ.get('DEBUG') or os.environ.get('ZO_DEBUG'):
+    logging.basicConfig(level=logging.DEBUG, format='%(levelname)s: %(message)s')
+else:
+    logging.basicConfig(
+        level=logging.INFO,
+        format='%(levelname)s: %(message)s'
+    )
+logger = logging.getLogger(__name__)
 
 
 def resolve_feature_dir(feature_arg: str, repo_root: str) -> tuple:
@@ -143,6 +154,11 @@ def resolve_report_path(report_arg: str, repo_root: str) -> str:
 
 def main():
     """Main entry point."""
+    # Validate execution environment
+    if not validate_execution_environment():
+        print("ERROR: Execution environment validation failed.", file=sys.stderr)
+        sys.exit(1)
+    
     parser = argparse.ArgumentParser(
         description='Verify and locate the latest roast report for a feature',
         add_help=False

@@ -23,6 +23,7 @@ Output:
 
 import argparse
 import json
+import logging
 import os
 import re
 import sys
@@ -34,6 +35,16 @@ script_dir = Path(__file__).parent.resolve()
 sys.path.insert(0, str(script_dir))
 
 from common import get_repo_root
+
+# Configure logging with debug mode support
+if os.environ.get('DEBUG') or os.environ.get('ZO_DEBUG'):
+    logging.basicConfig(level=logging.DEBUG, format='%(levelname)s: %(message)s')
+else:
+    logging.basicConfig(
+        level=logging.INFO,
+        format='%(levelname)s: %(message)s'
+    )
+logger = logging.getLogger(__name__)
 
 
 def slugify(text: str) -> str:
@@ -106,15 +117,17 @@ def parse_args():
 
 def main():
     """Main entry point."""
+    logger.debug("Starting setup-brainstorm")
+    
     args = parse_args()
     
     # Handle help
     if args.help:
         # Match bash help output exactly - bash uses $0 which expands to the script path
         script_name = sys.argv[0]
-        print(f"Usage: {script_name} [--json] [brainstorm topic]")
-        print("  --json    Output results in JSON format")
-        print("  --help    Show this help message")
+        logger.info(f"Usage: {script_name} [--json] [brainstorm topic]")
+        logger.info("  --json    Output results in JSON format")
+        logger.info("  --help    Show this help message")
         sys.exit(0)
     
     # Get repository root
@@ -171,6 +184,8 @@ def main():
         print(json.dumps(result, separators=(',', ':')))
     else:
         print(f"OUTPUT_FILE: {output_file}")
+    
+    logger.debug("setup-brainstorm completed successfully")
 
 
 if __name__ == '__main__':

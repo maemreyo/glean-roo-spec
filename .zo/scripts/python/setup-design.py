@@ -27,6 +27,7 @@ Output:
 
 import argparse
 import json
+import logging
 import os
 import re
 import sys
@@ -36,11 +37,22 @@ from pathlib import Path
 script_dir = Path(__file__).parent.resolve()
 sys.path.insert(0, str(script_dir))
 
+# Configure logging with debug mode support
+if os.environ.get('DEBUG') or os.environ.get('ZO_DEBUG'):
+    logging.basicConfig(level=logging.DEBUG, format='%(levelname)s: %(message)s')
+else:
+    logging.basicConfig(
+        level=logging.INFO,
+        format='%(levelname)s: %(message)s'
+    )
+logger = logging.getLogger(__name__)
+
 from common import (
     get_repo_root,
     get_current_branch,
     find_feature_dir_by_prefix,
-    check_file_exists
+    check_file_exists,
+    validate_execution_environment
 )
 
 
@@ -156,7 +168,7 @@ def setup_feature_design(repo_root: str, feature_arg: str, json_mode: bool) -> d
             feature_spec = os.path.join(feature_dir, 'spec.md')
             feature_name = os.path.basename(feature_dir)
         else:
-            print(f"Error: Directory '{feature_arg}' not found.", file=sys.stderr)
+            logger.error(f"Directory '{feature_arg}' not found.")
             sys.exit(1)
     else:
         # Auto-detect context from current branch
@@ -172,10 +184,9 @@ def setup_feature_design(repo_root: str, feature_arg: str, json_mode: bool) -> d
                 feature_spec = os.path.join(feature_dir, 'spec.md')
                 feature_name = os.path.basename(feature_dir)
             else:
-                print(
-                    "Error: Could not determine feature context. "
-                    "Run inside a feature branch or specify directory.",
-                    file=sys.stderr
+                logger.error(
+                    "Could not determine feature context. "
+                    "Run inside a feature branch or specify directory."
                 )
                 sys.exit(1)
     
@@ -208,6 +219,11 @@ def setup_feature_design(repo_root: str, feature_arg: str, json_mode: bool) -> d
 
 def main():
     """Main entry point."""
+    # Validate execution environment
+    if not validate_execution_environment():
+        logger.error("Execution environment validation failed.")
+        sys.exit(1)
+    
     args = parse_args()
     
     # Handle help

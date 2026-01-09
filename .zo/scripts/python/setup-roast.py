@@ -28,6 +28,7 @@ The roast report is created at: FEATURE_DIR/roasts/roast-report-FEATURE_NAME-YYY
 
 import argparse
 import json
+import logging
 import os
 import re
 import shutil
@@ -35,11 +36,25 @@ import sys
 from datetime import datetime
 from pathlib import Path
 
+# Configure logging with debug mode support
+if os.environ.get('DEBUG') or os.environ.get('ZO_DEBUG'):
+    logging.basicConfig(level=logging.DEBUG, format='%(levelname)s: %(message)s')
+else:
+    logging.basicConfig(
+        level=logging.INFO,
+        format='%(levelname)s: %(message)s'
+    )
+logger = logging.getLogger(__name__)
+
 # Add parent directory to path to import common module
 script_dir = Path(__file__).parent.resolve()
 sys.path.insert(0, str(script_dir))
 
-from common import get_feature_paths, check_file_exists
+from common import (
+    get_feature_paths,
+    check_file_exists,
+    validate_execution_environment,
+)
 
 
 def parse_json_input(arg_value: str) -> dict:
@@ -67,7 +82,7 @@ def parse_json_input(arg_value: str) -> dict:
     try:
         return json.loads(json_str)
     except json.JSONDecodeError as e:
-        print(f"Error: Invalid JSON input: {e}", file=sys.stderr)
+        logger.error(f"Invalid JSON input: {e}")
         sys.exit(1)
 
 
@@ -88,25 +103,21 @@ def resolve_feature_dir(feature_arg: str, repo_root: str) -> tuple:
         # Absolute path
         feature_dir = str(feature_path.resolve())
         feature_name = feature_path.name
-        print(f"Using specified feature directory: {feature_dir}")
+        logger.info(f"Using specified feature directory: {feature_dir}")
         return feature_dir, feature_name
     
     # Try as relative path from current directory
     if feature_path.is_dir():
-        feature_dir = str(feature_path.resolve())
-        feature_name = feature_path.name
-        print(f"Using specified feature directory: {feature_dir}")
+        logger.info(f"Using specified feature directory: {feature_dir}")
         return feature_dir, feature_name
     
     # Try as relative path from repo root
     repo_relative = Path(repo_root) / feature_arg
     if repo_relative.is_dir():
-        feature_dir = str(repo_relative.resolve())
-        feature_name = repo_relative.name
-        print(f"Using specified feature directory: {feature_dir}")
+        logger.info(f"Using specified feature directory: {feature_dir}")
         return feature_dir, feature_name
     
-    print(f"Error: Directory '{feature_arg}' not found.", file=sys.stderr)
+    logger.error(f"Directory '{feature_arg}' not found.")
     sys.exit(1)
 
 
@@ -119,12 +130,11 @@ def create_roast_report(report_file: str, template_path: str, json_data: dict) -
         template_path: Path to template file
         json_data: Parsed JSON data for metadata
     """
-    # Copy template if it exists
     if check_file_exists(template_path):
         shutil.copy(template_path, report_file)
-        print(f"Initialized Roast Report at {report_file}")
+        logger.info(f"Initialized Roast Report at {report_file}")
     else:
-        print(f"Warning: Roast template not found at {template_path}", file=sys.stderr)
+        logger.warning(f"Roast template not found at {template_path}")
         Path(report_file).touch()
     
     # Append metadata if JSON input provided
@@ -144,6 +154,11 @@ def create_roast_report(report_file: str, template_path: str, json_data: dict) -
 
 def main():
     """Main entry point."""
+    # Validate execution environment
+    if not validate_execution_environment():
+        logger.error("Execution environment validation failed.")
+        sys.exit(1)
+    
     parser = argparse.ArgumentParser(
         description='Initialize a roast report for code review',
         add_help=False
@@ -206,7 +221,7 @@ def main():
         try:
             json_data = json.loads(args.json_data)
         except json.JSONDecodeError as e:
-            print(f"Error: Invalid JSON input: {e}", file=sys.stderr)
+            logger.error(f"Invalid JSON input: {e}")
             sys.exit(1)
         json_mode = True
     
@@ -229,10 +244,10 @@ def main():
                 feature_spec = os.path.join(feature_dir, 'spec.md')
                 impl_plan = os.path.join(feature_dir, 'plan.md')
                 tasks = os.path.join(feature_dir, 'tasks.md')
-                print("Warning: Not on a feature branch. Using repo root for roast report.")
+                logger.warning("Not on a feature branch. Using repo root for roast report.")
             else:
-                print("Error: Not on a feature branch. Please specify a feature directory or switch to a feature branch.", file=sys.stderr)
-                print(f"Usage: {sys.argv[0]} [--json] <feature-directory>", file=sys.stderr)
+                logger.error("Not on a feature branch. Please specify a feature directory or switch to a feature branch.")
+                logger.error(f"Usage: {sys.argv[0]} [--json] <feature-directory>")
                 sys.exit(1)
         else:
             feature_dir = paths['FEATURE_DIR']

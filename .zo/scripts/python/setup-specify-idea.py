@@ -26,12 +26,28 @@ Example:
 
 import argparse
 import json
+import logging
+import os
 import sys
 from pathlib import Path
 
+# Configure logging with debug mode support
+if os.environ.get('DEBUG') or os.environ.get('ZO_DEBUG'):
+    logging.basicConfig(level=logging.DEBUG, format='%(levelname)s: %(message)s')
+else:
+    logging.basicConfig(
+        level=logging.INFO,
+        format='%(levelname)s: %(message)s'
+    )
+logger = logging.getLogger(__name__)
+
 # Add parent directory to path for imports
 sys.path.insert(0, str(Path(__file__).parent.parent))
-from python.common import get_repo_root, get_feature_dir
+from python.common import (
+    get_repo_root,
+    get_feature_dir,
+    validate_execution_environment,
+)
 
 
 def find_brainstorm_file(repo_root: str, feature_dir: str, user_path: str = None) -> Path:
@@ -95,6 +111,12 @@ def find_brainstorm_file(repo_root: str, feature_dir: str, user_path: str = None
 
 def main():
     """Main entry point."""
+    # Validate execution environment
+    if not validate_execution_environment():
+        logger.error("Execution environment validation failed.")
+        print("ERROR: Execution environment validation failed.", file=sys.stderr)
+        return 1
+    
     parser = argparse.ArgumentParser(
         description='Find brainstorm file and spec template for spec creation',
         formatter_class=argparse.RawDescriptionHelpFormatter
@@ -145,9 +167,11 @@ def main():
         return 0
         
     except FileNotFoundError as e:
+        logger.error(str(e))
         print(f"Error: {e}", file=sys.stderr)
         return 1
     except Exception as e:
+        logger.error(str(e))
         print(f"Error: {e}", file=sys.stderr)
         return 1
 

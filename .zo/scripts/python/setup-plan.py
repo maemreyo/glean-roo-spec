@@ -22,6 +22,7 @@ Output:
 
 import argparse
 import json
+import logging
 import os
 import sys
 from pathlib import Path
@@ -30,7 +31,17 @@ from pathlib import Path
 script_dir = Path(__file__).parent.resolve()
 sys.path.insert(0, str(script_dir))
 
-from common import get_feature_paths, check_file_exists
+from common import get_feature_paths, check_file_exists, validate_execution_environment
+
+# Configure logging with debug mode support
+if os.environ.get('DEBUG') or os.environ.get('ZO_DEBUG'):
+    logging.basicConfig(level=logging.DEBUG, format='%(levelname)s: %(message)s')
+else:
+    logging.basicConfig(
+        level=logging.INFO,
+        format='%(levelname)s: %(message)s'
+    )
+logger = logging.getLogger(__name__)
 
 
 def parse_args():
@@ -67,6 +78,11 @@ def parse_args():
 
 def main():
     """Main entry point."""
+    # Validate execution environment
+    if not validate_execution_environment():
+        logger.error("Execution environment validation failed")
+        sys.exit(1)
+    
     args = parse_args()
     
     # Handle help - match bash help format

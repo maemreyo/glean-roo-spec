@@ -29,6 +29,7 @@ Output:
 
 import argparse
 import json
+import logging
 import os
 import shutil
 import sys
@@ -40,6 +41,16 @@ script_dir = Path(__file__).parent
 sys.path.insert(0, str(script_dir))
 
 import feature_utils
+
+# Configure logging with debug mode support
+if os.environ.get('DEBUG') or os.environ.get('ZO_DEBUG'):
+    logging.basicConfig(level=logging.DEBUG, format='%(levelname)s: %(message)s')
+else:
+    logging.basicConfig(
+        level=logging.INFO,
+        format='%(levelname)s: %(message)s'
+    )
+logger = logging.getLogger(__name__)
 
 
 def parse_arguments():
@@ -85,30 +96,29 @@ def parse_arguments():
     # If there are unknown args starting with -, bash exits with code 1
     for arg in unknown:
         if arg.startswith('-'):
-            print(f"Error: Unknown option: {arg}", file=sys.stderr)
+            logger.error(f"Unknown option: {arg}")
             sys.exit(1)
 
     # Handle --help flag
     if args.help:
         script_name = os.path.basename(sys.argv[0])
-        print(f"Usage: {script_name} [--json] [--short-name <name>] [--number N] <feature_description>")
-        print("")
-        print("Options:")
-        print("  --json              Output in JSON format")
-        print("  --short-name <name> Provide a custom short name (2-4 words) for the branch")
-        print("  --number N          Specify branch number manually (overrides auto-detection)")
-        print("  --help, -h          Show this help message")
-        print("")
-        print("Examples:")
-        print(f"  {script_name} 'Add user authentication system' --short-name 'user-auth'")
-        print(f"  {script_name} 'Implement OAuth2 integration for API' --number 5")
+        logger.info(f"Usage: {script_name} [--json] [--short-name <name>] [--number N] <feature_description>")
+        logger.info("")
+        logger.info("Options:")
+        logger.info("  --json              Output in JSON format")
+        logger.info("  --short-name <name> Provide a custom short name (2-4 words) for the branch")
+        logger.info("  --number N          Specify branch number manually (overrides auto-detection)")
+        logger.info("  --help, -h          Show this help message")
+        logger.info("")
+        logger.info("Examples:")
+        logger.info(f"  {script_name} 'Add user authentication system' --short-name 'user-auth'")
+        logger.info(f"  {script_name} 'Implement OAuth2 integration for API' --number 5")
         sys.exit(0)
 
     # Validate feature description
     if not args.feature_description:
         script_name = os.path.basename(sys.argv[0])
-        print(f"Usage: {script_name} [--json] [--short-name <name>] [--number N] <feature_description>",
-              file=sys.stderr)
+        logger.error(f"Usage: {script_name} [--json] [--short-name <name>] [--number N] <feature_description>")
         sys.exit(1)
 
     return args
@@ -142,6 +152,8 @@ def determine_branch_number(args_number: str, specs_dir: str, has_git_repo: bool
 
 def main():
     """Main entry point."""
+    logger.debug("Starting create-feature-from-idea")
+
     args = parse_arguments()
 
     # Join feature description words
@@ -212,6 +224,8 @@ def main():
         print(f"SPEC_FILE: {spec_file}")
         print(f"FEATURE_NUM: {feature_num}")
         print(f"SPECIFY_FEATURE environment variable set to: {branch_name}")
+
+    logger.debug("create-feature-from-idea completed successfully")
 
 
 if __name__ == '__main__':

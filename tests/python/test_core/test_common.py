@@ -13,10 +13,21 @@ Test Classes:
 
 import os
 import sys
+import logging
 import tempfile
 import unittest
 from pathlib import Path
 from unittest.mock import patch, MagicMock
+
+# Configure logging with debug mode support
+if os.environ.get('DEBUG') or os.environ.get('ZO_DEBUG'):
+    logging.basicConfig(level=logging.DEBUG, format='%(levelname)s: %(message)s')
+else:
+    logging.basicConfig(
+        level=logging.INFO,
+        format='%(levelname)s: %(message)s'
+    )
+logger = logging.getLogger(__name__)
 
 # Add parent directory to path for imports
 sys.path.insert(0, str(Path(__file__).parent.parent.parent.parent / '.zo' / 'scripts' / 'python'))
