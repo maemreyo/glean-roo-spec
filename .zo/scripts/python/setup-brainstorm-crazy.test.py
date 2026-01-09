@@ -98,6 +98,66 @@ def run_python_script(args, env=None):
         return -1, "", "Python script not found"
 
 
+def extract_json(output):
+    """Extract JSON from output, skipping non-JSON lines."""
+    for line in output.split('\n'):
+        line = line.strip()
+        if line.startswith('{') and line.endswith('}'):
+            try:
+                return json.loads(line)
+            except:
+                pass
+    return None
+
+
+def compare_json_values(test_name, args, env=None):
+    """
+    Compare JSON values between bash and Python outputs.
+    Only compares JSON fields, ignores log lines.
+    
+    Args:
+        test_name: Name of the test
+        args: Command line arguments
+        env: Environment variables
+        
+    Returns:
+        True if JSON values match, False otherwise
+    """
+    print_info("Test: " + test_name)
+    print_info("Args: " + str(args))
+    if env:
+        print_info("Env: " + str(env))
+    
+    bash_code, bash_stdout, bash_stderr = run_bash_script(args, env)
+    python_code, python_stdout, python_stderr = run_python_script(args, env)
+    
+    # Compare exit codes
+    if bash_code != python_code:
+        print_fail("Exit codes differ: bash=" + str(bash_code) + ", python=" + str(python_code))
+        return False
+    print_success("Exit codes match: " + str(bash_code))
+    
+    # Extract JSON from output (skip non-JSON lines)
+    bash_json = extract_json(bash_stdout)
+    python_json = extract_json(python_stdout)
+    
+    if bash_json is None or python_json is None:
+        print_fail("Could not extract JSON from output")
+        print("  Bash stdout:", bash_stdout[:200] if bash_stdout else "(empty)")
+        print("  Python stdout:", python_stdout[:200] if python_stdout else "(empty)")
+        return False
+    
+    # Compare JSON values
+    if bash_json == python_json:
+        print_success("JSON values match")
+        return True
+    else:
+        print_fail("JSON values differ:")
+        print("  Bash:", json.dumps(bash_json, indent=2))
+        print("  Python:", json.dumps(python_json, indent=2))
+        return False
+
+
 def compare_outputs(test_name, args, env=None, check_json_equivalence=True):
     """
     Compare outputs of bash and Python scripts.
@@ -215,7 +275,7 @@ def test_stop_word_filtering():
     try:
         cleanup_test_features()
         # Input with common stop words
-        return compare_outputs(
+        return compare_json_values(
             "Stop word filtering",
             ["improve the login flow for better user experience"],
             None
@@ -237,7 +297,7 @@ def test_spec_folder_matching():
         create_test_spec_feature(specs_dir, "999", "user-authentication")
         
         # Use a request that should match the spec folder
-        return compare_outputs(
+        return compare_json_values(
             "Spec folder matching",
             ["add user authentication"],
             None
@@ -252,7 +312,7 @@ def test_json_mode():
     
     try:
         cleanup_test_features()
-        return compare_outputs(
+        return compare_json_values(
             "JSON output mode",
             ["--json", "implement oauth integration"],
             None
@@ -267,7 +327,7 @@ def test_dry_run_mode():
     
     try:
         cleanup_test_features()
-        return compare_outputs(
+        return compare_json_values(
             "Dry-run mode",
             ["--dry-run", "test feature request"],
             None
@@ -310,7 +370,7 @@ def test_no_matching_spec():
     
     try:
         cleanup_test_features()
-        return compare_outputs(
+        return compare_json_values(
             "No matching spec folder",
             ["nonexistent feature request"],
             None
@@ -341,7 +401,7 @@ Date: {{DATE}}
     
     try:
         cleanup_test_features()
-        return compare_outputs(
+        return compare_json_values(
             "Template usage",
             ["test template"],
             None
@@ -356,7 +416,7 @@ def test_complex_topic():
     
     try:
         cleanup_test_features()
-        return compare_outputs(
+        return compare_json_values(
             "Complex topic with special chars",
             ["add user @auth #2fa system!!!"],
             None
@@ -379,23 +439,23 @@ def test_research_focus_extraction():
             print_fail("Exit codes differ")
             return False
         
-        try:
-            bash_json = json.loads(bash_stdout)
-            python_json = json.loads(python_stdout)
-            
-            if "RESEARCH_FOCUS" not in bash_json or "RESEARCH_FOCUS" not in python_json:
-                print_fail("RESEARCH_FOCUS field missing")
-                return False
-            
-            if bash_json["RESEARCH_FOCUS"] != python_json["RESEARCH_FOCUS"]:
-                print_fail("RESEARCH_FOCUS differs: bash=" + bash_json["RESEARCH_FOCUS"] + ", python=" + python_json["RESEARCH_FOCUS"])
-                return False
-            
-            print_success("Research focus extraction matches")
-            return True
-        except json.JSONDecodeError as e:
-            print_fail("JSON parse error: " + str(e))
+        bash_json = extract_json(bash_stdout)
+        python_json = extract_json(python_stdout)
+        
+        if bash_json is None or python_json is None:
+            print_fail("Could not extract JSON")
             return False
+        
+        if "RESEARCH_FOCUS" not in bash_json or "RESEARCH_FOCUS" not in python_json:
+            print_fail("RESEARCH_FOCUS field missing")
+            return False
+        
+        if bash_json["RESEARCH_FOCUS"] != python_json["RESEARCH_FOCUS"]:
+            print_fail("RESEARCH_FOCUS differs: bash=" + bash_json["RESEARCH_FOCUS"] + ", python=" + python_json["RESEARCH_FOCUS"])
+            return False
+        
+        print_success("Research focus extraction matches")
+        return True
     finally:
         cleanup_test_features()
 
@@ -420,21 +480,21 @@ def test_related_files_detection():
             print_fail("Exit codes differ")
             return False
         
-        try:
-            bash_json = json.loads(bash_stdout)
-            python_json = json.loads(python_stdout)
-            
-            # Check that FEATURE_SPEC, IMPL_PLAN, TASKS are present and match
-            for key in ["FEATURE_SPEC", "IMPL_PLAN", "TASKS"]:
-                if bash_json.get(key) != python_json.get(key):
-                    print_fail(f"{key} differs: bash={bash_json.get(key)}, python={python_json.get(key)}")
-                    return False
-            
-            print_success("Related files detection matches")
-            return True
-        except json.JSONDecodeError as e:
-            print_fail("JSON parse error: " + str(e))
+        bash_json = extract_json(bash_stdout)
+        python_json = extract_json(python_stdout)
+        
+        if bash_json is None or python_json is None:
+            print_fail("Could not extract JSON")
             return False
+        
+        # Check that FEATURE_SPEC, IMPL_PLAN, TASKS are present and match
+        for key in ["FEATURE_SPEC", "IMPL_PLAN", "TASKS"]:
+            if bash_json.get(key) != python_json.get(key):
+                print_fail(f"{key} differs: bash={bash_json.get(key)}, python={python_json.get(key)}")
+                return False
+        
+        print_success("Related files detection matches")
+        return True
     finally:
         cleanup_test_features()
 

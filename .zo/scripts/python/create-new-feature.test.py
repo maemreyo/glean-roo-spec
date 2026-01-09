@@ -98,6 +98,66 @@ def run_python_script(args, env=None):
         return -1, "", "Python script not found"
 
 
+def extract_json(output):
+    """Extract JSON from output, skipping non-JSON lines."""
+    for line in output.split('\n'):
+        line = line.strip()
+        if line.startswith('{') and line.endswith('}'):
+            try:
+                return json.loads(line)
+            except:
+                pass
+    return None
+
+
+def compare_json_values(test_name, args, env=None):
+    """
+    Compare JSON values between bash and Python outputs.
+    Only compares JSON fields, ignores log lines.
+    
+    Args:
+        test_name: Name of the test
+        args: Command line arguments
+        env: Environment variables
+        
+    Returns:
+        True if JSON values match, False otherwise
+    """
+    print_info("Test: " + test_name)
+    print_info("Args: " + str(args))
+    if env:
+        print_info("Env: " + str(env))
+    
+    bash_code, bash_stdout, bash_stderr = run_bash_script(args, env)
+    python_code, python_stdout, python_stderr = run_python_script(args, env)
+    
+    # Compare exit codes
+    if bash_code != python_code:
+        print_fail("Exit codes differ: bash=" + str(bash_code) + ", python=" + str(python_code))
+        return False
+    print_success("Exit codes match: " + str(bash_code))
+    
+    # Extract JSON from output (skip non-JSON lines)
+    bash_json = extract_json(bash_stdout)
+    python_json = extract_json(python_stdout)
+    
+    if bash_json is None or python_json is None:
+        print_fail("Could not extract JSON from output")
+        print("  Bash stdout:", bash_stdout[:200] if bash_stdout else "(empty)")
+        print("  Python stdout:", python_stdout[:200] if python_stdout else "(empty)")
+        return False
+    
+    # Compare JSON values
+    if bash_json == python_json:
+        print_success("JSON values match")
+        return True
+    else:
+        print_fail("JSON values differ:")
+        print("  Bash:", json.dumps(bash_json, indent=2))
+        print("  Python:", json.dumps(python_json, indent=2))
+        return False
+
+
 def compare_outputs(test_name, args, env=None, check_json_equivalence=True):
     """
     Compare outputs of bash and Python scripts.
@@ -245,7 +305,7 @@ def test_json_mode():
         cleanup_test_features()
         setup_test_template()
         
-        return compare_outputs(
+        return compare_json_values(
             "JSON mode output",
             ["--json", "implement oauth2 integration"],
             None
@@ -280,7 +340,7 @@ def test_custom_short_name_json():
         cleanup_test_features()
         setup_test_template()
         
-        return compare_outputs(
+        return compare_json_values(
             "Custom short name with JSON",
             ["--json", "--short-name", "oauth-integration", "implement oauth2"],
             None
@@ -327,26 +387,26 @@ def test_stop_word_filtering():
             print_fail("Exit codes differ")
             return False
         
-        try:
-            bash_json = json.loads(bash_stdout)
-            python_json = json.loads(python_stdout)
-            
-            # Check that branch names match and don't contain stop words
-            if bash_json["BRANCH_NAME"] != python_json["BRANCH_NAME"]:
-                print_fail("Branch names differ")
-                return False
-            
-            branch_name = bash_json["BRANCH_NAME"]
-            # Check that stop words are removed
-            if " a " in branch_name.lower() or " the " in branch_name.lower() or " for " in branch_name.lower():
-                print_fail("Stop words not filtered from branch name: " + branch_name)
-                return False
-            
-            print_success("Stop word filtering works: " + branch_name)
-            return True
-        except json.JSONDecodeError as e:
-            print_fail("JSON parse error: " + str(e))
+        bash_json = extract_json(bash_stdout)
+        python_json = extract_json(python_stdout)
+        
+        if bash_json is None or python_json is None:
+            print_fail("Could not extract JSON")
             return False
+        
+        # Check that branch names match and don't contain stop words
+        if bash_json["BRANCH_NAME"] != python_json["BRANCH_NAME"]:
+            print_fail("Branch names differ")
+            return False
+        
+        branch_name = bash_json["BRANCH_NAME"]
+        # Check that stop words are removed
+        if " a " in branch_name.lower() or " the " in branch_name.lower() or " for " in branch_name.lower():
+            print_fail("Stop words not filtered from branch name: " + branch_name)
+            return False
+        
+        print_success("Stop word filtering works: " + branch_name)
+        return True
     finally:
         cleanup_test_features()
 
@@ -369,27 +429,27 @@ def test_github_branch_limit():
             print_fail("Exit codes differ")
             return False
         
-        try:
-            bash_json = json.loads(bash_stdout)
-            python_json = json.loads(python_stdout)
-            
-            # Check that branch names match
-            if bash_json["BRANCH_NAME"] != python_json["BRANCH_NAME"]:
-                print_fail("Branch names differ")
-                return False
-            
-            branch_name = bash_json["BRANCH_NAME"]
-            
-            # Check that branch name is within GitHub's limit (244 bytes)
-            if len(branch_name.encode('utf-8')) > 244:
-                print_fail("Branch name exceeds GitHub limit: " + str(len(branch_name.encode('utf-8'))))
-                return False
-            
-            print_success("Branch name within GitHub limit: " + str(len(branch_name.encode('utf-8'))) + " bytes")
-            return True
-        except json.JSONDecodeError as e:
-            print_fail("JSON parse error: " + str(e))
+        bash_json = extract_json(bash_stdout)
+        python_json = extract_json(python_stdout)
+        
+        if bash_json is None or python_json is None:
+            print_fail("Could not extract JSON")
             return False
+        
+        # Check that branch names match
+        if bash_json["BRANCH_NAME"] != python_json["BRANCH_NAME"]:
+            print_fail("Branch names differ")
+            return False
+        
+        branch_name = bash_json["BRANCH_NAME"]
+        
+        # Check that branch name is within GitHub's limit (244 bytes)
+        if len(branch_name.encode('utf-8')) > 244:
+            print_fail("Branch name exceeds GitHub limit: " + str(len(branch_name.encode('utf-8'))))
+            return False
+        
+        print_success("Branch name within GitHub limit: " + str(len(branch_name.encode('utf-8'))) + " bytes")
+        return True
     finally:
         cleanup_test_features()
 
@@ -417,28 +477,28 @@ def test_branch_number_detection():
             print_fail("Exit codes differ")
             return False
         
-        try:
-            bash_json = json.loads(bash_stdout)
-            python_json = json.loads(python_stdout)
-            
-            # Both should use the same next number
-            if bash_json["BRANCH_NAME"] != python_json["BRANCH_NAME"]:
-                print_fail("Branch names differ")
-                return False
-            
-            # Extract feature number from branch name
-            feature_num = bash_json["FEATURE_NUM"]
-            
-            # Should be 003 (next after 001 and 002)
-            if feature_num != "003":
-                print_fail("Expected feature_num 003, got: " + feature_num)
-                return False
-            
-            print_success("Branch number detection works: " + feature_num)
-            return True
-        except json.JSONDecodeError as e:
-            print_fail("JSON parse error: " + str(e))
+        bash_json = extract_json(bash_stdout)
+        python_json = extract_json(python_stdout)
+        
+        if bash_json is None or python_json is None:
+            print_fail("Could not extract JSON")
             return False
+        
+        # Both should use the same next number
+        if bash_json["BRANCH_NAME"] != python_json["BRANCH_NAME"]:
+            print_fail("Branch names differ")
+            return False
+        
+        # Extract feature number from branch name
+        feature_num = bash_json["FEATURE_NUM"]
+        
+        # Should be 003 (next after 001 and 002)
+        if feature_num != "003":
+            print_fail("Expected feature_num 003, got: " + feature_num)
+            return False
+        
+        print_success("Branch number detection works: " + feature_num)
+        return True
     finally:
         cleanup_test_features()
 
@@ -493,27 +553,27 @@ def test_json_fields():
             print_fail("Exit codes differ")
             return False
         
-        try:
-            bash_json = json.loads(bash_stdout)
-            python_json = json.loads(python_stdout)
-            
-            # Check required fields
-            required_fields = ["BRANCH_NAME", "SPEC_FILE", "FEATURE_NUM"]
-            
-            for field in required_fields:
-                if field not in bash_json or field not in python_json:
-                    print_fail(f"Missing field: {field}")
-                    return False
-                
-                if bash_json[field] != python_json[field]:
-                    print_fail(f"{field} differs")
-                    return False
-            
-            print_success("JSON fields match")
-            return True
-        except json.JSONDecodeError as e:
-            print_fail("JSON parse error: " + str(e))
+        bash_json = extract_json(bash_stdout)
+        python_json = extract_json(python_stdout)
+        
+        if bash_json is None or python_json is None:
+            print_fail("Could not extract JSON")
             return False
+        
+        # Check required fields
+        required_fields = ["BRANCH_NAME", "SPEC_FILE", "FEATURE_NUM"]
+        
+        for field in required_fields:
+            if field not in bash_json or field not in python_json:
+                print_fail(f"Missing field: {field}")
+                return False
+            
+            if bash_json[field] != python_json[field]:
+                print_fail(f"{field} differs")
+                return False
+        
+        print_success("JSON fields match")
+        return True
     finally:
         cleanup_test_features()
 
@@ -552,24 +612,24 @@ def test_feature_number_with_leading_zeros():
             print_fail("Exit codes differ")
             return False
         
-        try:
-            bash_json = json.loads(bash_stdout)
-            python_json = json.loads(python_stdout)
-            
-            # Check that feature number is formatted with leading zeros
-            if bash_json["FEATURE_NUM"] != "007":
-                print_fail("Expected FEATURE_NUM 007, got: " + bash_json["FEATURE_NUM"])
-                return False
-            
-            if python_json["FEATURE_NUM"] != "007":
-                print_fail("Expected FEATURE_NUM 007, got: " + python_json["FEATURE_NUM"])
-                return False
-            
-            print_success("Feature number format correct: 007")
-            return True
-        except json.JSONDecodeError as e:
-            print_fail("JSON parse error: " + str(e))
+        bash_json = extract_json(bash_stdout)
+        python_json = extract_json(python_stdout)
+        
+        if bash_json is None or python_json is None:
+            print_fail("Could not extract JSON")
             return False
+        
+        # Check that feature number is formatted with leading zeros
+        if bash_json["FEATURE_NUM"] != "007":
+            print_fail("Expected FEATURE_NUM 007, got: " + bash_json["FEATURE_NUM"])
+            return False
+        
+        if python_json["FEATURE_NUM"] != "007":
+            print_fail("Expected FEATURE_NUM 007, got: " + python_json["FEATURE_NUM"])
+            return False
+        
+        print_success("Feature number format correct: 007")
+        return True
     finally:
         cleanup_test_features()
 

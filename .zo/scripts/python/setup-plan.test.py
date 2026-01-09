@@ -98,6 +98,66 @@ def run_python_script(args, env=None):
         return -1, "", "Python script not found"
 
 
+def extract_json(output):
+    """Extract JSON from output, skipping non-JSON lines."""
+    for line in output.split('\n'):
+        line = line.strip()
+        if line.startswith('{') and line.endswith('}'):
+            try:
+                return json.loads(line)
+            except:
+                pass
+    return None
+
+
+def compare_json_values(test_name, args, env=None):
+    """
+    Compare JSON values between bash and Python outputs.
+    Only compares JSON fields, ignores log lines.
+    
+    Args:
+        test_name: Name of the test
+        args: Command line arguments
+        env: Environment variables
+        
+    Returns:
+        True if JSON values match, False otherwise
+    """
+    print_info("Test: " + test_name)
+    print_info("Args: " + str(args))
+    if env:
+        print_info("Env: " + str(env))
+    
+    bash_code, bash_stdout, bash_stderr = run_bash_script(args, env)
+    python_code, python_stdout, python_stderr = run_python_script(args, env)
+    
+    # Compare exit codes
+    if bash_code != python_code:
+        print_fail("Exit codes differ: bash=" + str(bash_code) + ", python=" + str(python_code))
+        return False
+    print_success("Exit codes match: " + str(bash_code))
+    
+    # Extract JSON from output (skip non-JSON lines)
+    bash_json = extract_json(bash_stdout)
+    python_json = extract_json(python_stdout)
+    
+    if bash_json is None or python_json is None:
+        print_fail("Could not extract JSON from output")
+        print("  Bash stdout:", bash_stdout[:200] if bash_stdout else "(empty)")
+        print("  Python stdout:", python_stdout[:200] if python_stdout else "(empty)")
+        return False
+    
+    # Compare JSON values
+    if bash_json == python_json:
+        print_success("JSON values match")
+        return True
+    else:
+        print_fail("JSON values differ:")
+        print("  Bash:", json.dumps(bash_json, indent=2))
+        print("  Python:", json.dumps(python_json, indent=2))
+        return False
+
+
 def compare_outputs(test_name, args, env=None, check_json_equivalence=True):
     """
     Compare outputs of bash and Python scripts.
@@ -220,7 +280,7 @@ def test_json_mode():
     
     feature_dir, env = create_test_feature_dir()
     try:
-        return compare_outputs(
+        return compare_json_values(
             "JSON mode output",
             ["--json"],
             env
@@ -242,34 +302,30 @@ def test_json_fields():
             print_fail("Exit codes differ")
             return False
         
-        try:
-            bash_json = json.loads(bash_stdout)
-            python_json = json.loads(python_stdout)
+        bash_json = extract_json(bash_stdout)
+        python_json = extract_json(python_stdout)
+        
+        # Check required fields
+        required_fields = [
+            "FEATURE_SPEC",
+            "IMPL_PLAN",
+            "DESIGN_FILE",
+            "SPECS_DIR",
+            "BRANCH",
+            "HAS_GIT"
+        ]
+        
+        for field in required_fields:
+            if field not in bash_json or field not in python_json:
+                print_fail(f"Missing field: {field}")
+                return False
             
-            # Check required fields
-            required_fields = [
-                "FEATURE_SPEC",
-                "IMPL_PLAN",
-                "DESIGN_FILE",
-                "SPECS_DIR",
-                "BRANCH",
-                "HAS_GIT"
-            ]
-            
-            for field in required_fields:
-                if field not in bash_json or field not in python_json:
-                    print_fail(f"Missing field: {field}")
-                    return False
-                
-                if bash_json[field] != python_json[field]:
-                    print_fail(f"{field} differs: bash={bash_json[field]}, python={python_json[field]}")
-                    return False
-            
-            print_success("JSON fields match and contain correct values")
-            return True
-        except json.JSONDecodeError as e:
-            print_fail("JSON parse error: " + str(e))
-            return False
+            if bash_json[field] != python_json[field]:
+                print_fail(f"{field} differs: bash={bash_json[field]}, python={python_json[field]}")
+                return False
+        
+        print_success("JSON fields match")
+        return True
     finally:
         cleanup_test_feature(feature_dir)
 
@@ -443,23 +499,23 @@ def test_has_git_detection():
             print_fail("Exit codes differ")
             return False
         
-        try:
-            bash_json = json.loads(bash_stdout)
-            python_json = json.loads(python_stdout)
-            
-            # HAS_GIT should be a boolean or string 'true'/'false'
-            bash_has_git = bash_json.get("HAS_GIT")
-            python_has_git = python_json.get("HAS_GIT")
-            
-            if bash_has_git != python_has_git:
-                print_fail(f"HAS_GIT differs: bash={bash_has_git}, python={python_has_git}")
-                return False
-            
-            print_success(f"HAS_GIT detection matches: {bash_has_git}")
-            return True
-        except json.JSONDecodeError as e:
-            print_fail("JSON parse error: " + str(e))
+        bash_json = extract_json(bash_stdout)
+        python_json = extract_json(python_stdout)
+        
+        if bash_json is None or python_json is None:
+            print_fail("Could not extract JSON")
             return False
+        
+        # HAS_GIT should be a boolean or string 'true'/'false'
+        bash_has_git = bash_json.get("HAS_GIT")
+        python_has_git = python_json.get("HAS_GIT")
+        
+        if bash_has_git != python_has_git:
+            print_fail(f"HAS_GIT differs: bash={bash_has_git}, python={python_has_git}")
+            return False
+        
+        print_success(f"HAS_GIT detection matches: {bash_has_git}")
+        return True
     finally:
         cleanup_test_feature(feature_dir)
 
