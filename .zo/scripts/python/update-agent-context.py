@@ -57,7 +57,13 @@ from pathlib import Path
 
 # Add parent directory to path for imports
 sys.path.insert(0, str(Path(__file__).parent.parent))
-from python.common import get_repo_root, get_current_branch, get_feature_dir
+from python.common import (
+    get_repo_root, 
+    get_current_branch, 
+    get_feature_dir,
+    get_workspace_path,
+    resolve_path,
+)
 
 # Configure logging
 logging.basicConfig(

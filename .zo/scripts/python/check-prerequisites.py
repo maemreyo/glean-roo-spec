@@ -34,16 +34,22 @@ from common import (
     has_git,
     get_repo_root,
     get_current_branch,
+    get_workspace_path,
     check_feature_branch,
     check_file_exists,
     check_dir_exists_with_files,
+    resolve_path,
+    validate_execution_environment,
 )
 
-# Configure logging
-logging.basicConfig(
-    level=logging.INFO,
-    format='%(levelname)s: %(message)s'
-)
+# Configure logging with debug mode support
+if os.environ.get('DEBUG') or os.environ.get('ZO_DEBUG'):
+    logging.basicConfig(level=logging.DEBUG, format='%(levelname)s: %(message)s')
+else:
+    logging.basicConfig(
+        level=logging.INFO,
+        format='%(levelname)s: %(message)s'
+    )
 logger = logging.getLogger(__name__)
 
 
@@ -177,9 +183,18 @@ def main():
     
     logger.debug("Starting prerequisite check")
     
+    # Validate execution environment
+    if not validate_execution_environment():
+        print("ERROR: Execution environment validation failed.", file=sys.stderr)
+        sys.exit(1)
+    
     # Get feature paths and validate branch
     paths = get_feature_paths()
-    logger.debug(f"Feature paths: {paths}")
+    
+    # Log all paths for debugging
+    logger.debug("Feature paths resolved:")
+    for key, value in paths.items():
+        logger.debug(f"  {key}: {value}")
     
     is_valid, error_msg = check_feature_branch(
         paths['CURRENT_BRANCH'], 
@@ -203,20 +218,32 @@ def main():
             print(f"TASKS: {paths['TASKS']}")
         sys.exit(0)
     
+    # Resolve paths for file operations
+    feature_dir = resolve_path(paths['FEATURE_DIR'])
+    impl_plan = resolve_path(paths['IMPL_PLAN'])
+    tasks = resolve_path(paths['TASKS'])
+    research = resolve_path(paths['RESEARCH'])
+    data_model = resolve_path(paths['DATA_MODEL'])
+    design_file = resolve_path(paths['DESIGN_FILE'])
+    contracts_dir = resolve_path(paths['CONTRACTS_DIR'])
+    quickstart = resolve_path(paths['QUICKSTART'])
+    
     # Validate required directories and files
-    if not os.path.isdir(paths['FEATURE_DIR']):
-        print(f"ERROR: Feature directory not found: {paths['FEATURE_DIR']}", file=sys.stderr)
+    if not os.path.isdir(feature_dir):
+        print(f"ERROR: Feature directory not found: {feature_dir}", file=sys.stderr)
+        print(f"  Current working directory: {os.getcwd()}", file=sys.stderr)
+        print(f"  Expected feature directory: {feature_dir}", file=sys.stderr)
         print("Run /zo.zo first to create the feature structure.", file=sys.stderr)
         sys.exit(1)
     
-    if not os.path.isfile(paths['IMPL_PLAN']):
-        print(f"ERROR: plan.md not found in {paths['FEATURE_DIR']}", file=sys.stderr)
+    if not os.path.isfile(impl_plan):
+        print(f"ERROR: plan.md not found in {feature_dir}", file=sys.stderr)
         print("Run /zo.plan first to create the implementation plan.", file=sys.stderr)
         sys.exit(1)
     
     # Check for tasks.md if required
-    if args.require_tasks and not os.path.isfile(paths['TASKS']):
-        print(f"ERROR: tasks.md not found in {paths['FEATURE_DIR']}", file=sys.stderr)
+    if args.require_tasks and not os.path.isfile(tasks):
+        print(f"ERROR: tasks.md not found in {feature_dir}", file=sys.stderr)
         print("Run /zo.tasks first to create the task list.", file=sys.stderr)
         sys.exit(1)
     
@@ -224,22 +251,22 @@ def main():
     available_docs = []
     
     # Always check these optional docs
-    if check_file_exists(paths['RESEARCH']):
+    if check_file_exists(research):
         available_docs.append('research.md')
-    if check_file_exists(paths['DATA_MODEL']):
+    if check_file_exists(data_model):
         available_docs.append('data-model.md')
-    if check_file_exists(paths['DESIGN_FILE']):
+    if check_file_exists(design_file):
         available_docs.append('design.md')
     
     # Check contracts directory (only if it exists and has files)
-    if check_dir_exists_with_files(paths['CONTRACTS_DIR']):
+    if check_dir_exists_with_files(contracts_dir):
         available_docs.append('contracts/')
     
-    if check_file_exists(paths['QUICKSTART']):
+    if check_file_exists(quickstart):
         available_docs.append('quickstart.md')
     
     # Include tasks.md if requested and it exists
-    if args.include_tasks and check_file_exists(paths['TASKS']):
+    if args.include_tasks and check_file_exists(tasks):
         available_docs.append('tasks.md')
     
     # Output results
@@ -251,14 +278,14 @@ def main():
         print("AVAILABLE_DOCS:")
         
         # Show status of each potential document
-        print(check_file_status(paths['RESEARCH'], 'research.md'))
-        print(check_file_status(paths['DATA_MODEL'], 'data-model.md'))
-        print(check_file_status(paths['DESIGN_FILE'], 'design.md'))
-        print(check_dir_status(paths['CONTRACTS_DIR'], 'contracts/'))
-        print(check_file_status(paths['QUICKSTART'], 'quickstart.md'))
+        print(check_file_status(research, 'research.md'))
+        print(check_file_status(data_model, 'data-model.md'))
+        print(check_file_status(design_file, 'design.md'))
+        print(check_dir_status(contracts_dir, 'contracts/'))
+        print(check_file_status(quickstart, 'quickstart.md'))
         
         if args.include_tasks:
-            print(check_file_status(paths['TASKS'], 'tasks.md'))
+            print(check_file_status(tasks, 'tasks.md'))
     
     logger.debug("Prerequisite check completed successfully")
     sys.exit(0)
