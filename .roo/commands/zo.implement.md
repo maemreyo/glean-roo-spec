@@ -159,12 +159,26 @@ You **MUST** consider the user input before proceeding (if not empty).
    - For parallel tasks [P], continue with successful tasks, report failed ones
    - Provide clear error messages with context for debugging
    - Suggest next steps if implementation cannot proceed
-   - **AUTOMATED** After completing each task, call the update script:
+   - **AUTOMATED** After completing tasks, call the update script:
      ```sh
-     python3 .zo/scripts/python/update_task_status.py "$TASKS" "TASK_ID"
+     python3 .zo/scripts/python/update_task_status.py "$TASKS" TASK_ID [TASK_ID...]
      ```
-     Example: `python3 .zo/scripts/python/update_task_status.py "specs/001-feature/tasks.md" "T001"`
-   - The script will automatically change `- [ ]` to `- [x]` for the completed task
+     Examples:
+     ```sh
+     # Single task
+     python3 .zo/scripts/python/update_task_status.py "specs/001-feature/tasks.md" T001
+     
+     # Multiple tasks
+     python3 .zo/scripts/python/update_task_status.py "specs/001-feature/tasks.md" T001 T002 T005
+     
+     # Task range
+     python3 .zo/scripts/python/update_task_status.py "specs/001-feature/tasks.md" T001-T005
+     
+     # Mixed (range + individual)
+     python3 .zo/scripts/python/update_task_status.py "specs/001-feature/tasks.md" T001-T003 T005 T007-T009
+     ```
+   - The script will automatically change `- [ ]` to `- [x]` for the completed tasks
+   - Supports batch updates: complete multiple tasks in a single call
    - If the script fails (file not found, task not found), report the error but continue execution
 
 9. Completion validation:
