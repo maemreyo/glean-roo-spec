@@ -16,6 +16,7 @@ import subprocess
 import sys
 import tempfile
 from pathlib import Path
+from test_common import extract_json
 
 # Constants
 SCRIPT_DIR = Path(__file__).parent

@@ -1,9 +1,9 @@
 # Feature Specification: [FEATURE NAME]
 
-**Feature Branch**: `[###-feature-name]`  
-**Created**: [DATE]  
-**Status**: Draft  
-**Input**: User description: "$ARGUMENTS"
+**Feature Branch**: `[###-feature-name]`
+**Created**: [DATE]
+**Status**: Draft
+**Source Context**: Brainstorm [BRAINSTORM_FILE] (Ideas: [IDEAS])
 
 ## User Scenarios & Testing *(mandatory)*
 

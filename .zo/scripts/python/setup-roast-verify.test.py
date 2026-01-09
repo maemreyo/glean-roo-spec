@@ -16,6 +16,7 @@ import subprocess
 import sys
 import tempfile
 from pathlib import Path
+from test_common import compare_json_values, extract_json
 
 # Constants
 SCRIPT_DIR = Path(__file__).parent
@@ -111,6 +112,13 @@ def compare_outputs(test_name, args, env=None, check_json_equivalence=True):
     Returns:
         True if outputs match, False otherwise
     """
+    # Use compare_json_values for JSON mode
+    if check_json_equivalence and "--json" in args:
+        return compare_json_values(
+            test_name, args, env, run_bash_script, run_python_script,
+            print_info, print_success, print_fail
+        )
+    
     print_info("Test: " + test_name)
     print_info("Args: " + str(args))
     if env:
@@ -137,21 +145,6 @@ def compare_outputs(test_name, args, env=None, check_json_equivalence=True):
         print(python_stdout)
         return False
     print_success("Stdout matches")
-    
-    # If JSON mode, verify JSON equivalence
-    if check_json_equivalence and "--json" in args:
-        try:
-            bash_json = json.loads(bash_stdout)
-            python_json = json.loads(python_stdout)
-            if bash_json != python_json:
-                print_fail("JSON content differs:")
-                print("  Bash JSON: " + json.dumps(bash_json, indent=2))
-                print("  Python JSON: " + json.dumps(python_json, indent=2))
-                return False
-            print_success("JSON content matches")
-        except json.JSONDecodeError as e:
-            print_fail("JSON parse error: " + str(e))
-            return False
     
     return True
 
@@ -322,8 +315,12 @@ def test_json_fields():
             return False
         
         try:
-            bash_json = json.loads(bash_stdout)
-            python_json = json.loads(python_stdout)
+            bash_json = extract_json(bash_stdout)
+            python_json = extract_json(python_stdout)
+            
+            if bash_json is None or python_json is None:
+                print_fail("Could not extract JSON from output")
+                return False
             
             # Check required fields
             required_fields = ["REPORT_FILE", "TASKS", "BRANCH"]
@@ -334,12 +331,12 @@ def test_json_fields():
                     return False
                 
                 if bash_json[field] != python_json[field]:
-                    print_fail(f"{field} differs")
+                    print_fail(f"{field} differs: bash={bash_json[field]}, python={python_json[field]}")
                     return False
             
             print_success("JSON fields match")
             return True
-        except json.JSONDecodeError as e:
+        except Exception as e:
             print_fail("JSON parse error: " + str(e))
             return False
     finally:
@@ -456,8 +453,12 @@ def test_multiple_roast_reports():
             return False
         
         try:
-            bash_json = json.loads(bash_stdout)
-            python_json = json.loads(python_stdout)
+            bash_json = extract_json(bash_stdout)
+            python_json = extract_json(python_stdout)
+            
+            if bash_json is None or python_json is None:
+                print_fail("Could not extract JSON from output")
+                return False
             
             # Both should return the same report
             if bash_json["REPORT_FILE"] != python_json["REPORT_FILE"]:
@@ -471,7 +472,7 @@ def test_multiple_roast_reports():
             
             print_success("Latest roast report selected correctly")
             return True
-        except json.JSONDecodeError as e:
+        except Exception as e:
             print_fail("JSON parse error: " + str(e))
             return False
     finally:

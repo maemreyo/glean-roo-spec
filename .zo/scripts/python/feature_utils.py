@@ -40,7 +40,7 @@ def run_git_command(args: list, cwd: Optional[str] = None) -> Optional[str]:
 
     Args:
         args: List of git command arguments
-        cwd: Working directory for command
+        cwd: Working directory for command (defaults to current dir)
 
     Returns:
         Command output as string, or None if command fails
@@ -60,14 +60,17 @@ def run_git_command(args: list, cwd: Optional[str] = None) -> Optional[str]:
         return None
 
 
-def has_git() -> bool:
+def has_git(repo_root: Optional[str] = None) -> bool:
     """
     Check if git is available and this is a git repository.
+
+    Args:
+        repo_root: Repository root directory (optional, uses cwd if not provided)
 
     Returns:
         True if git is available, False otherwise
     """
-    return run_git_command(['rev-parse', '--show-toplevel']) is not None
+    return run_git_command(['rev-parse', '--show-toplevel'], cwd=repo_root) is not None
 
 
 def find_repo_root(start_dir: Optional[str] = None) -> Optional[str]:
@@ -106,16 +109,13 @@ def get_repo_root() -> str:
     Raises:
         SystemExit: If repository root cannot be determined
     """
-    # Try git first
-    git_root = run_git_command(['rev-parse', '--show-toplevel'])
-    if git_root:
-        return git_root
-
-    # Fall back to searching for markers
-    repo_root = find_repo_root()
+    # Find repo root by walking up from script location (matches bash behavior)
+    script_dir = Path(__file__).parent.resolve()
+    repo_root = find_repo_root(str(script_dir))
+    
     if repo_root:
         return repo_root
-
+    
     print("Error: Could not determine repository root. "
           "Please run this script from within the repository.", file=sys.stderr)
     sys.exit(1)
@@ -200,7 +200,7 @@ def check_existing_branches(specs_dir: str) -> int:
     to find the highest numbered feature, and returns the next available number.
 
     Args:
-        specs_dir: Path to specs directory
+        specs_dir: Path to specs directory (can be relative or absolute)
 
     Returns:
         Next available feature number
@@ -211,8 +211,12 @@ def check_existing_branches(specs_dir: str) -> int:
     # Get highest number from all branches
     highest_branch = get_highest_from_branches()
 
-    # Get highest number from all specs
-    highest_spec = get_highest_from_specs(specs_dir)
+    # Get highest number from all specs (resolve to absolute path if relative)
+    specs_path = Path(specs_dir)
+    if not specs_path.is_absolute():
+        # Resolve relative path against current working directory
+        specs_path = Path.cwd() / specs_dir
+    highest_spec = get_highest_from_specs(str(specs_path))
 
     # Take the maximum of both
     max_num = max(highest_branch, highest_spec)
