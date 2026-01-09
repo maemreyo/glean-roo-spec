@@ -39,10 +39,12 @@ from pathlib import Path
 # Add parent directory to path to import feature_utils
 script_dir = Path(__file__).parent
 sys.path.insert(0, str(script_dir))
-
 import feature_utils
 
+from common import resolve_path, validate_execution_environment
+
 # Configure logging with debug mode support
+
 if os.environ.get('DEBUG') or os.environ.get('ZO_DEBUG'):
     logging.basicConfig(level=logging.DEBUG, format='%(levelname)s: %(message)s')
 else:
@@ -153,10 +155,16 @@ def determine_branch_number(args_number: str, specs_dir: str, has_git_repo: bool
 def main():
     """Main entry point."""
     logger.debug("Starting create-new-feature")
-
     args = parse_arguments()
 
+    if not validate_execution_environment():
+
+        print("ERROR: Execution environment validation failed.", file=sys.stderr)
+
+        sys.exit(1)
+
     # Join feature description words
+
     feature_description = ' '.join(args.feature_description)
 
     # Get repository root
