@@ -32,7 +32,16 @@ You **MUST** consider the user input before proceeding (if not empty).
 
 ## Outline
 
-1. Run `.zo/scripts/python/check-prerequisites.py --json --require-tasks --include-tasks` from repo root and parse FEATURE_DIR and AVAILABLE_DOCS list. All paths must be absolute. For single quotes in args like "I'm Groot", use escape syntax: e.g 'I'\''m Groot' (or double-quote if possible: "I'm Groot").
+1. **Initialize context** (REQUIRED - do NOT skip):
+   - Run this command from the **current workspace directory** (no cwd parameter needed):
+   
+     ```sh
+     python3 .zo/scripts/python/check-prerequisites.py --json --require-tasks --include-tasks
+     ```
+   
+   - **IMPORTANT**: Execute directly - the tool will automatically run from workspace. DO NOT use cwd parameter or prepend workspace path.
+   - Parse the JSON output to get FEATURE_DIR and AVAILABLE_DOCS list.
+   - If script fails, proceed to Step 2 and manually locate tasks.md using standard paths (check `.zo/` directory or standard feature locations).
 
 2. **Check checklists status** (if FEATURE_DIR/checklists/ exists):
    - Scan all checklist files in the checklists/ directory
@@ -144,7 +153,13 @@ You **MUST** consider the user input before proceeding (if not empty).
    - For parallel tasks [P], continue with successful tasks, report failed ones
    - Provide clear error messages with context for debugging
    - Suggest next steps if implementation cannot proceed
-   - **IMPORTANT** For completed tasks, make sure to mark the task off as [X] in the tasks file.
+   - **AUTOMATED** After completing each task, call the update script:
+     ```sh
+     python3 .zo/scripts/python/update_task_status.py "$TASKS" "TASK_ID"
+     ```
+     Example: `python3 .zo/scripts/python/update_task_status.py "specs/001-feature/tasks.md" "T001"`
+   - The script will automatically change `- [ ]` to `- [x]` for the completed task
+   - If the script fails (file not found, task not found), report the error but continue execution
 
 9. Completion validation:
    - Verify all required tasks are completed
