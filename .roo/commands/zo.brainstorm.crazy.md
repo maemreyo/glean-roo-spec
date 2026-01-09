@@ -34,9 +34,9 @@ handoffs:
 >   - SPEC_DIR: Path to the specification directory
 > 
 > EXAMPLES:
->   python3 setup-brainstorm-crazy.py "improve login flow"
->   python3 setup-brainstorm-crazy.py -v "add offline support"
->   python3 setup-brainstorm-crazy.py --dry-run "story creator"
+>   ZO_DEBUG=1 python3 setup-brainstorm-crazy.py "improve login flow"
+>   ZO_DEBUG=1 python3 setup-brainstorm-crazy.py -v "add offline support"
+>   ZO_DEBUG=1 python3 setup-brainstorm-crazy.py --dry-run "story creator"
 > ```
 
 ## User Input
@@ -87,7 +87,7 @@ First, establish the project context by finding the correct specification and pl
 
 1.  Run the setup script to initialize context:
     ```bash
-    python3 .zo/scripts/python/setup-brainstorm-crazy.py --json $ARGUMENTS
+    ZO_DEBUG=1 python3 .zo/scripts/python/setup-brainstorm-crazy.py --json $ARGUMENTS
     ```
 2.  Parse the JSON output to find:
     - `OUTPUT_FILE`: Where to save the accepted ideas (e.g., `.zo/brainstorms/improve-login-flow-DATE.md`).

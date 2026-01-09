@@ -29,8 +29,8 @@ handoffs:
 >   - TOPIC: The topic slug used for the file
 > 
 > EXAMPLES:
->   python3 setup-brainstorm.py "improve login flow"
->   python3 setup-brainstorm.py --json "add dark mode"
+>   ZO_DEBUG=1 python3 setup-brainstorm.py "improve login flow"
+>   ZO_DEBUG=1 python3 setup-brainstorm.py --json "add dark mode"
 > ```
 
 ## User Input

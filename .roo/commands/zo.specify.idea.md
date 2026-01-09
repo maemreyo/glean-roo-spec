@@ -34,9 +34,9 @@ handoffs:
 >   4. docs/brainstorms/ (legacy)
 >
 > EXAMPLES:
->   python3 setup-specify-idea.py
->   python3 setup-specify-idea.py --json
->   python3 setup-specify-idea.py path/to/brainstorm.md
+>   ZO_DEBUG=1 python3 setup-specify-idea.py
+>   ZO_DEBUG=1 python3 setup-specify-idea.py --json
+>   ZO_DEBUG=1 python3 setup-specify-idea.py path/to/brainstorm.md
 > ```
 >
 > ### 2. create-feature-from-idea.py

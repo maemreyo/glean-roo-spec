@@ -30,9 +30,9 @@ handoffs:
 >   roast-report-FEATURE_NAME-*.md
 > 
 > EXAMPLES:
->   python3 setup-roast-verify.py --json
->   python3 setup-roast-verify.py --json --report path/to/report.md
->   python3 setup-roast-verify.py --json path/to/feature
+>   ZO_DEBUG=1 python3 setup-roast-verify.py --json
+>   ZO_DEBUG=1 python3 setup-roast-verify.py --json --report path/to/report.md
+>   ZO_DEBUG=1 python3 setup-roast-verify.py --json path/to/feature
 > ```
 
 ## User Input

@@ -34,9 +34,9 @@ handoffs:
 >   FEATURE_DIR/roasts/roast-report-FEATURE_NAME-YYYY-MM-DD-HHMM.md
 > 
 > EXAMPLES:
->   python3 setup-roast.py --json
->   python3 setup-roast.py --json '{"commits":["abc123"]}'
->   python3 setup-roast.py --json path/to/feature
+>   ZO_DEBUG=1 python3 setup-roast.py --json
+>   ZO_DEBUG=1 python3 setup-roast.py --json '{"commits":["abc123"]}'
+>   ZO_DEBUG=1 python3 setup-roast.py --json path/to/feature
 > ```
 
 ## User Input

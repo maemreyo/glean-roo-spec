@@ -8,7 +8,7 @@ and spec directories, generates a branch name from the description using stop
 word filtering, and creates the spec file from the spec-template.
 
 Usage:
-    python3 create-new-feature.py [--json] [--short-name <name>] [--number N] <feature_description>
+    ZO_DEBUG=1 python3 create-new-feature.py [--json] [--short-name <name>] [--number N] <feature_description>
 
 Options:
     --json              Output in JSON format
@@ -17,8 +17,8 @@ Options:
     --help, -h          Show this help message
 
 Examples:
-    python3 create-new-feature.py 'Add user authentication system' --short-name 'user-auth'
-    python3 create-new-feature.py 'Implement OAuth2 integration for API' --number 5
+    ZO_DEBUG=1 python3 create-new-feature.py 'Add user authentication system' --short-name 'user-auth'
+    ZO_DEBUG=1 python3 create-new-feature.py 'Implement OAuth2 integration for API' --number 5
 
 Output:
     BRANCH_NAME: The created branch name (e.g., 001-user-auth)

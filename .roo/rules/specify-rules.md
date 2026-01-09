@@ -1,6 +1,6 @@
 # glean-teleprompter Development Guidelines
 
-Auto-generated from all feature plans. Last updated: 2026-01-03
+Auto-generated from all feature plans. Last updated: 2026-01-09
 
 ## Active Technologies
 - TypeScript 5.3+ with strict mode + React 18.2+, Next.js 14+, Jest, React Testing Library, Zustand 4.4+ (001-config-preview-integration)
@@ -15,6 +15,8 @@ Auto-generated from all feature plans. Last updated: 2026-01-03
 - TypeScript 5.3+ (strict mode) + React 18.2+, Next.js 14+, Zustand 4.4+, Supabase 2.39+, Tailwind CSS, shadcn/ui, Radix UI components, Framer Motion, Sonner (toasts) (007-unified-state-architecture)
 - localStorage for persistence (primary), Supabase (optional cloud backup) (007-unified-state-architecture)
 - TypeScript 5.3+ (strict mode) + React 18.2+, Next.js 14+ + Zustand 4.4+, Supabase 2.39+, Tailwind CSS, shadcn/ui, Radix UI components, Framer Motion, Sonner (toasts) (009-fix-preview)
+- TypeScript 5.3+ (strict mode) + React 18.2+, Next.js 14+ + Zustand 4.4+, Supabase 2.39+, Tailwind CSS, shadcn/ui, Radix UI components, Framer Motion, Sonner (toasts) (003-cloud-sync-autosave)
+- localStorage (primary, <1KB), Supabase (drafts table with JSONB, one draft per user) (003-cloud-sync-autosave)
 - Web Audio API (011-music-player-widget)
 - BroadcastChannel API (011-music-player-widget)
 - TypeScript 5.3+ (strict mode) + React 18.2+, Next.js 14+ + Zustand 4.4+, Framer Motion, Sonner (toasts), ReactPlayer, Supabase 2.39+, Tailwind CSS, shadcn/ui (011-music-player-widget)

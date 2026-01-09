@@ -6,28 +6,28 @@ This script marks tasks as completed by changing `- [ ]` to `- [x]`
 for specified task IDs in a markdown tasks file.
 
 Usage:
-    python3 update_task_status.py <tasks_file> <task_id> [task_id...]
-    python3 update_task_status.py /path/to/tasks.md T001
-    python3 update_task_status.py tasks.md T001 T002 T003
+    ZO_DEBUG=1 python3 update_task_status.py <tasks_file> <task_id> [task_id...]
+    ZO_DEBUG=1 python3 update_task_status.py /path/to/tasks.md T001
+    ZO_DEBUG=1 python3 update_task_status.py tasks.md T001 T002 T003
 
 Examples:
     # Single task
-    python3 update_task_status.py specs/001-feature/tasks.md T001
+    ZO_DEBUG=1 python3 update_task_status.py specs/001-feature/tasks.md T001
     
     # Multiple tasks
-    python3 update_task_status.py tasks.md T001 T002 T005
+    ZO_DEBUG=1 python3 update_task_status.py tasks.md T001 T002 T005
     
     # Task range
-    python3 update_task_status.py tasks.md T001-T005
+    ZO_DEBUG=1 python3 update_task_status.py tasks.md T001-T005
     
     # Mixed (range + individual)
-    python3 update_task_status.py tasks.md T001-T003 T005 T007-T009
+    ZO_DEBUG=1 python3 update_task_status.py tasks.md T001-T003 T005 T007-T009
     
     # Bracket format
-    python3 update_task_status.py tasks.md [T001] [T002] --verbose
+    ZO_DEBUG=1 python3 update_task_status.py tasks.md [T001] [T002] --verbose
     
     # With task_ prefix
-    python3 update_task_status.py tasks.md task_T001 task_T002 --verbose
+    ZO_DEBUG=1 python3 update_task_status.py tasks.md task_T001 task_T002 --verbose
 
 Options:
     --dry-run    Show what would be changed without modifying file
@@ -71,19 +71,19 @@ def parse_args():
         epilog='''
 Examples:
   # Single task
-  python3 update_task_status.py tasks.md T001
+  ZO_DEBUG=1 python3 update_task_status.py tasks.md T001
   
   # Multiple tasks
-  python3 update_task_status.py tasks.md T001 T002 T005
+  ZO_DEBUG=1 python3 update_task_status.py tasks.md T001 T002 T005
   
   # Task range
-  python3 update_task_status.py tasks.md T001-T005
+  ZO_DEBUG=1 python3 update_task_status.py tasks.md T001-T005
   
   # Mixed (range + individual)
-  python3 update_task_status.py tasks.md T001-T003 T005 T007-T009
+  ZO_DEBUG=1 python3 update_task_status.py tasks.md T001-T003 T005 T007-T009
   
   # Dry run to preview changes
-  python3 update_task_status.py tasks.md T001-T005 --dry-run
+  ZO_DEBUG=1 python3 update_task_status.py tasks.md T001-T005 --dry-run
         '''
     )
     parser.add_argument(

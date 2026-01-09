@@ -35,8 +35,8 @@ handoffs:
 >   - SPECIFY_FEATURE: Set to the branch name
 > 
 > EXAMPLES:
->   python3 create-new-feature.py --json "Add user authentication system" --short-name "user-auth"
->   python3 create-new-feature.py --json "Implement OAuth2 integration for API" --number 5
+>   ZO_DEBUG=1 python3 create-new-feature.py --json "Add user authentication system" --short-name "user-auth"
+>   ZO_DEBUG=1 python3 create-new-feature.py --json "Implement OAuth2 integration for API" --number 5
 > ```
 
 ## User Input

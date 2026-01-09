@@ -42,7 +42,7 @@ You **MUST** consider the user input before proceeding (if not empty).
    - Run this command from the **current workspace directory** (no cwd parameter needed):
    
      ```sh
-     python3 .zo/scripts/python/check-prerequisites.py --json --require-tasks --include-tasks
+     ZO_DEBUG=1 python3 .zo/scripts/python/check-prerequisites.py --json --require-tasks --include-tasks
      ```
    
    - **IMPORTANT**: Execute directly - the tool will automatically run from workspace. DO NOT use cwd parameter or prepend workspace path.
@@ -161,21 +161,21 @@ You **MUST** consider the user input before proceeding (if not empty).
    - Suggest next steps if implementation cannot proceed
    - **AUTOMATED** After completing tasks, call the update script:
      ```sh
-     python3 .zo/scripts/python/update_task_status.py "$TASKS" TASK_ID [TASK_ID...]
+     ZO_DEBUG=1 python3 .zo/scripts/python/update_task_status.py "$TASKS" TASK_ID [TASK_ID...]
      ```
      Examples:
      ```sh
      # Single task
-     python3 .zo/scripts/python/update_task_status.py "specs/001-feature/tasks.md" T001
+     ZO_DEBUG=1 python3 .zo/scripts/python/update_task_status.py "specs/001-feature/tasks.md" T001
      
      # Multiple tasks
-     python3 .zo/scripts/python/update_task_status.py "specs/001-feature/tasks.md" T001 T002 T005
+     ZO_DEBUG=1 python3 .zo/scripts/python/update_task_status.py "specs/001-feature/tasks.md" T001 T002 T005
      
      # Task range
-     python3 .zo/scripts/python/update_task_status.py "specs/001-feature/tasks.md" T001-T005
+     ZO_DEBUG=1 python3 .zo/scripts/python/update_task_status.py "specs/001-feature/tasks.md" T001-T005
      
      # Mixed (range + individual)
-     python3 .zo/scripts/python/update_task_status.py "specs/001-feature/tasks.md" T001-T003 T005 T007-T009
+     ZO_DEBUG=1 python3 .zo/scripts/python/update_task_status.py "specs/001-feature/tasks.md" T001-T003 T005 T007-T009
      ```
    - The script will automatically change `- [ ]` to `- [x]` for the completed tasks
    - Supports batch updates: complete multiple tasks in a single call
