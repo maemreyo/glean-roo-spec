@@ -45,6 +45,16 @@ def run_git_command(args: list, cwd: Optional[str] = None) -> Optional[str]:
     Returns:
         Command output as string, or None if command fails
     """
+    # Validate and normalize cwd before passing to subprocess
+    if cwd is not None:
+        # Ensure cwd is an absolute path with proper format
+        if not os.path.isabs(cwd) and not cwd.startswith('.'):
+            # If cwd looks like a relative path without './' prefix, skip it
+            cwd = None
+        elif not os.path.exists(cwd):
+            # If cwd doesn't exist, skip it
+            cwd = None
+
     try:
         result = subprocess.run(
             ['git'] + args,
@@ -87,9 +97,10 @@ def find_repo_root(start_dir: Optional[str] = None) -> Optional[str]:
         Path to repository root, or None if not found
     """
     if start_dir is None:
-        start_dir = os.getcwd()
+        # Use abspath to ensure we get a valid absolute path
+        start_dir = os.path.abspath(os.getcwd())
 
-    current = Path(start_dir).resolve()
+    current = Path(start_dir).resolve(strict=True)
 
     while current != current.parent:  # Not at root
         if (current / '.git').exists() or (current / '.zo').exists():
