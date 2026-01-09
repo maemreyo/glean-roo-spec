@@ -12,6 +12,8 @@ Usage:
 Examples:
     python3 update_task_status.py specs/001-feature/tasks.md T001
     python3 update_task_status.py tasks.md T005 --verbose
+    python3 update_task_status.py tasks.md [T001] --verbose  # Bracket format
+    python3 update_task_status.py tasks.md task_T001 --verbose  # task_ prefix
 
 Options:
     --dry-run    Show what would be changed without modifying file
@@ -35,6 +37,160 @@ logging.basicConfig(
 logger = logging.getLogger(__name__)
 
 
+def get_workspace_path() -> str:
+    """Get the workspace root path from environment or current directory."""
+    pwd = os.environ.get('PWD', '')
+    workspace = os.environ.get('WORKSPACE', os.environ.get('HOME', ''))
+    
+    if pwd and os.path.exists(pwd):
+        return os.path.abspath(pwd)
+    
+    return os.path.abspath(os.getcwd())
+
+
+def normalize_task_id(task_id: str) -> str:
+    """
+    Normalize task ID to standard format TXXX.
+    
+    Handles common variations:
+    - [T001] -> T001
+    - task_T001 -> T001
+    - T001 -> T001
+    
+    Args:
+        task_id: Raw task ID input
+    
+    Returns:
+        Normalized task ID in format T001
+    """
+    original = task_id
+    
+    # Remove brackets if present: [T001] -> T001
+    task_id = task_id.strip()
+    if task_id.startswith('[') and task_id.endswith(']'):
+        task_id = task_id[1:-1]
+    
+    # Remove 'task_' prefix if present: task_T001 -> T001
+    if task_id.lower().startswith('task_'):
+        task_id = task_id[5:]
+    
+    # Ensure uppercase T prefix
+    if not task_id.startswith('T') and re.match(r'^\d{3}$', task_id):
+        task_id = 'T' + task_id
+    
+    if original != task_id:
+        logger.debug(f"Normalized task ID: '{original}' -> '{task_id}'")
+    
+    return task_id
+
+
+def strip_duplicate_workspace_prefix(task_file: str, workspace: str) -> str:
+    """
+    Strip duplicate workspace prefix from path.
+    
+    Handles cases like:
+    /Users/xxx/Documents/zaob-dev/glean-v2/Users/xxx/Documents/zaob-dev/glean-v2/specs/...
+    
+    Args:
+        task_file: The input file path
+        workspace: The workspace root path
+    
+    Returns:
+        Path with duplicate prefix stripped if detected
+    """
+    # Check for doubled workspace path (e.g., /path/to/workspace/path/to/workspace/...)
+    doubled_pattern = workspace + workspace
+    if task_file.startswith(doubled_pattern):
+        corrected = task_file[len(workspace):]
+        logger.warning(f"Detected doubled workspace path, corrected: {task_file[:50]}... -> {corrected[:50]}...")
+        return corrected
+    
+    # Check if path starts with workspace + '/Users/xxx/...' pattern
+    if task_file.startswith(workspace):
+        after_workspace = task_file[len(workspace):].lstrip('/')
+        
+        if after_workspace.startswith('Users/') or after_workspace.startswith('User/'):
+            second_occurrence = task_file.find(after_workspace)
+            if second_occurrence > len(workspace):
+                corrected = '/' + after_workspace
+                logger.warning(f"Detected duplicate workspace segment, corrected: {task_file[:50]}... -> {corrected}")
+                return corrected
+    
+    return task_file
+
+
+def resolve_path(task_file: str) -> str:
+    """
+    Resolve task file path, handling common AI mistakes.
+    
+    This function handles:
+    1. Double workspace path (AI mistakenly prepends workspace twice)
+    2. Non-existent paths from wrong CWD (tries common locations)
+    3. Relative paths from different directories
+    
+    Args:
+        task_file: The input file path (possibly incorrect)
+    
+    Returns:
+        Resolved absolute path to the file, or original if not found
+    """
+    workspace = get_workspace_path()
+    original_path = task_file
+    
+    # Case A: Strip duplicate workspace prefix
+    task_file = strip_duplicate_workspace_prefix(task_file, workspace)
+    
+    # Case B: Try multiple locations if file doesn't exist
+    if not os.path.exists(task_file):
+        possible_paths = []
+        
+        # Original path (just in case)
+        possible_paths.append(task_file)
+        
+        # Try relative to workspace
+        ws_relative = os.path.join(workspace, task_file)
+        possible_paths.append(ws_relative)
+        
+        # Try with 'specs/' prefix if not already present
+        basename = os.path.basename(task_file)
+        possible_paths.append(os.path.join(workspace, 'specs', basename))
+        
+        # Try with 'specs/' prefix for full path
+        if not task_file.startswith('specs/'):
+            possible_paths.append(os.path.join(workspace, 'specs', task_file))
+        
+        # Try parent directories (for when AI assumes wrong CWD)
+        parts = task_file.split(os.sep)
+        if len(parts) > 1:
+            possible_paths.append(os.path.join(workspace, parts[-1]))
+        
+        # Try current working directory
+        cwd = os.getcwd()
+        if cwd != workspace:
+            possible_paths.append(os.path.join(cwd, task_file))
+            possible_paths.append(os.path.join(cwd, 'specs', os.path.basename(task_file)))
+        
+        # Find the first existing path
+        for path in possible_paths:
+            if os.path.exists(path):
+                abs_path = os.path.abspath(path)
+                if abs_path != original_path:
+                    logger.warning(f"Path not found at '{original_path}', resolved to: {abs_path}")
+                return abs_path
+        
+        # If file exists after normalization, use it
+        if os.path.exists(task_file):
+            return os.path.abspath(task_file)
+    
+    # Return absolute path if file exists
+    if os.path.exists(task_file):
+        return os.path.abspath(task_file)
+    
+    # Return original if nothing works (will fail at file check later)
+    logger.warning(f"Could not resolve path, using original: {task_file}")
+    return task_file
+
+
 def parse_args():
     """Parse command line arguments."""
     parser = argparse.ArgumentParser(
@@ -45,6 +201,8 @@ Examples:
   python3 update_task_status.py tasks.md T001
   python3 update_task_status.py specs/001-feature/tasks.md T005 --dry-run
   python3 update_task_status.py tasks.md T012 --verbose
+  python3 update_task_status.py tasks.md [T001] --verbose  # bracket format
+  python3 update_task_status.py tasks.md task_T001 --verbose  # task_ prefix
         '''
     )
     parser.add_argument(
@@ -53,7 +211,7 @@ Examples:
     )
     parser.add_argument(
         'task_id',
-        help='Task ID to mark as completed (e.g., T001)'
+        help='Task ID to mark as completed (e.g., T001, [T001], task_T001)'
     )
     parser.add_argument(
         '--dry-run',
@@ -170,29 +328,36 @@ def main():
     if args.verbose:
         logger.setLevel(logging.DEBUG)
     
+    # Normalize task ID (handle [T001], task_T001, etc.)
+    normalized_task_id = normalize_task_id(args.task_id)
+    
     # Validate task ID format
-    if not validate_task_id(args.task_id):
-        logger.error(f"Invalid task ID format: {args.task_id}")
+    if not validate_task_id(normalized_task_id):
+        logger.error(f"Invalid task ID format: {normalized_task_id}")
         logger.error("Task ID must match pattern T001, T002, etc.")
         sys.exit(1)
     
+    # Resolve path (handle common AI path mistakes)
+    resolved_path = resolve_path(args.tasks_file)
+    
     # Check if tasks file exists
-    if not os.path.isfile(args.tasks_file):
+    if not os.path.isfile(resolved_path):
         logger.error(f"Tasks file not found: {args.tasks_file}")
+        logger.error(f"Resolved path: {resolved_path}")
         sys.exit(1)
     
     # Read file content
     try:
-        with open(args.tasks_file, 'r', encoding='utf-8') as f:
+        with open(resolved_path, 'r', encoding='utf-8') as f:
             content = f.read()
     except IOError as e:
         logger.error(f"Failed to read tasks file: {e}")
         sys.exit(1)
     
     # Find the task line
-    line_num = find_task_line(content, args.task_id)
+    line_num = find_task_line(content, normalized_task_id)
     if line_num is None:
-        logger.error(f"Task {args.task_id} not found in {args.tasks_file}")
+        logger.error(f"Task {normalized_task_id} not found in {resolved_path}")
         sys.exit(1)
     
     # Get the task line for display
@@ -201,19 +366,19 @@ def main():
     logger.debug(f"Found task at line {line_num + 1}: {task_line.strip()}")
     
     # Update task status
-    updated_content, modified = update_task_status(content, args.task_id)
+    updated_content, modified = update_task_status(content, normalized_task_id)
     
     # Try bracket-wrapped format if not found
     if not modified:
-        updated_content, modified = update_task_status_bracket(content, args.task_id)
+        updated_content, modified = update_task_status_bracket(content, normalized_task_id)
     
     # Report results
     if not modified:
-        logger.info(f"Task {args.task_id} already marked as completed")
+        logger.info(f"Task {normalized_task_id} already marked as completed")
         sys.exit(0)
     
     if args.dry_run:
-        logger.info(f"[DRY RUN] Would mark task {args.task_id} as completed")
+        logger.info(f"[DRY RUN] Would mark task {normalized_task_id} as completed")
         logger.debug(f"Line {line_num + 1}: {task_line}")
         # Show what would change
         new_lines = updated_content.split('\n')
@@ -221,9 +386,9 @@ def main():
     else:
         # Write updated content
         try:
-            with open(args.tasks_file, 'w', encoding='utf-8') as f:
+            with open(resolved_path, 'w', encoding='utf-8') as f:
                 f.write(updated_content)
-            logger.info(f"✓ Task {args.task_id} marked as completed")
+            logger.info(f"✓ Task {normalized_task_id} marked as completed")
         except IOError as e:
             logger.error(f"Failed to write tasks file: {e}")
             sys.exit(1)
