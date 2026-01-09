@@ -6,6 +6,39 @@ handoffs:
     prompt: Okay, I'm sorry. I'll fix the code.
 ---
 
+> **Prerequisite Script**: This command uses `.zo/scripts/python/setup-roast.py` for context initialization.
+>
+> ```text
+> setup-roast.py
+> Initialize a roast report for code review.
+> 
+> Usage: python setup-roast.py [--json] [--json=JSON_DATA] [feature_dir]
+> 
+> OPTIONS:
+>   --json              Output results in JSON format
+>   --json=JSON_DATA    Input JSON data with commits array and optional design_system
+>                       Example: --json='{"commits":["abc123","def456"],"design_system":"/path"}'
+>   feature_dir         Optional feature directory path (defaults to current branch)
+>   --help, -h          Show this help message
+> 
+> OUTPUTS:
+>   JSON object with:
+>   - REPORT_FILE: Path to roast report
+>   - TASKS: Path to tasks file
+>   - IMPL_PLAN: Path to implementation plan
+>   - BRANCH: Current git branch
+>   - COMMITS: Comma-separated commit hashes (if provided)
+>   - DESIGN_SYSTEM: Path to design system file
+> 
+> OUTPUT FILE LOCATION:
+>   FEATURE_DIR/roasts/roast-report-FEATURE_NAME-YYYY-MM-DD-HHMM.md
+> 
+> EXAMPLES:
+>   python setup-roast.py --json
+>   python setup-roast.py --json '{"commits":["abc123"]}'
+>   python setup-roast.py --json path/to/feature
+> ```
+
 ## User Input
 ```text
 $ARGUMENTS

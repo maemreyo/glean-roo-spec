@@ -10,6 +10,35 @@ handoffs:
     send: true
 ---
 
+> **Prerequisite Script**: This command uses `.zo/scripts/python/create-new-feature.py` for feature initialization.
+>
+> ```text
+> create-new-feature.py
+> Create a new feature from a user description.
+> 
+> Usage: python create-new-feature.py [--json] [--short-name <name>] [--number N] <feature_description>
+> 
+> OPTIONS:
+>   --json              Output in JSON format
+>   --short-name <name> Provide a custom short name (2-4 words) for the branch
+>   --number N          Specify branch number manually (overrides auto-detection)
+>   --help, -h          Show this help message
+>   feature_description Feature description (positional argument)
+> 
+> OUTPUTS:
+>   JSON object with:
+>   - BRANCH_NAME: The created branch name (e.g., 001-user-auth)
+>   - SPEC_FILE: Path to the created spec file
+>   - FEATURE_NUM: The feature number (e.g., 001)
+> 
+> ENVIRONMENT VARIABLES:
+>   - SPECIFY_FEATURE: Set to the branch name
+> 
+> EXAMPLES:
+>   python create-new-feature.py --json "Add user authentication system" --short-name "user-auth"
+>   python create-new-feature.py --json "Implement OAuth2 integration for API" --number 5
+> ```
+
 ## User Input
 
 ```text

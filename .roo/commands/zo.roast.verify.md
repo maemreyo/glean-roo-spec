@@ -6,6 +6,35 @@ handoffs:
     prompt: I'm ready for another beating.
 ---
 
+> **Prerequisite Script**: This command uses `.zo/scripts/python/setup-roast-verify.py` for context initialization.
+>
+> ```text
+> setup-roast-verify.py
+> Verify and locate the latest roast report for a feature.
+> 
+> Usage: python setup-roast-verify.py [--json] [--report=path/to/report.md] [feature_dir]
+> 
+> OPTIONS:
+>   --json              Output results in JSON format
+>   --report            Specify a specific roast report file (absolute or relative path)
+>   feature_dir         Optional feature directory path (defaults to current branch)
+>   --help, -h          Show this help message
+> 
+> OUTPUTS:
+>   JSON object with:
+>   - REPORT_FILE: Path to roast report
+>   - TASKS: Path to tasks file
+>   - BRANCH: Current git branch
+> 
+> REPORT SEARCH PATTERN:
+>   roast-report-FEATURE_NAME-*.md
+> 
+> EXAMPLES:
+>   python setup-roast-verify.py --json
+>   python setup-roast-verify.py --json --report path/to/report.md
+>   python setup-roast-verify.py --json path/to/feature
+> ```
+
 ## User Input
 ```text
 $ARGUMENTS

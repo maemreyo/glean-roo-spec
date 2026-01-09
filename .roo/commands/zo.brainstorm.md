@@ -9,6 +9,30 @@ handoffs:
     prompt: Let's turn this idea into tasks.
 ---
 
+> **Prerequisite Script**: This command uses `.zo/scripts/python/setup-brainstorm.py` for context initialization.
+>
+> ```text
+> setup-brainstorm.py
+> Initialize a brainstorm session in .zo/brainstorms/ directory.
+> 
+> Usage: python setup-brainstorm.py [--json] [brainstorm topic]
+> 
+> OPTIONS:
+>   --json              Output results in JSON format
+>   --help, -h          Show this help message
+>   topic               Brainstorm topic (optional)
+> 
+> OUTPUTS:
+>   JSON object with:
+>   - OUTPUT_FILE: Path to the brainstorm file created
+>   - BRAINSTORM_DIR: Path to the brainstorms directory
+>   - TOPIC: The topic slug used for the file
+> 
+> EXAMPLES:
+>   python setup-brainstorm.py "improve login flow"
+>   python setup-brainstorm.py --json "add dark mode"
+> ```
+
 ## User Input
 
 ```text

@@ -9,6 +9,36 @@ handoffs:
     prompt: Let's turn this idea into tasks.
 ---
 
+> **Prerequisite Script**: This command uses `.zo/scripts/python/setup-brainstorm-crazy.py` for context initialization.
+>
+> ```text
+> setup-brainstorm-crazy.py
+> Initialize context for a "crazy" brainstorm session with enhanced template support.
+> Uses brainstorm-template-crazy.md for output formatting.
+> 
+> Usage: python setup-brainstorm-crazy.py [OPTIONS] "brainstorm request"
+> 
+> OPTIONS:
+>   --json              Output JSON (default)
+>   --help, -h          Show usage
+>   --dry-run           Show what would be found without creating files
+>   -v, --verbose       Verbose output
+> 
+> OUTPUTS:
+>   JSON object with:
+>   - OUTPUT_FILE: Path to the brainstorm output file
+>   - FEATURE_SPEC: Path to the feature specification document
+>   - IMPL_PLAN: Path to the implementation plan document
+>   - TASKS: Path to the tasks document
+>   - RESEARCH_FOCUS: Extracted keywords from user input
+>   - SPEC_DIR: Path to the specification directory
+> 
+> EXAMPLES:
+>   python setup-brainstorm-crazy.py "improve login flow"
+>   python setup-brainstorm-crazy.py -v "add offline support"
+>   python setup-brainstorm-crazy.py --dry-run "story creator"
+> ```
+
 ## User Input
 
 ```text

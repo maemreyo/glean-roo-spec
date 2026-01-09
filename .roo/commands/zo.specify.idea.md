@@ -9,6 +9,63 @@ handoffs:
     prompt: Create a plan for the spec. I am building with...
 ---
 
+> **Prerequisite Scripts**: This command uses two scripts for context initialization:
+>
+> ### 1. setup-specify-idea.py
+> Find brainstorm file and spec template for spec creation.
+>
+> ```text
+> Usage: python setup-specify-idea.py [--json] [brainstorm_file]
+>
+> OPTIONS:
+>   --json, -h          Output results in JSON format
+>   brainstorm_file     Optional path to brainstorm file (absolute or relative)
+>
+> OUTPUTS:
+>   JSON object with:
+>   - BRAINSTORM_FILE: Path to the brainstorm file
+>   - SPEC_TEMPLATE: Path to the spec template
+>   - DESIGN_FILE: Path to the design file
+>
+> BRAINSTORM FILE SEARCH ORDER:
+>   1. User-provided path (if specified)
+>   2. .zo/brainstorms/ (primary location)
+>   3. FEATURE_DIR/brainstorms/ (legacy)
+>   4. docs/brainstorms/ (legacy)
+>
+> EXAMPLES:
+>   python setup-specify-idea.py
+>   python setup-specify-idea.py --json
+>   python setup-specify-idea.py path/to/brainstorm.md
+> ```
+>
+> ### 2. create-feature-from-idea.py
+> Create a new feature from an idea description.
+>
+> ```text
+> Usage: python create-feature-from-idea.py [--json] [--short-name <name>] [--number N] <feature_description>
+>
+> OPTIONS:
+>   --json              Output in JSON format
+>   --short-name <name> Provide a custom short name (2-4 words) for the branch
+>   --number N          Specify branch number manually (overrides auto-detection)
+>   --help, -h          Show this help message
+>   feature_description Feature description (positional argument)
+>
+> OUTPUTS:
+>   JSON object with:
+>   - BRANCH_NAME: The created branch name (e.g., 001-user-auth)
+>   - SPEC_FILE: Path to the created spec file
+>   - FEATURE_NUM: The feature number (e.g., 001)
+>
+> ENVIRONMENT VARIABLES:
+>   - SPECIFY_FEATURE: Set to the branch name
+>
+> EXAMPLES:
+>   python create-feature-from-idea.py --json "Add user authentication system" --short-name "user-auth"
+>   python create-feature-from-idea.py --json "Implement OAuth2 integration for API" --number 5
+> ```
+
 ## User Input
 
 ```text

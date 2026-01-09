@@ -10,6 +10,28 @@ handoffs:
     prompt: Create a checklist for the following domain...
 ---
 
+> **Prerequisite Script**: This command uses `.zo/scripts/python/setup-plan.py` for context initialization.
+>
+> ```text
+> setup-plan.py
+> Initialize implementation plan for a feature.
+> 
+> Usage: python setup-plan.py [--json]
+> 
+> OPTIONS:
+>   --json              Output results in JSON format
+>   --help, -h          Show this help message
+> 
+> OUTPUTS:
+>   JSON object with:
+>   - FEATURE_SPEC: Path to feature specification
+>   - IMPL_PLAN: Path to implementation plan
+>   - DESIGN_FILE: Path to design file
+>   - SPECS_DIR: Path to feature directory
+>   - BRANCH: Current git branch
+>   - HAS_GIT: Whether git repository is available
+> ```
+
 ## User Input
 
 ```text
