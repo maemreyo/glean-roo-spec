@@ -108,12 +108,16 @@ def resolve_feature_dir(feature_arg: str, repo_root: str) -> tuple:
     
     # Try as relative path from current directory
     if feature_path.is_dir():
+        feature_dir = str(feature_path.resolve())
+        feature_name = feature_path.name
         logger.info(f"Using specified feature directory: {feature_dir}")
         return feature_dir, feature_name
     
     # Try as relative path from repo root
     repo_relative = Path(repo_root) / feature_arg
     if repo_relative.is_dir():
+        feature_dir = str(repo_relative.resolve())
+        feature_name = repo_relative.name
         logger.info(f"Using specified feature directory: {feature_dir}")
         return feature_dir, feature_name
     
