@@ -35,12 +35,64 @@ export default defineCustomTool({
 });
 ```
 
-## Building Tools
+## Running Tools
+
+Tools can be run directly without compilation using the helper script:
 
 ```bash
 cd .roo/tools
-npm install
-npx tsc
+
+# Quick tool execution with parameters
+npm run tool -- src/git-branch-detector.ts '{"specsDir":"specs","hasGit":true}'
+
+# Run any tool directly with ts-node
+npm run dev -- src/branch-name-generator.ts
+
+# Or use the run script
+npm run run -- src/spec-content-generator.ts
+```
+
+### Tool Parameters
+
+Each tool expects JSON parameters matching its Zod schema:
+
+```bash
+# Git branch detector
+npm run tool -- src/git-branch-detector.ts '{"specsDir":"specs","hasGit":true}'
+
+# Branch name generator
+npm run tool -- src/branch-name-generator.ts '{"featureDescription":"Add user auth"}'
+
+# Git branch creator
+npm run tool -- src/git-branch-creator.ts '{"branchName":"001-user-auth","repoRoot":"."}'
+
+# Directory creator
+npm run tool -- src/filesystem-operations.ts # (Note: this exports multiple tools)
+```
+
+### Direct ts-node Usage
+
+For development/testing:
+
+```bash
+# Run with ts-node directly
+npx ts-node src/git-branch-detector.ts
+
+# With custom evaluation (for testing)
+npx ts-node -e "
+import('./src/git-branch-detector.ts').then(m =>
+  m.default.execute({ specsDir: 'specs', hasGit: true }).then(console.log)
+);
+"
+```
+
+## Building Tools (Optional)
+
+If you prefer compiled JavaScript:
+
+```bash
+cd .roo/tools
+npm run build
 ```
 
 Compiled tools are available in the `dist/` directory.
