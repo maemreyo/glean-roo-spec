@@ -34,7 +34,11 @@ function checkFeatureBranch() {
 }
 
 // Get feature directory path
-function getFeatureDir() {
+function getFeatureDir(featureName) {
+  if (featureName) {
+    return join(__dirname, '..', '..', 'specs', featureName);
+  }
+  
   try {
     const branch = execSync('git branch --show-current', { encoding: 'utf8' }).trim();
     return join(__dirname, '..', '..', 'specs', branch);
@@ -74,22 +78,37 @@ function checkAvailableDocs(featureDir) {
 function main() {
   const args = process.argv.slice(2);
   const jsonOutput = args.includes('--json');
+  const requireTasks = args.includes('--requireTasks');
+  const includeTasks = args.includes('--includeTasks');
+  const pathsOnly = args.includes('--pathsOnly');
   
-  // Check if we're on a feature branch
-  const branchValidation = checkFeatureBranch();
-  if (!branchValidation.isValid) {
-    if (jsonOutput) {
-      console.log(JSON.stringify({ error: branchValidation.error, valid: false }));
-    } else {
-      console.log(`ERROR: ${branchValidation.error}`);
+  let featureDir;
+  let featureName;
+  
+  // Check for feature directory parameter
+  const featureDirIndex = args.findIndex(arg => arg.startsWith('--featureDir='));
+  if (featureDirIndex !== -1) {
+    featureName = args[featureDirIndex].split('=')[1];
+    featureDir = getFeatureDir(featureName);
+  } else {
+    // Check if we're on a feature branch
+    const branchValidation = checkFeatureBranch();
+    if (!branchValidation.isValid) {
+      if (jsonOutput) {
+        console.log(JSON.stringify({ error: branchValidation.error, valid: false }));
+      } else {
+        console.log(`ERROR: ${branchValidation.error}`);
+      }
+      return;
     }
-    return;
+    
+    featureDir = getFeatureDir();
   }
   
-  const featureDir = getFeatureDir();
-  
-  if (!existsSync(featureDir)) {
-    const errorMsg = `ERROR: Feature directory not found: ${featureDir}`;
+  if (!featureDir || !existsSync(featureDir)) {
+    const errorMsg = featureName 
+      ? `ERROR: Feature directory not found: ${featureDir}`
+      : `ERROR: Feature directory not found: ${featureDir}`;
     if (jsonOutput) {
       console.log(JSON.stringify({ error: errorMsg, valid: false }));
     } else {
@@ -115,19 +134,36 @@ function main() {
   // Check available docs
   const availableDocs = checkAvailableDocs(featureDir);
   
+  // Filter out tasks if not included
+  const finalDocs = includeTasks ? availableDocs : availableDocs.filter(doc => doc !== 'tasks.md');
+  
   // Output results
   if (jsonOutput) {
     const result = {
       FEATURE_DIR: featureDir,
-      AVAILABLE_DOCS: availableDocs,
+      AVAILABLE_DOCS: finalDocs,
       HAS_TASKS: availableDocs.includes('tasks.md'),
       VALID: true,
     };
+    
+    if (pathsOnly) {
+      result.PATHS_ONLY = true;
+      result.FEATURE_SPEC = join(featureDir, 'spec.md');
+      result.IMPL_PLAN = join(featureDir, 'plan.md');
+      result.DESIGN_FILE = join(featureDir, 'design.md');
+      result.RESEARCH_FILE = join(featureDir, 'research.md');
+      result.DATA_MODEL_FILE = join(featureDir, 'data-model.md');
+      result.QUICKSTART_FILE = join(featureDir, 'quickstart.md');
+      result.TASKS_FILE = join(featureDir, 'tasks.md');
+      result.CONTRACTS_DIR = join(featureDir, 'contracts');
+      result.CHECKLISTS_DIR = join(featureDir, 'checklists');
+    }
+    
     console.log(JSON.stringify(result));
   } else {
     console.log(`FEATURE_DIR: ${featureDir}`);
     console.log('AVAILABLE_DOCS:');
-    availableDocs.forEach(doc => {
+    finalDocs.forEach(doc => {
       console.log(`  ✓ ${doc}`);
     });
     console.log(`VALID: true`);

@@ -32,13 +32,11 @@
 import { defineCustomTool } from '@roo-code/types';
 import { parametersSchema as z } from '@roo-code/types';
 import { existsSync } from 'node:fs';
-import { join } from 'node:path';
 import {
   checkDirExistsWithFiles,
   checkFeatureBranch,
   checkFileExists,
   getFeaturePaths,
-  getRepoRoot,
   resolvePath,
   validateExecutionEnvironment,
 } from './lib/util.js';
