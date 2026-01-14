@@ -34,23 +34,13 @@ The text the user typed after `/zo.specify.roo-tools` in the triggering message 
 
 Given that feature description, do this:
 
-1. **Generate a concise short name** (2-4 words) for the branch:
-    - Use `branch_name_generator` tool to generate from feature description
-    - Use action-noun format when possible (e.g., "add-user-auth", "fix-payment-bug")
-    - Preserve technical terms and acronyms (OAuth2, API, JWT, etc.)
-    - Keep it concise but descriptive enough to understand the feature at a glance
+1. **Call branch_name_generator tool** to generate short name:
+    - Parameters: featureDescription="$ARGUMENTS"
+    - This will return the short name for the branch
 
-2. **Check for existing branches before creating new one**:
-
-    a. Use `git_branch_detector` tool to find the highest feature number across:
-       - Remote branches: `git ls-remote --heads origin | grep -E 'refs/heads/[0-9]{3}-'`
-       - Local branches: `git branch | grep -E '^[* ]*[0-9]{3}-'`
-       - Specs directories: Check for all directories matching `specs/[0-9]{3}-`
-
-    b. Determine the next available number:
-       - Extract all numbers from tool results
-       - Find the highest number N
-       - Use N+1 for the new branch number
+2. **Call git_branch_detector tool** to find next branch number:
+    - Parameters: specsDir="specs", hasGit=true
+    - This will return nextNumber for branch creation
 
 3. **Create Branch and Feature Structure**:
     - Create git branch with pattern: `{next_number:03d}-{short_name}`
