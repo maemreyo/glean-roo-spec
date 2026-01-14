@@ -1,5 +1,5 @@
 ---
-description: Create or update the feature specification from a natural language feature description with optional UI/UX design (Roo Tools Proof-of-Concept)
+description: Create or update the feature specification from a natural language feature description with optional UI/UX design (Production-Ready Roo Tools)
 handoffs:
    - label: Build Technical Plan
      agent: zo.plan
@@ -10,13 +10,17 @@ handoffs:
      send: true
 ---
 
-> **Proof-of-Concept**: This command uses Roo Custom Tools instead of Python scripts for feature initialization.
+> **Production-Ready**: This command uses Roo Custom Tools for complete feature specification workflow.
 >
 > Uses tools:
-> - `git_branch_detector`: Detect highest branch numbers from git and specs
 > - `branch_name_generator`: Generate short names from descriptions
+> - `git_branch_detector`: Detect highest branch numbers from git and specs
+> - `git_branch_creator`: Create and checkout git branches
+> - `filesystem_directory_creator`: Create feature directories
+> - `spec_content_generator`: Generate specification content
+> - `filesystem_template_copier`: Copy and fill templates
 >
-> **NOTE**: This is a proof-of-concept version. Original `zo.specify.md` remains unchanged.
+> **NOTE**: Production-ready replacement for Python script workflow.
 
 ## User Input
 
@@ -34,28 +38,23 @@ The text the user typed after `/zo.specify.roo-tools` in the triggering message 
 
 Given that feature description, do this:
 
-1. **Generate a concise short name** (2-4 words) for the branch:
-    - Use `branch_name_generator` tool to generate from feature description
-    - Use action-noun format when possible (e.g., "add-user-auth", "fix-payment-bug")
-    - Preserve technical terms and acronyms (OAuth2, API, JWT, etc.)
-    - Keep it concise but descriptive enough to understand the feature at a glance
+1. **Call branch_name_generator tool** to generate short name:
+    - Parameters: `featureDescription="$ARGUMENTS"`
 
-2. **Check for existing branches before creating new one**:
+2. **Call git_branch_detector tool** to find next branch number:
+    - Parameters: `specsDir="specs", hasGit=true`
 
-    a. Use `git_branch_detector` tool to find the highest feature number across:
-       - Remote branches: `git ls-remote --heads origin | grep -E 'refs/heads/[0-9]{3}-'`
-       - Local branches: `git branch | grep -E '^[* ]*[0-9]{3}-'`
-       - Specs directories: Check for all directories matching `specs/[0-9]{3}-`
+3. **Create git branch** using git_branch_creator tool:
+    - Parameters: `branchName="{next_number:03d}-{short_name}", repoRoot="."`
 
-    b. Determine the next available number:
-       - Extract all numbers from tool results
-       - Find the highest number N
-       - Use N+1 for the new branch number
+4. **Create feature directory** using filesystem_directory_creator tool:
+    - Parameters: `dirPath="specs/{branch_name}"`
 
-3. **Create Branch and Feature Structure**:
-    - Create git branch with pattern: `{next_number:03d}-{short_name}`
-    - Create feature directory: `specs/{branch_name}/`
-    - Copy spec template to: `specs/{branch_name}/spec.md`
+5. **Generate spec content** using spec_content_generator tool:
+    - Parameters: `featureDescription="$ARGUMENTS", branchName="{branch_name}", templatePath=".zo/templates/spec-template.md"`
+
+6. **Write spec file** using filesystem_template_copier tool:
+    - Parameters: `templatePath=".zo/templates/spec-template.md", destinationPath="specs/{branch_name}/spec.md", placeholders={generated_content}`
 
 4. **Generate Specification Content**:
     - Load `.zo/templates/spec-template.md`
