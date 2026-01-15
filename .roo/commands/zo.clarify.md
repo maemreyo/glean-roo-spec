@@ -10,7 +10,7 @@ handoffs:
 >
 > **Debug Mode**: Enable debug output with:
 > ```sh
-> ZO_DEBUG=1 python3 .zo/scripts/python/check-prerequisites.py --json --paths-only
+> cd "$(git rev-parse --show-toplevel)" && ZO_DEBUG=1 python3 .zo/scripts/python/check-prerequisites.py --json --paths-only
 > ```
 > This shows detailed path resolution, workspace detection, and validation messages.
 >
@@ -48,7 +48,7 @@ Note: This clarification workflow is expected to run (and be completed) BEFORE i
 
 Execution steps:
 
-1. Run `ZO_DEBUG=1 python3 .zo/scripts/python/check-prerequisites.py --json --paths-only` from repo root **once** (combined `--json --paths-only` mode / `-Json -PathsOnly`). Parse minimal JSON payload fields:
+1. Run `cd "$(git rev-parse --show-toplevel)" && ZO_DEBUG=1 python3 .zo/scripts/python/check-prerequisites.py --json --paths-only` **once** (combined `--json --paths-only` mode / `-Json -PathsOnly`). Parse minimal JSON payload fields:
    - `FEATURE_DIR`
    - `FEATURE_SPEC`
    - `DESIGN_FILE` (if available)

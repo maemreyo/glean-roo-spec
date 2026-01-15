@@ -34,9 +34,9 @@ handoffs:
 >   - SPEC_DIR: Path to the specification directory
 > 
 > EXAMPLES:
->   ZO_DEBUG=1 python3 setup-brainstorm-crazy.py "improve login flow"
->   ZO_DEBUG=1 python3 setup-brainstorm-crazy.py -v "add offline support"
->   ZO_DEBUG=1 python3 setup-brainstorm-crazy.py --dry-run "story creator"
+>   cd "$(git rev-parse --show-toplevel)" && ZO_DEBUG=1 python3 .zo/scripts/python/setup-brainstorm-crazy.py "improve login flow"
+>   cd "$(git rev-parse --show-toplevel)" && ZO_DEBUG=1 python3 .zo/scripts/python/setup-brainstorm-crazy.py -v "add offline support"
+>   cd "$(git rev-parse --show-toplevel)" && ZO_DEBUG=1 python3 .zo/scripts/python/setup-brainstorm-crazy.py --dry-run "story creator"
 > ```
 
 ## User Input

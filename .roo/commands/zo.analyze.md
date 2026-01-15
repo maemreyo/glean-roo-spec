@@ -6,7 +6,7 @@ description: Perform a non-destructive cross-artifact consistency and quality an
 >
 > **Debug Mode**: Enable debug output with:
 > ```sh
-> ZO_DEBUG=1 python3 .zo/scripts/python/check-prerequisites.py --json --require-tasks --include-tasks
+> cd "$(git rev-parse --show-toplevel)" && ZO_DEBUG=1 python3 .zo/scripts/python/check-prerequisites.py --json --require-tasks --include-tasks
 > ```
 > This shows detailed path resolution, workspace detection, and validation messages.
 >
@@ -50,7 +50,7 @@ Identify inconsistencies, duplications, ambiguities, and underspecified items ac
 
 ### 1. Initialize Analysis Context
 
-Run `.zo/scripts/python/check-prerequisites.py --json --require-tasks --include-tasks` once from repo root and parse JSON for FEATURE_DIR and AVAILABLE_DOCS. Derive absolute paths:
+Run `cd "$(git rev-parse --show-toplevel)" && ZO_DEBUG=1 python3 .zo/scripts/python/check-prerequisites.py --json --require-tasks --include-tasks` once and parse JSON for FEATURE_DIR and AVAILABLE_DOCS. Derive absolute paths:
 
 - SPEC = FEATURE_DIR/spec.md
 - PLAN = FEATURE_DIR/plan.md

@@ -15,7 +15,7 @@ handoffs:
 >
 > **Debug Mode**: Enable debug output with:
 > ```sh
-> ZO_DEBUG=1 python3 .zo/scripts/python/check-prerequisites.py --json
+> cd "$(git rev-parse --show-toplevel)" && ZO_DEBUG=1 python3 .zo/scripts/python/check-prerequisites.py --json
 > ```
 > This shows detailed path resolution, workspace detection, and validation messages.
 >
@@ -47,7 +47,7 @@ You **MUST** consider the user input before proceeding (if not empty).
 
 ## Outline
 
-1. **Setup**: Run `.zo/scripts/python/check-prerequisites.py --json` from repo root and parse FEATURE_DIR and AVAILABLE_DOCS list. All paths must be absolute. For single quotes in args like "I'm Groot", use escape syntax: e.g 'I'\''m Groot' (or double-quote if possible: "I'm Groot").
+1. **Setup**: Run `cd "$(git rev-parse --show-toplevel)" && ZO_DEBUG=1 python3 .zo/scripts/python/check-prerequisites.py --json` and parse FEATURE_DIR and AVAILABLE_DOCS list. All paths must be absolute. For single quotes in args like "I'm Groot", use escape syntax: e.g 'I'\''m Groot' (or double-quote if possible: "I'm Groot").
 
 2. **Load design documents**: Read from FEATURE_DIR:
    - **Required**: plan.md (tech stack, libraries, structure), spec.md (user stories with priorities)

@@ -12,7 +12,7 @@ handoffs:
 > setup-roast.py
 > Initialize a roast report for code review.
 > 
-> Usage: ZO_DEBUG=1 python3setup-roast.py [--json] [--json=JSON_DATA] [feature_dir]
+> Usage: cd "$(git rev-parse --show-toplevel)" && ZO_DEBUG=1 python3 .zo/scripts/python/setup-roast.py [--json] [--json=JSON_DATA] [feature_dir]
 > 
 > OPTIONS:
 >   --json              Output results in JSON format
@@ -34,9 +34,9 @@ handoffs:
 >   FEATURE_DIR/roasts/roast-report-FEATURE_NAME-YYYY-MM-DD-HHMM.md
 > 
 > EXAMPLES:
->   ZO_DEBUG=1 python3 setup-roast.py --json
->   ZO_DEBUG=1 python3 setup-roast.py --json '{"commits":["abc123"]}'
->   ZO_DEBUG=1 python3 setup-roast.py --json path/to/feature
+>   cd "$(git rev-parse --show-toplevel)" && ZO_DEBUG=1 python3 .zo/scripts/python/setup-roast.py --json
+>   cd "$(git rev-parse --show-toplevel)" && ZO_DEBUG=1 python3 .zo/scripts/python/setup-roast.py --json '{"commits":["abc123"]}'
+>   cd "$(git rev-parse --show-toplevel)" && ZO_DEBUG=1 python3 .zo/scripts/python/setup-roast.py --json path/to/feature
 > ```
 
 ## User Input

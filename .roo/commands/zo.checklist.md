@@ -6,7 +6,7 @@ description: Generate a custom checklist for the current feature based on user r
 >
 > **Debug Mode**: Enable debug output with:
 > ```sh
-> ZO_DEBUG=1 python3 .zo/scripts/python/check-prerequisites.py --json --require-tasks --include-tasks
+> cd "$(git rev-parse --show-toplevel)" && ZO_DEBUG=1 python3 .zo/scripts/python/check-prerequisites.py --json --require-tasks --include-tasks
 > ```
 > This shows detailed path resolution, workspace detection, and validation messages.
 >

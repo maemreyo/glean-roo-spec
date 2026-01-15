@@ -6,7 +6,7 @@ description: Execute the implementation plan by processing and executing all tas
 >
 > **Debug Mode**: Enable debug output with:
 > ```sh
-> ZO_DEBUG=1 python3 .zo/scripts/python/check-prerequisites.py --json --require-tasks --include-tasks
+> cd "$(git rev-parse --show-toplevel)" && ZO_DEBUG=1 python3 .zo/scripts/python/check-prerequisites.py --json --require-tasks --include-tasks
 > ```
 > This shows detailed path resolution, workspace detection, and validation messages.
 >
@@ -42,7 +42,7 @@ You **MUST** consider the user input before proceeding (if not empty).
    - Run this command from the **current workspace directory** (no cwd parameter needed):
    
      ```sh
-     ZO_DEBUG=1 python3 .zo/scripts/python/check-prerequisites.py --json --require-tasks --include-tasks
+     cd "$(git rev-parse --show-toplevel)" && ZO_DEBUG=1 python3 .zo/scripts/python/check-prerequisites.py --json --require-tasks --include-tasks
      ```
    
    - **IMPORTANT**: Execute directly - the tool will automatically run from workspace. DO NOT use cwd parameter or prepend workspace path.

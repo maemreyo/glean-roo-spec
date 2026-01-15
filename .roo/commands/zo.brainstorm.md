@@ -15,7 +15,7 @@ handoffs:
 > setup-brainstorm.py
 > Initialize a brainstorm session in .zo/brainstorms/ directory.
 > 
-> Usage: ZO_DEBUG=1 python3setup-brainstorm.py [--json] [brainstorm topic]
+> Usage: cd "$(git rev-parse --show-toplevel)" && ZO_DEBUG=1 python3 .zo/scripts/python/setup-brainstorm.py [--json] [brainstorm topic]
 > 
 > OPTIONS:
 >   --json              Output results in JSON format
@@ -29,8 +29,8 @@ handoffs:
 >   - TOPIC: The topic slug used for the file
 > 
 > EXAMPLES:
->   ZO_DEBUG=1 python3 setup-brainstorm.py "improve login flow"
->   ZO_DEBUG=1 python3 setup-brainstorm.py --json "add dark mode"
+>   cd "$(git rev-parse --show-toplevel)" && ZO_DEBUG=1 python3 .zo/scripts/python/setup-brainstorm.py "improve login flow"
+>   cd "$(git rev-parse --show-toplevel)" && ZO_DEBUG=1 python3 .zo/scripts/python/setup-brainstorm.py --json "add dark mode"
 > ```
 
 ## User Input

@@ -16,7 +16,7 @@ handoffs:
 > setup-plan.py
 > Initialize implementation plan for a feature.
 > 
-> Usage: ZO_DEBUG=1 python3setup-plan.py [--json]
+> Usage: cd "$(git rev-parse --show-toplevel)" && ZO_DEBUG=1 python3 .zo/scripts/python/setup-plan.py [--json]
 > 
 > OPTIONS:
 >   --json              Output results in JSON format
@@ -42,7 +42,7 @@ You **MUST** consider the user input before proceeding (if not empty).
 
 ## Outline
 
-1. **Setup**: Run `ZO_DEBUG=1 python3 .zo/scripts/python/setup-plan.py --json` from repo root and parse JSON for FEATURE_SPEC, IMPL_PLAN, DESIGN_FILE, SPECS_DIR, BRANCH. For single quotes in args like "I'm Groot", use escape syntax: e.g 'I'\''m Groot' (or double-quote if possible: "I'm Groot").
+1. **Setup**: Run `cd "$(git rev-parse --show-toplevel)" && ZO_DEBUG=1 python3 .zo/scripts/python/setup-plan.py --json` and parse JSON for FEATURE_SPEC, IMPL_PLAN, DESIGN_FILE, SPECS_DIR, BRANCH. For single quotes in args like "I'm Groot", use escape syntax: e.g 'I'\''m Groot' (or double-quote if possible: "I'm Groot").
 2. **Load context**: Read FEATURE_SPEC and `.zo/memory/constitution.md`. Read DESIGN_FILE if it exists. Load IMPL_PLAN template (already copied).
 
    **Design System Loading** (if DESIGN_FILE exists):

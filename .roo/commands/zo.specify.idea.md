@@ -15,7 +15,7 @@ handoffs:
 > Find brainstorm file and spec template for spec creation.
 >
 > ```text
-> Usage: ZO_DEBUG=1 python3setup-specify-idea.py [--json] [brainstorm_file]
+> Usage: cd "$(git rev-parse --show-toplevel)" && ZO_DEBUG=1 python3 .zo/scripts/python/setup-specify-idea.py [--json] [brainstorm_file]
 >
 > OPTIONS:
 >   --json, -h          Output results in JSON format
@@ -34,16 +34,16 @@ handoffs:
 >   4. docs/brainstorms/ (legacy)
 >
 > EXAMPLES:
->   ZO_DEBUG=1 python3 setup-specify-idea.py
->   ZO_DEBUG=1 python3 setup-specify-idea.py --json
->   ZO_DEBUG=1 python3 setup-specify-idea.py path/to/brainstorm.md
+>   cd "$(git rev-parse --show-toplevel)" && ZO_DEBUG=1 python3 .zo/scripts/python/setup-specify-idea.py
+>   cd "$(git rev-parse --show-toplevel)" && ZO_DEBUG=1 python3 .zo/scripts/python/setup-specify-idea.py --json
+>   cd "$(git rev-parse --show-toplevel)" && ZO_DEBUG=1 python3 .zo/scripts/python/setup-specify-idea.py path/to/brainstorm.md
 > ```
 >
 > ### 2. create-feature-from-idea.py
 > Create a new feature from an idea description.
 >
 > ```text
-> Usage: ZO_DEBUG=1 python3create-feature-from-idea.py [--json] [--short-name <name>] [--number N] <feature_description>
+> Usage: cd "$(git rev-parse --show-toplevel)" && ZO_DEBUG=1 python3 .zo/scripts/python/create-feature-from-idea.py [--json] [--short-name <name>] [--number N] <feature_description>
 >
 > OPTIONS:
 >   --json              Output in JSON format

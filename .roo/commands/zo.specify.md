@@ -16,7 +16,7 @@ handoffs:
 > create-new-feature.py
 > Create a new feature from a user description.
 > 
-> Usage: ZO_DEBUG=1 python3create-new-feature.py [--json] [--short-name <name>] [--number N] <feature_description>
+> Usage: cd "$(git rev-parse --show-toplevel)" && ZO_DEBUG=1 python3 .zo/scripts/python/create-new-feature.py [--json] [--short-name <name>] [--number N] <feature_description>
 > 
 > OPTIONS:
 >   --json              Output in JSON format
@@ -35,8 +35,8 @@ handoffs:
 >   - SPECIFY_FEATURE: Set to the branch name
 > 
 > EXAMPLES:
->   ZO_DEBUG=1 python3 create-new-feature.py --json "Add user authentication system" --short-name "user-auth"
->   ZO_DEBUG=1 python3 create-new-feature.py --json "Implement OAuth2 integration for API" --number 5
+>   cd "$(git rev-parse --show-toplevel)" && ZO_DEBUG=1 python3 .zo/scripts/python/create-new-feature.py --json "Add user authentication system" --short-name "user-auth"
+>   cd "$(git rev-parse --show-toplevel)" && ZO_DEBUG=1 python3 .zo/scripts/python/create-new-feature.py --json "Implement OAuth2 integration for API" --number 5
 > ```
 
 ## User Input

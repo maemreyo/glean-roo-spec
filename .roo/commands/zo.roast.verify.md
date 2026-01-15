@@ -12,7 +12,7 @@ handoffs:
 > setup-roast-verify.py
 > Verify and locate the latest roast report for a feature.
 > 
-> Usage: ZO_DEBUG=1 python3setup-roast-verify.py [--json] [--report=path/to/report.md] [feature_dir]
+> Usage: cd "$(git rev-parse --show-toplevel)" && ZO_DEBUG=1 python3 .zo/scripts/python/setup-roast-verify.py [--json] [--report=path/to/report.md] [feature_dir]
 > 
 > OPTIONS:
 >   --json              Output results in JSON format
@@ -30,9 +30,9 @@ handoffs:
 >   roast-report-FEATURE_NAME-*.md
 > 
 > EXAMPLES:
->   ZO_DEBUG=1 python3 setup-roast-verify.py --json
->   ZO_DEBUG=1 python3 setup-roast-verify.py --json --report path/to/report.md
->   ZO_DEBUG=1 python3 setup-roast-verify.py --json path/to/feature
+>   cd "$(git rev-parse --show-toplevel)" && ZO_DEBUG=1 python3 .zo/scripts/python/setup-roast-verify.py --json
+>   cd "$(git rev-parse --show-toplevel)" && ZO_DEBUG=1 python3 .zo/scripts/python/setup-roast-verify.py --json --report path/to/report.md
+>   cd "$(git rev-parse --show-toplevel)" && ZO_DEBUG=1 python3 .zo/scripts/python/setup-roast-verify.py --json path/to/feature
 > ```
 
 ## User Input

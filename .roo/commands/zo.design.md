@@ -194,27 +194,27 @@ Based on project type and requirements, execute searches:
 
 1. **Project Type/Domain**:
    ```bash
-   python3 .zo/system/ui-ux-pro-max/scripts/search.py "[project-type]" --domain product
+   cd "$(git rev-parse --show-toplevel)" && python3 .zo/system/ui-ux-pro-max/scripts/search.py "[project-type]" --domain product
    ```
 
 2. **Style & Aesthetics**:
    ```bash
-   python3 .zo/system/ui-ux-pro-max/scripts/search.py "[desired-mood]" --domain style
+   cd "$(git rev-parse --show-toplevel)" && python3 .zo/system/ui-ux-pro-max/scripts/search.py "[desired-mood]" --domain style
    ```
 
 3. **Typography**:
    ```bash
-   python3 .zo/system/ui-ux-pro-max/scripts/search.py "[mood]" --domain typography
+   cd "$(git rev-parse --show-toplevel)" && python3 .zo/system/ui-ux-pro-max/scripts/search.py "[mood]" --domain typography
    ```
 
 4. **Color Palette**:
    ```bash
-   python3 .zo/system/ui-ux-pro-max/scripts/search.py "[industry/features]" --domain color
+   cd "$(git rev-parse --show-toplevel)" && python3 .zo/system/ui-ux-pro-max/scripts/search.py "[industry/features]" --domain color
    ```
 
 5. **Component Patterns**:
    ```bash
-   python3 .zo/system/ui-ux-pro-max/scripts/search.py "[component-type]" --domain ux
+   cd "$(git rev-parse --show-toplevel)" && python3 .zo/system/ui-ux-pro-max/scripts/search.py "[component-type]" --domain ux
    ```
 
 **Step 3.2.2: Synthesize & Document**
