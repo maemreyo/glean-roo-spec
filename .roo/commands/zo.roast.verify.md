@@ -43,7 +43,7 @@ $ARGUMENTS
 ## Context Setup
 
 1.  **Initialize Verification**:
-    -   Run `ZO_DEBUG=1 python3 .zo/scripts/python/setup-roast-verify.py --json $ARGUMENTS` to locate the target roast report.
+    -   Run `cd "$(git rev-parse --show-toplevel)" && ZO_DEBUG=1 python3 .zo/scripts/python/setup-roast-verify.py --json $ARGUMENTS` to locate the target roast report.
     -   Parse the JSON output to get `REPORT_FILE`.
     -   Read `REPORT_FILE` to access the **Audit & Roast Checklist**.
 

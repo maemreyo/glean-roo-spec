@@ -85,9 +85,9 @@ Given that feature description, do this:
       - Find the highest number N
       - Use N+1 for the new branch number
 
-   d. Run the script `ZO_DEBUG=1 python3 .zo/scripts/python/create-new-feature.py --json "$ARGUMENTS"` with the calculated number and short-name:
+   d. Run the script `cd "$(git rev-parse --show-toplevel)" && ZO_DEBUG=1 python3 .zo/scripts/python/create-new-feature.py --json "$ARGUMENTS"` with the calculated number and short-name:
       - Pass `--number N+1` and `--short-name "your-short-name"` along with the feature description
-      - Python example: `ZO_DEBUG=1 python3 .zo/scripts/python/create-new-feature.py --json "$ARGUMENTS" --number 5 --short-name "user-auth" "Add user authentication"`
+      - Python example: `cd "$(git rev-parse --show-toplevel)" && ZO_DEBUG=1 python3 .zo/scripts/python/create-new-feature.py --json "$ARGUMENTS" --number 5 --short-name "user-auth" "Add user authentication"`
 
    **IMPORTANT**:
    - Check all three sources (remote branches, local branches, specs directories) to find the highest number
